@@ -7,7 +7,7 @@ import cors from 'cors';
 
 dotenv.config();
 
-// TODO exit if something go wrong
+// TODO exit if something goes wrong
 const port: string | undefined = process.env.PORT;
 
 // setup db connection

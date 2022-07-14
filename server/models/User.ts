@@ -262,6 +262,24 @@ async function deleteRelationship(
 }
 
 /**
+ * Create a standard user.
+ * @param username the user username
+ * @param email the user email
+ * @param password the user password
+ * @returns a Promise of `UserDocument`, i.e. the user created
+ */
+export async function createUser(
+  username: string,
+  email: string,
+  password: string
+): Promise<UserDocument> {
+  const user = new UserModel({ email, username });
+  await user.setPassword(password);
+  await user.setRole(UserRoles.Standard);
+  return Promise.resolve(user);
+}
+
+/**
  * Return the user who match the given user id.
  * Return an error if the user does not exists.
  * @param userId the user id
@@ -272,7 +290,7 @@ export async function getUserById(userId: Types.ObjectId): Promise<UserDocument>
   try {
     const user = await UserModel.findOne({ _id: userId }).exec();
     if (!user) {
-      return Promise.reject(`User ${userId} not found`);
+      return Promise.reject(`User not found`);
     }
     return Promise.resolve(user);
   } catch (err) {
@@ -291,7 +309,26 @@ export async function getUserByUsername(username: string): Promise<UserDocument>
   try {
     const user = await UserModel.findOne({ username }).exec();
     if (!user) {
-      return Promise.reject(new Error(`User ${username} not found`));
+      return Promise.reject(new Error(`User not found`));
+    }
+    return Promise.resolve(user);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+/**
+ * Return the user who match the given email.
+ * Return an error if the user does not exists.
+ * @param email the user email
+ * @returns a Promise of `UserDocument`, i.e. the user found
+ * @memberof User
+ */
+export async function getUserByEmail(email: string): Promise<UserDocument> {
+  try {
+    const user = await UserModel.findOne({ email }).exec();
+    if (!user) {
+      return Promise.reject(new Error(`User not found`));
     }
     return Promise.resolve(user);
   } catch (err) {

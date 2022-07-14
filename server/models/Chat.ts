@@ -14,16 +14,19 @@ interface ChatProps {
   messages: Types.DocumentArray<Message>;
 
   /**
+   * Add a user to the chat
    * @param {string} username
    */
   adduser: (username: string) => Promise<ChatDocument>;
 
   /**
+   * Remove a user from the chat
    * @param {string} username
    */
   removeUser: (username: string) => Promise<ChatDocument>;
 
   /**
+   * Add a message to the chat
    * @param {Message} message
    */
   addMessage: (message: Message) => Promise<ChatDocument>;
