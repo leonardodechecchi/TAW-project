@@ -4,7 +4,7 @@ import passport from 'passport';
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import { getUserById } from '../models/User';
 
-const pubKey: Buffer = fs.readFileSync(path.join(__dirname));
+const pubKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtRS256.key.pub'));
 
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

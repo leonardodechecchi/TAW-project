@@ -14,7 +14,7 @@ const port: string | undefined = process.env.PORT;
 require('./model/db');
 
 export const app: Express = express();
-export const auth: any = passport.authenticate('jwt', { session: false });
+export const auth = passport.authenticate('jwt', { session: false });
 
 const httpServer: http.Server = http.createServer(app);
 const ioServer: io.Server = new io.Server(httpServer, {
@@ -24,9 +24,8 @@ const ioServer: io.Server = new io.Server(httpServer, {
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('Hello World!');
-});
+app.use(require('./routes/auth-routes'));
+app.use(require('./routes/user-routes'));
 
 httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

@@ -3,12 +3,12 @@ import path from 'path';
 import jsonwebtoken from 'jsonwebtoken';
 import { User } from '../models/User';
 
-const privKey: Buffer = fs.readFileSync(path.join(__dirname));
+const privKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtRS256.key'));
 
 /**
- *
- * @param user
- * @returns
+ * Issue a jwt token signed with a private key.
+ * @param {User} user the user to get the information from
+ * @returns the token
  * @memberof utils
  */
 export function issueJwt(user: User): string {
