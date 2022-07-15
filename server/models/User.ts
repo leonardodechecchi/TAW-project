@@ -262,21 +262,37 @@ async function deleteRelationship(
 }
 
 /**
- * Create a standard user.
- * @param username the user username
- * @param email the user email
- * @param password the user password
- * @returns a Promise of `UserDocument`, i.e. the user created
+ * Create a standard user with the given information.
+ * @param data the user email, username, password
+ * @returns a Promise of `UserDocument`, i.e. the new user
  */
-export async function createUser(
-  username: string,
-  email: string,
-  password: string
-): Promise<UserDocument> {
-  const user = new UserModel({ email, username });
-  await user.setPassword(password);
+export async function createUser(data: {
+  email: string;
+  username: string;
+  password: string;
+}): Promise<UserDocument> {
+  const user = new UserModel({ email: data.email, username: data.username });
+  await user.setPassword(data.password);
   await user.setRole(UserRoles.Standard);
   return Promise.resolve(user);
+}
+
+/**
+ * Find and delete the user.
+ * Return an error if the user does not exists.
+ * @param userId the user id
+ * @returns an empty Promise
+ */
+export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
+  try {
+    const user = await UserModel.findOneAndDelete({ _id: userId }).exec();
+    if (!user) {
+      return Promise.reject(new Error(`User not found`));
+    }
+    return Promise.resolve();
+  } catch (err) {
+    return Promise.reject(err);
+  }
 }
 
 /**

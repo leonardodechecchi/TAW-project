@@ -35,7 +35,7 @@ router.post(
   ) => {
     try {
       const { username, email, password } = req.body;
-      const user = await createUser(username, email, password);
+      const user = await createUser({ email, username, password });
       return res.status(200).json({
         /** TODO */
       });

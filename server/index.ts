@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import http from 'http';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import io from 'socket.io';
 import passport from 'passport';
 import cors from 'cors';
@@ -11,7 +11,7 @@ dotenv.config();
 const port: string | undefined = process.env.PORT;
 
 // setup db connection
-require('./model/db');
+require('./config/db');
 
 export const app: Express = express();
 export const auth = passport.authenticate('jwt', { session: false });
