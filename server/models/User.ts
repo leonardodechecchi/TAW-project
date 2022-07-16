@@ -1,4 +1,5 @@
 import { HydratedDocument, Model, model, Types, Schema, SchemaTypes } from 'mongoose';
+import { StatusError } from './StatusError';
 import { Relationship, relationshipSchema } from './Relationship';
 import { Notification, notificationSchema, NotificationType } from './Notification';
 import { deleteChatById } from './Chat';
@@ -145,7 +146,7 @@ userSchema.method(
       this.password = hash;
       return this.save();
     } catch (err) {
-      return Promise.reject(new Error('Error occurred during password encryption'));
+      return Promise.reject(new StatusError(500, 'Error occurred during password encryption'));
     }
   }
 );
@@ -294,15 +295,6 @@ export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err);
-  }
-}
-
-export class StatusError extends Error {
-  statusCode: number;
-
-  constructor(statusCode: number, message?: string) {
-    super(message);
-    this.statusCode = statusCode;
   }
 }
 

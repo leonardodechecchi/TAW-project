@@ -1,12 +1,12 @@
 import http from 'http';
 import express, { ErrorRequestHandler, Express, RequestHandler } from 'express';
+import { StatusError } from './models/StatusError';
 import io from 'socket.io';
 import passport from 'passport';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
-import { StatusError } from './models/User';
 
 dotenv.config();
 colors.enable();

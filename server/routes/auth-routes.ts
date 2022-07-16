@@ -1,5 +1,6 @@
 import Router, { Request } from 'express';
-import { createUser, getUserByEmail, StatusError } from '../models/User';
+import { createUser, getUserByEmail } from '../models/User';
+import { StatusError } from '../models/StatusError';
 import { issueJwt } from '../utils/issue-jwt';
 
 const router = Router();
