@@ -1,11 +1,11 @@
 import Router, { Request } from 'express';
-import { createUser, getUserByEmail } from '../models/User';
+import { createUser, getUserByEmail, StatusError } from '../models/User';
 import { issueJwt } from '../utils/issue-jwt';
 
 const router = Router();
 
 /**
- *
+ * POST /auth/login
  */
 router.post(
   '/auth/login',
@@ -14,7 +14,7 @@ router.post(
       const { email, password } = req.body;
       const user = await getUserByEmail(email);
       const validate = await user.validatePassword(password);
-      if (!validate) return res.status(401).send('Invalid username or password');
+      if (!validate) return next(new StatusError(401, 'Invalid username or password'));
       const token = issueJwt(user);
       return res.status(200).json(token);
     } catch (err) {
@@ -24,7 +24,7 @@ router.post(
 );
 
 /**
- *
+ * POST /auth/register
  */
 router.post(
   '/auth/register',

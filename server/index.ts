@@ -1,11 +1,12 @@
 import http from 'http';
-import express, { Express } from 'express';
+import express, { ErrorRequestHandler, Express, RequestHandler } from 'express';
 import io from 'socket.io';
 import passport from 'passport';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
+import { StatusError } from './models/User';
 
 dotenv.config();
 colors.enable();
@@ -20,7 +21,7 @@ require('./config/db');
 require('./config/passport');
 
 // Create express app
-export const app: Express = express();
+const app: Express = express();
 
 // Get passport middleware
 export const auth = passport.authenticate('jwt', { session: false });
@@ -44,12 +45,28 @@ app.use(
 );
 app.use(cors());
 
+// Middleware for error handling
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (err instanceof StatusError) {
+    return res.status(err.statusCode).send(err.message);
+  }
+  console.log(err);
+  return res.sendStatus(500);
+};
+
+// Middleware for invalid endpoint
+const invalidEndpoint: RequestHandler = (req, res, next) => {
+  return res.status(404).send('Invalid endpoint');
+};
+
 // Register routes
 app.use(require('./routes/auth-routes'));
 app.use(require('./routes/user-routes'));
 app.use(require('./routes/relationship-routes'));
 app.use(require('./routes/notification-routes'));
 app.use(require('./routes/error-routes'));
+app.use(errorHandler);
+app.use(invalidEndpoint);
 
 // Finally start http server
 httpServer.listen(port, () => {
