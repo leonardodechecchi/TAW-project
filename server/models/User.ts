@@ -258,7 +258,7 @@ async function deleteRelationship(
       return user.save();
     }
   }
-  return Promise.reject(new Error(`Relationship not found`));
+  return Promise.reject(new StatusError(404, `Relationship not found`));
 }
 
 /**
@@ -289,11 +289,20 @@ export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
   try {
     const user = await UserModel.findOneAndDelete({ _id: userId }).exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, `User not found`));
     }
     return Promise.resolve();
   } catch (err) {
     return Promise.reject(err);
+  }
+}
+
+export class StatusError extends Error {
+  statusCode: number;
+
+  constructor(statusCode: number, message?: string) {
+    super(message);
+    this.statusCode = statusCode;
   }
 }
 
@@ -308,7 +317,7 @@ export async function getUserById(userId: Types.ObjectId): Promise<UserDocument>
   try {
     const user = await UserModel.findOne({ _id: userId }).exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, 'User not found'));
     }
     return Promise.resolve(user);
   } catch (err) {
@@ -327,7 +336,7 @@ export async function getUserByUsername(username: string): Promise<UserDocument>
   try {
     const user = await UserModel.findOne({ username }).exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, `User not found`));
     }
     return Promise.resolve(user);
   } catch (err) {
@@ -346,7 +355,7 @@ export async function getUserByEmail(email: string): Promise<UserDocument> {
   try {
     const user = await UserModel.findOne({ email }).exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, `User not found`));
     }
     return Promise.resolve(user);
   } catch (err) {
@@ -368,7 +377,7 @@ export async function getUserRelationships(
       .populate('relationships.friendId', 'username online')
       .exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, `User not found`));
     }
     return Promise.resolve(user.relationships);
   } catch (err) {
@@ -390,7 +399,7 @@ export async function getUserNotifications(
       .populate('notifications.senderId', 'username online')
       .exec();
     if (!user) {
-      return Promise.reject(new Error(`User not found`));
+      return Promise.reject(new StatusError(404, `User not found`));
     }
     return Promise.resolve(user.notifications);
   } catch (err) {

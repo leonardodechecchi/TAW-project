@@ -1,6 +1,6 @@
 import Router, { Request } from 'express';
 import { auth } from '..';
-import { getUserById, getUserByUsername } from '../models/User';
+import { getUserById, getUserByUsername, StatusError } from '../models/User';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
 

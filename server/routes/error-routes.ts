@@ -1,17 +1,22 @@
 import Router, { ErrorRequestHandler, RequestHandler } from 'express';
+import { app } from '..';
+import { StatusError } from '../models/User';
 
 const router = Router();
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (err instanceof StatusError) {
+    return res.status(err.statusCode).send(err.message);
+  }
   console.log(err);
-  res.status(err.statusCode || 500).json(err);
+  return res.sendStatus(500);
 };
 
 const invalidEndpoint: RequestHandler = (req, res, next) => {
-  res.status(500).send('Invalid endpoint');
+  return res.status(404).send('Invalid endpoint');
 };
 
-router.use(errorHandler);
-router.use(invalidEndpoint);
+app.use(errorHandler);
+app.use(invalidEndpoint);
 
 export = router;
