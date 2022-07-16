@@ -21,22 +21,25 @@ mongoose.connection.on('connected', async () => {
   const count = await UserModel.countDocuments({ username: { $ne: 'admin' } }).exec();
   if (count === 0) {
     console.log(`[database]: No mock accounts found. Creating new ones...`);
+    // user1
+    const user1 = new UserModel({
+      email: 'example1@battleship.it',
+      username: 'example1',
+    });
+    await user1.setPassword('example1');
+    await user1.setRole(UserRoles.Standard);
+    // user2
+    const user2 = new UserModel({
+      email: 'example2@battleship.it',
+      username: 'example2',
+    });
+    await user2.setPassword('example2');
+    await user2.setRole(UserRoles.Standard);
+    // testing relationships
+    await admin.addRelationship(user1._id);
+    await admin.addRelationship(user2._id);
   }
   console.log(`[database]: Mongoose connection open to mongodb://${dbURI}`);
-  // user1
-  const user1 = new UserModel({
-    email: 'example1@battleship.it',
-    username: 'example1',
-  });
-  await user1.setPassword('example1');
-  await user1.setRole(UserRoles.Standard);
-  // user2
-  const user2 = new UserModel({
-    email: 'example2@battleship.it',
-    username: 'example2',
-  });
-  await user2.setPassword('example2');
-  await user2.setRole(UserRoles.Standard);
 });
 
 mongoose.connection.on('error', () => {

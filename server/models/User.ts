@@ -194,7 +194,7 @@ userSchema.method(
   'addRelationship',
   async function (this: UserDocument, friendId: Types.ObjectId): Promise<UserDocument> {
     const friend = await getUserById(friendId);
-    friend.relationships.push({ friendId });
+    friend.relationships.push({ friendId: this._id });
     this.relationships.push({ friendId });
     await friend.save();
     return this.save();
@@ -258,13 +258,14 @@ async function deleteRelationship(
       return user.save();
     }
   }
-  return Promise.reject(new Error(`User ${user._id} has no relationship with that user`));
+  return Promise.reject(new Error(`Relationship not found`));
 }
 
 /**
  * Create a standard user with the given information.
  * @param data the user email, username, password
  * @returns a Promise of `UserDocument`, i.e. the new user
+ * @memberof User
  */
 export async function createUser(data: {
   email: string;
@@ -282,6 +283,7 @@ export async function createUser(data: {
  * Return an error if the user does not exists.
  * @param userId the user id
  * @returns an empty Promise
+ * @memberof User
  */
 export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
   try {
@@ -306,7 +308,7 @@ export async function getUserById(userId: Types.ObjectId): Promise<UserDocument>
   try {
     const user = await UserModel.findOne({ _id: userId }).exec();
     if (!user) {
-      return Promise.reject(`User not found`);
+      return Promise.reject(new Error(`User not found`));
     }
     return Promise.resolve(user);
   } catch (err) {
@@ -347,6 +349,50 @@ export async function getUserByEmail(email: string): Promise<UserDocument> {
       return Promise.reject(new Error(`User not found`));
     }
     return Promise.resolve(user);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+/**
+ * Return the list of the user relationships.
+ * @param userId the user id
+ * @returns an array of `Relationship`, i.e. the user relationships
+ * @memberof User
+ */
+export async function getUserRelationships(
+  userId: Types.ObjectId
+): Promise<Relationship[] & Types.DocumentArray<Relationship>> {
+  try {
+    const user = await UserModel.findOne({ _id: userId })
+      .populate('relationships.friendId', 'username online')
+      .exec();
+    if (!user) {
+      return Promise.reject(new Error(`User not found`));
+    }
+    return Promise.resolve(user.relationships);
+  } catch (err) {
+    return Promise.reject(err);
+  }
+}
+
+/**
+ * Return the list of the user notifications.
+ * @param userId the user id
+ * @returns an array of `Notification`, i.e. the user notifications
+ * @memberof User
+ */
+export async function getUserNotifications(
+  userId: Types.ObjectId
+): Promise<Notification[] & Types.DocumentArray<Notification>> {
+  try {
+    const user = await UserModel.findOne({ _id: userId })
+      .populate('notifications.senderId', 'username online')
+      .exec();
+    if (!user) {
+      return Promise.reject(new Error(`User not found`));
+    }
+    return Promise.resolve(user.notifications);
   } catch (err) {
     return Promise.reject(err);
   }

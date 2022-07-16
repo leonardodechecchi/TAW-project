@@ -1,30 +1,18 @@
-import Router, { Request, RequestHandler } from 'express';
-import { Types } from 'mongoose';
+import Router, { Request } from 'express';
 import { auth } from '..';
 import { getUserById, getUserByUsername } from '../models/User';
 import { formatUser } from '../utils/format-user';
+import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
 
 /**
- *
- * @param inputId
- * @returns
- */
-const retrieveId = (inputId: string) => {
-  try {
-    return new Types.ObjectId(inputId);
-  } catch (err) {
-    throw new Error('No user with that identifier');
-  }
-};
-
-/**
- *
+ * GET /users/:userId
  */
 router.get('/users/:userId', auth, async (req: Request<{ userId: string }>, res, next) => {
   try {
-    const user = await getUserById(retrieveId(req.params.userId));
+    const userId = retrieveId(req.params.userId);
+    const user = await getUserById(userId);
     return res.status(200).json(formatUser(user));
   } catch (err) {
     next(err);
@@ -32,7 +20,7 @@ router.get('/users/:userId', auth, async (req: Request<{ userId: string }>, res,
 });
 
 /**
- *
+ * GET /users?username=username
  */
 router.get('/users', auth, async (req: Request<{}, {}, {}, { username: string }>, res, next) => {
   try {
@@ -42,5 +30,23 @@ router.get('/users', auth, async (req: Request<{}, {}, {}, { username: string }>
     next(err);
   }
 });
+
+/**
+ * PUT /users/:userId/password
+ */
+router.put(
+  '/users/:userId/password',
+  auth,
+  async (req: Request<{ userId: string }, {}, { password: string }>, res, next) => {
+    try {
+      const userId = retrieveId(req.params.userId);
+      const user = await getUserById(userId);
+      await user.setPassword(req.body.password);
+      return res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 export = router;

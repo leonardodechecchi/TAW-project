@@ -11,7 +11,7 @@ const privKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtR
  * @returns the token
  * @memberof utils
  */
-export function issueJwt(user: User): string {
+export const issueJwt = (user: User): string => {
   const payload = {
     _id: user._id,
     username: user.username,
@@ -19,4 +19,4 @@ export function issueJwt(user: User): string {
     roles: user.roles,
   };
   return jsonwebtoken.sign(payload, privKey, { expiresIn: '1d', algorithm: 'RS256' });
-}
+};
