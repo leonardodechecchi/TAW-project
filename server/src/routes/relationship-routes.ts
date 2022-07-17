@@ -1,6 +1,7 @@
 import Router, { Request } from 'express';
+import { Types } from 'mongoose';
 import { auth } from '..';
-import { getUserById, getUserRelationships } from '../models/User';
+import { getUserById, getUserRelationships, UserDocument, UserRelationships } from '../models/User';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -13,8 +14,8 @@ router.get(
   auth,
   async (req: Request<{ userId: string }>, res, next) => {
     try {
-      const userId = retrieveId(req.params.userId);
-      const relationships = await getUserRelationships(userId);
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const relationships: UserRelationships = await getUserRelationships(userId);
       return res.status(200).json(relationships);
     } catch (err) {
       next(err);
@@ -30,10 +31,10 @@ router.post(
   auth,
   async (req: Request<{ userId: string }, {}, { friendId: string }>, res, next) => {
     try {
-      const userId = retrieveId(req.params.userId);
-      const friendId = retrieveId(req.body.friendId);
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const friendId: Types.ObjectId = retrieveId(req.body.friendId);
 
-      const user = await getUserById(userId);
+      const user: UserDocument = await getUserById(userId);
       await user.addRelationship(friendId);
       return res.sendStatus(200);
     } catch (err) {
@@ -50,10 +51,10 @@ router.delete(
   auth,
   async (req: Request<{ userId: string; friendId: string }>, res, next) => {
     try {
-      const userId = retrieveId(req.params.userId);
-      const friendId = retrieveId(req.params.friendId);
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const friendId: Types.ObjectId = retrieveId(req.params.friendId);
 
-      const user = await getUserById(userId);
+      const user: UserDocument = await getUserById(userId);
       await user.deleteRelationship(friendId);
       return res.sendStatus(200);
     } catch (err) {

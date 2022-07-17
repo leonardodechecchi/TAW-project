@@ -5,6 +5,7 @@ import { Relationship, relationshipSchema } from './Relationship';
 import { Notification, notificationSchema, NotificationType } from './Notification';
 import { deleteChatById } from './Chat';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 /**
  * Enum that defines all the possible roles that a user can have.
@@ -16,6 +17,14 @@ export enum UserRoles {
 }
 
 /**
+ * Enum that represents the current status of the user (Active or Pending)
+ */
+export enum UserStatus {
+  Pending = 'Pending',
+  Active = 'Active',
+}
+
+/**
  * Interface that represents a user within the database.
  */
 export interface User {
@@ -23,6 +32,7 @@ export interface User {
   username: string;
   email: string;
   password: string;
+  status: UserStatus;
   roles: string[];
   online: boolean;
   stats: UserStats;
@@ -45,6 +55,12 @@ interface UserProps {
    * @param {string} password the password to check
    */
   validatePassword: (password: string) => Promise<boolean>;
+
+  /**
+   * Set the user status.
+   * @param status the status
+   */
+  setStatus: (status: UserStatus) => Promise<UserDocument>;
 
   /**
    * Assign the role to the user.
@@ -105,6 +121,10 @@ interface UserProps {
 
 export interface UserDocument extends HydratedDocument<User, UserProps> {}
 
+export type UserRelationships = Relationship[] & Types.DocumentArray<Relationship>;
+
+export type UserNotifications = Notification[] & Types.DocumentArray<Notification>;
+
 const userSchema: Schema = new Schema<User, Model<User, {}, UserProps>>({
   username: {
     type: SchemaTypes.String,
@@ -113,12 +133,15 @@ const userSchema: Schema = new Schema<User, Model<User, {}, UserProps>>({
   },
   email: {
     type: SchemaTypes.String,
-    required: true,
-    unique: true,
   },
   password: {
     type: SchemaTypes.String,
     required: true,
+  },
+  status: {
+    type: SchemaTypes.String,
+    enum: UserStatus,
+    default: UserStatus.Pending,
   },
   roles: {
     type: [SchemaTypes.String],
@@ -160,6 +183,14 @@ userSchema.method(
   'validatePassword',
   async function (this: UserDocument, password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
+  }
+);
+
+userSchema.method(
+  'setStatus',
+  async function (this: UserDocument, status: UserStatus): Promise<UserDocument> {
+    this.status = status;
+    return this.save();
   }
 );
 
@@ -274,7 +305,7 @@ async function deleteRelationship(
  * @memberof User
  */
 export async function createUser(data: {
-  email: string;
+  email?: string;
   username: string;
   password: string;
 }): Promise<UserDocument> {
@@ -366,9 +397,7 @@ export async function getUserByEmail(email: string): Promise<UserDocument> {
  * @returns an array of `Relationship`, i.e. the user relationships
  * @memberof User
  */
-export async function getUserRelationships(
-  userId: Types.ObjectId
-): Promise<Relationship[] & Types.DocumentArray<Relationship>> {
+export async function getUserRelationships(userId: Types.ObjectId): Promise<UserRelationships> {
   try {
     const user = await UserModel.findOne({ _id: userId })
       .populate('relationships.friendId', 'username online')
@@ -388,9 +417,7 @@ export async function getUserRelationships(
  * @returns an array of `Notification`, i.e. the user notifications
  * @memberof User
  */
-export async function getUserNotifications(
-  userId: Types.ObjectId
-): Promise<Notification[] & Types.DocumentArray<Notification>> {
+export async function getUserNotifications(userId: Types.ObjectId): Promise<UserNotifications> {
   try {
     const user = await UserModel.findOne({ _id: userId })
       .populate('notifications.senderId', 'username online')

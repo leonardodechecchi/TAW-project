@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { User } from '../models/User';
+import { User, UserStatus } from '../models/User';
 import { UserStats } from '../models/UserStats';
 
 /**
@@ -10,15 +10,17 @@ import { UserStats } from '../models/UserStats';
 export const formatUser = (
   user: User
 ): {
-  _id: Types.ObjectId;
+  userId: Types.ObjectId;
   username: string;
+  status: UserStatus;
   online: boolean;
   stats: UserStats;
   roles: string[];
 } => {
   return {
-    _id: user._id,
+    userId: user._id,
     username: user.username,
+    status: user.status,
     online: user.online,
     stats: user.stats,
     roles: user.roles,

@@ -50,7 +50,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof StatusError) {
     return res.status(err.statusCode).send(err.message);
   }
-  console.log(err);
+  console.log(`[${colors.red('error')}]: ${err}`);
   return res.sendStatus(500);
 };
 
@@ -61,6 +61,7 @@ const invalidEndpoint: RequestHandler = (req, res, next) => {
 
 // Register routes
 app.use(require('./routes/auth-routes'));
+app.use(require('./routes/moderator-routes'));
 app.use(require('./routes/user-routes'));
 app.use(require('./routes/relationship-routes'));
 app.use(require('./routes/notification-routes'));
@@ -71,5 +72,5 @@ app.use(invalidEndpoint);
 
 // Finally start http server
 httpServer.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
 });
