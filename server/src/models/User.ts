@@ -1,5 +1,6 @@
 import { HydratedDocument, Model, model, Types, Schema, SchemaTypes } from 'mongoose';
 import { StatusError } from './StatusError';
+import { UserStats, userStatsSchema } from './UserStats';
 import { Relationship, relationshipSchema } from './Relationship';
 import { Notification, notificationSchema, NotificationType } from './Notification';
 import { deleteChatById } from './Chat';
@@ -24,7 +25,7 @@ export interface User {
   password: string;
   roles: string[];
   online: boolean;
-  // stats: UserStats;
+  stats: UserStats;
   relationships: Relationship[];
   notifications: Notification[];
 }
@@ -128,6 +129,10 @@ const userSchema: Schema = new Schema<User, Model<User, {}, UserProps>>({
   online: {
     type: SchemaTypes.Boolean,
     default: false,
+  },
+  stats: {
+    type: userStatsSchema,
+    default: () => ({}),
   },
   relationships: {
     type: [relationshipSchema],

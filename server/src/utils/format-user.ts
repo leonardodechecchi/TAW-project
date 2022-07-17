@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { User } from '../models/User';
+import { UserStats } from '../models/UserStats';
 
 /**
  * Return only some fields of the user object.
@@ -12,14 +13,14 @@ export const formatUser = (
   _id: Types.ObjectId;
   username: string;
   online: boolean;
-  // stats: UserStats;
+  stats: UserStats;
   roles: string[];
 } => {
   return {
     _id: user._id,
     username: user.username,
     online: user.online,
-    // stats: user.stats,
+    stats: user.stats,
     roles: user.roles,
   };
 };
