@@ -21,7 +21,7 @@ router.post(
 
       if (moderator.hasRole(UserRoles.Admin) || moderator.hasRole(UserRoles.Moderator)) {
         const randomPwd: string = process.env.TMP_PWD || '';
-        const username: string = 'moderator' + Math.floor(Math.random() * 900) + 100;
+        const username: string = 'moderator' + Math.floor(Date.now() + Math.random());
 
         const newModerator: UserDocument = await createUser({ username, password: randomPwd });
         await newModerator.setRole(UserRoles.Moderator);
