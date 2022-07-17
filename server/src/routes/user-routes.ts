@@ -1,6 +1,8 @@
 import Router, { Request } from 'express';
+import { Types } from 'mongoose';
 import { auth } from '..';
-import { getUserById, getUserByUsername } from '../models/User';
+import { ChatDocument, getChatById } from '../models/Chat';
+import { getUserById, getUserByUsername, UserDocument } from '../models/User';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
 
@@ -48,5 +50,29 @@ router.put(
     }
   }
 );
+
+/**
+ * GET /users/:userId/chats
+ */
+router.get('/users/:userId/chats', auth, async (req, res, next) => {
+  try {
+    const userId: Types.ObjectId = retrieveId(req.params.userId);
+    const user: UserDocument = await getUserById(userId);
+    const chats: any = [];
+    user.relationships.forEach(async (relationship, idx) => {
+      if (relationship.chatId) {
+        console.log(relationship.friendId);
+        console.log(relationship.chatId);
+        const chat = await getChatById(relationship.chatId);
+        const username = chat.users.find((username) => username !== user.username);
+        const lastMessage = chat.messages[chat.messages.length - 1];
+        chats.push({ username, lastMessage });
+      }
+    });
+    return res.status(200).json(chats);
+  } catch (err) {
+    next(err);
+  }
+});
 
 export = router;

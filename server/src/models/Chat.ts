@@ -1,5 +1,6 @@
 import { HydratedDocument, Model, model, Types, Schema, SchemaTypes } from 'mongoose';
 import { Message, messageSchema } from './Message';
+import { StatusError } from './StatusError';
 
 /**
  * Interface that represents a chat within the database.
@@ -14,22 +15,26 @@ interface ChatProps {
   messages: Types.DocumentArray<Message>;
 
   /**
-   * Add a user to the chat
+   * Add a user to the chat.
+   * Return an error if the user is already present in the chat.
    * @param {string} username
    */
   adduser: (username: string) => Promise<ChatDocument>;
 
   /**
-   * Remove a user from the chat
+   * Remove a user from the chat.
+   * Return an error if the user is not present in the chat.
    * @param {string} username
    */
   removeUser: (username: string) => Promise<ChatDocument>;
 
   /**
-   * Add a message to the chat
-   * @param {Message} message
+   * Add a message to the chat.
+   * @param author the message author
+   * @param content the message content
+   * @param date the message date
    */
-  addMessage: (message: Message) => Promise<ChatDocument>;
+  addMessage: (author: string, content: string, date: string) => Promise<ChatDocument>;
 }
 
 export interface ChatDocument extends HydratedDocument<Chat, ChatProps> {}
@@ -48,7 +53,8 @@ chatSchema.method(
   'addUser',
   function (this: ChatDocument, username: string): Promise<ChatDocument> {
     for (let user of this.users) {
-      if (user === username) return Promise.reject(new Error('User already in the chat'));
+      if (user === username)
+        return Promise.reject(new StatusError(400, 'User already in the chat'));
     }
     this.users.push(username);
     return this.save();
@@ -64,14 +70,19 @@ chatSchema.method(
         return this.save();
       }
     }
-    return Promise.reject(new Error('User not present in the chat'));
+    return Promise.reject(new StatusError(400, 'User not present in the chat'));
   }
 );
 
 chatSchema.method(
   'addMessage',
-  function (this: ChatDocument, message: Message): Promise<ChatDocument> {
-    this.messages.push(message);
+  function (
+    this: ChatDocument,
+    author: string,
+    content: string,
+    date: string
+  ): Promise<ChatDocument> {
+    this.messages.push({ author, content, date: new Date(date) });
     return this.save();
   }
 );
@@ -97,7 +108,7 @@ export async function createChat(users: string[]): Promise<ChatDocument> {
  */
 export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument> {
   const chat = await ChatModel.findOne({ _id: chatId }).exec();
-  if (!chat) return Promise.reject(new Error('Chat not found'));
+  if (!chat) return Promise.reject(new StatusError(404, 'Chat not found'));
   return Promise.resolve(chat);
 }
 
@@ -109,6 +120,6 @@ export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument>
  */
 export async function deleteChatById(chatId: Types.ObjectId): Promise<void> {
   const chat = await ChatModel.findOneAndDelete({ _id: chatId }).exec();
-  if (!chat) return Promise.reject(new Error('Chat not found'));
+  if (!chat) return Promise.reject(new StatusError(404, 'Chat not found'));
   return Promise.resolve();
 }
