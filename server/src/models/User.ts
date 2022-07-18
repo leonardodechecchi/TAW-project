@@ -5,7 +5,6 @@ import { Relationship, relationshipSchema } from './Relationship';
 import { Notification, notificationSchema, NotificationType } from './Notification';
 import { deleteChatById } from './Chat';
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 
 /**
  * Enum that defines all the possible roles that a user can have.
@@ -125,7 +124,7 @@ export type UserRelationships = Relationship[] & Types.DocumentArray<Relationshi
 
 export type UserNotifications = Notification[] & Types.DocumentArray<Notification>;
 
-const userSchema: Schema = new Schema<User, Model<User, {}, UserProps>>({
+const userSchema = new Schema<User, Model<User, {}, UserProps>>({
   username: {
     type: SchemaTypes.String,
     required: true,
