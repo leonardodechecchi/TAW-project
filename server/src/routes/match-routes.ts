@@ -26,7 +26,7 @@ router.post(
 );
 
 /**
- * PUT /matches/:matchId/grid
+ * PUT /matches/:matchId/players/:playerUsername/grid
  */
 router.put(
   '/matches/:matchId/players/:playerUsername/grid',
