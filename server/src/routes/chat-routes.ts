@@ -2,6 +2,7 @@ import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
 import { getChatById, deleteChatById, ChatDocument } from '../models/Chat';
+import { Message } from '../models/Message';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -61,16 +62,11 @@ router.delete('/chats/:chatId', auth, async (req: Request<{ chatId: string }>, r
 router.post(
   '/chats/:chatId/messages',
   auth,
-  async (
-    req: Request<{ chatId: string }, {}, { author: string; content: string; date: string }>,
-    res,
-    next
-  ) => {
+  async (req: Request<{ chatId: string }, {}, { message: Message }>, res, next) => {
     try {
       const chatId: Types.ObjectId = retrieveId(req.params.chatId);
-      const { author, content, date } = req.body;
       const chat: ChatDocument = await getChatById(chatId);
-      await chat.addMessage(author, content, date);
+      await chat.addMessage(req.body.message);
       return res.sendStatus(200);
     } catch (err) {
       next(err);

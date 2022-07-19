@@ -50,8 +50,8 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof StatusError) {
     return res.status(err.statusCode).send(err.message);
   }
-  console.log(`[${colors.red('error')}]: ${err}`);
-  return res.sendStatus(500);
+  console.log(err);
+  return res.status(500).send(err.message);
 };
 
 // Middleware for invalid endpoint

@@ -3,7 +3,7 @@ import { StatusError } from './StatusError';
 import { UserStats, userStatsSchema } from './UserStats';
 import { Relationship, relationshipSchema } from './Relationship';
 import { Notification, notificationSchema, NotificationType } from './Notification';
-import { deleteChatById } from './Chat';
+import { ChatDocument, createChat, deleteChatById } from './Chat';
 import bcrypt from 'bcrypt';
 
 /**
@@ -177,14 +177,10 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
 userSchema.method(
   'setPassword',
   async function (this: UserDocument, password: string): Promise<UserDocument> {
-    try {
-      const salt: string = await bcrypt.genSalt(10);
-      const hash: string = await bcrypt.hash(password, salt);
-      this.password = hash;
-      return this.save();
-    } catch (err) {
-      return Promise.reject(new StatusError(500, 'Error occurred during password encryption'));
-    }
+    const salt: string = await bcrypt.genSalt(10);
+    const hash: string = await bcrypt.hash(password, salt);
+    this.password = hash;
+    return this.save();
   }
 );
 
@@ -206,8 +202,11 @@ userSchema.method(
 userSchema.method(
   'setRole',
   async function (this: UserDocument, role: UserRoles): Promise<UserDocument> {
-    if (!this.hasRole(role)) this.roles.push(role);
-    return this.save();
+    if (!this.hasRole(role)) {
+      this.roles.push(role);
+      return this.save();
+    }
+    return Promise.reject(new StatusError(400, 'Role already set'));
   }
 );
 
@@ -215,9 +214,12 @@ userSchema.method(
   'removeRole',
   async function (this: UserDocument, role: UserRoles): Promise<UserDocument> {
     for (let idx in this.roles) {
-      if (this.roles[idx] === role) this.roles.splice(parseInt(idx), 1);
+      if (this.roles[idx] === role) {
+        this.roles.splice(parseInt(idx), 1);
+        return this.save();
+      }
     }
-    return this.save();
+    return Promise.reject(new StatusError(400, 'Role not found'));
   }
 );
 
@@ -259,8 +261,8 @@ userSchema.method(
   'deleteRelationship',
   async function (this: UserDocument, friendId: Types.ObjectId): Promise<UserDocument> {
     const friend = await getUserById(friendId);
-    await deleteRelationship(friend, this._id);
-    return deleteRelationship(this, friendId);
+    await deleteUserRelationship(friend, this._id);
+    return deleteUserRelationship(this, friendId);
   }
 );
 
@@ -317,14 +319,9 @@ export async function createUser(data: {
  * @memberof User
  */
 export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
-  try {
-    const user = await UserModel.findOneAndDelete({ _id: userId }).exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, `User not found`));
-    }
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOneAndDelete({ _id: userId }).exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, `User not found`));
   }
 }
 
@@ -336,15 +333,11 @@ export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
  * @memberof User
  */
 export async function getUserById(userId: Types.ObjectId): Promise<UserDocument> {
-  try {
-    const user = await UserModel.findOne({ _id: userId }).exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, 'User not found'));
-    }
-    return Promise.resolve(user);
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOne({ _id: userId }).exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, 'User not found'));
   }
+  return Promise.resolve(user);
 }
 
 /**
@@ -355,15 +348,11 @@ export async function getUserById(userId: Types.ObjectId): Promise<UserDocument>
  * @memberof User
  */
 export async function getUserByUsername(username: string): Promise<UserDocument> {
-  try {
-    const user = await UserModel.findOne({ username }).exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, `User not found`));
-    }
-    return Promise.resolve(user);
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOne({ username }).exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, `User not found`));
   }
+  return Promise.resolve(user);
 }
 
 /**
@@ -374,15 +363,11 @@ export async function getUserByUsername(username: string): Promise<UserDocument>
  * @memberof User
  */
 export async function getUserByEmail(email: string): Promise<UserDocument> {
-  try {
-    const user = await UserModel.findOne({ email }).exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, `User not found`));
-    }
-    return Promise.resolve(user);
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOne({ email }).exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, `User not found`));
   }
+  return Promise.resolve(user);
 }
 
 /**
@@ -392,17 +377,13 @@ export async function getUserByEmail(email: string): Promise<UserDocument> {
  * @memberof User
  */
 export async function getUserRelationships(userId: Types.ObjectId): Promise<UserRelationships> {
-  try {
-    const user = await UserModel.findOne({ _id: userId })
-      .populate('relationships.friendId', 'username online')
-      .exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, `User not found`));
-    }
-    return Promise.resolve(user.relationships);
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOne({ _id: userId })
+    .populate('relationships.friendId', 'username online stats')
+    .exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, `User not found`));
   }
+  return Promise.resolve(user.relationships);
 }
 
 /**
@@ -413,7 +394,7 @@ export async function getUserRelationships(userId: Types.ObjectId): Promise<User
  * @param friendId the friend id
  * @returns a Promise of `UserDocument`, i.e. the user record updated
  */
-async function deleteRelationship(
+async function deleteUserRelationship(
   user: UserDocument,
   friendId: Types.ObjectId
 ): Promise<UserDocument> {
@@ -429,15 +410,15 @@ async function deleteRelationship(
 }
 
 /**
- * Add the id of the chat to the relationship between user and the friend id given in input.
- * Return an error if the relationship does not exists.
+ * Auxiliary function.
+ * Add the `chatId` to the relationship between `user` and the `friendId` given in input.
+ * Return an error if the relationship does not exists and delete the chat.
  * @param user the user record
  * @param friendId the friend id
  * @param chatId the chat id
  * @returns a Promise of `UserDocument`, i.e. the user record updated
- * @memberof User
  */
-export async function addChatToRelationship(
+async function addChatIdToRelationship(
   user: UserDocument,
   friendId: Types.ObjectId,
   chatId: Types.ObjectId
@@ -458,21 +439,34 @@ export async function addChatToRelationship(
 }
 
 /**
+ * Create a chat for the relationship between `user` and `friend`.
+ * @param user the user record
+ * @param friend the friend record
+ * @returns a Promise of `ChatDocument`, i.e. the chat created
+ * @memberof User
+ */
+export async function createRelationshipChat(
+  user: UserDocument,
+  friend: UserDocument
+): Promise<ChatDocument> {
+  const chat: ChatDocument = await createChat([user.username, friend.username]);
+  await addChatIdToRelationship(friend, user._id, chat._id);
+  await addChatIdToRelationship(user, friend._id, chat._id);
+  return Promise.resolve(chat);
+}
+
+/**
  * Return the list of the user notifications.
  * @param userId the user id
  * @returns an array of `Notification`, i.e. the user notifications
  * @memberof User
  */
 export async function getUserNotifications(userId: Types.ObjectId): Promise<UserNotifications> {
-  try {
-    const user = await UserModel.findOne({ _id: userId })
-      .populate('notifications.senderId', 'username online')
-      .exec();
-    if (!user) {
-      return Promise.reject(new StatusError(404, `User not found`));
-    }
-    return Promise.resolve(user.notifications);
-  } catch (err) {
-    return Promise.reject(err);
+  const user = await UserModel.findOne({ _id: userId })
+    .populate('notifications.senderId', 'username')
+    .exec();
+  if (!user) {
+    return Promise.reject(new StatusError(404, `User not found`));
   }
+  return Promise.resolve(user.notifications);
 }

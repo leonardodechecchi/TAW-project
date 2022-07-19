@@ -16,9 +16,18 @@ export interface Match {
 
 interface MatchProps {
   /**
-   * @param grid
+   * Update the corresponding player grid.
+   * @param playerUsername the player username
+   * @param grid the player grid filled
    */
   updatePlayerGrid: (playerUsername: string, grid: Grid) => Promise<MatchDocument>;
+
+  /**
+   * Set the player status to ready. This meeans that the player is
+   * ready to play.
+   * @param playerUsername the player username
+   */
+  setPlayerReady: (playerUsername: string) => Promise<MatchDocument>;
 }
 
 export interface MatchDocument extends HydratedDocument<Match, MatchProps> {}
@@ -52,6 +61,16 @@ matchSchema.method(
   }
 );
 
+matchSchema.method(
+  'setPlayerReady',
+  async function (this: MatchDocument, playerUsername: string): Promise<MatchDocument> {
+    this.player1.playerUsername === playerUsername
+      ? (this.player1.ready = true)
+      : (this.player2.ready = true);
+    return this.save();
+  }
+);
+
 export const MatchModel = model<Match, Model<Match, {}, MatchProps>>('Match', matchSchema);
 
 /**
@@ -62,20 +81,16 @@ export const MatchModel = model<Match, Model<Match, {}, MatchProps>>('Match', ma
  * @memberof Match
  */
 export async function createMatch(username1: string, username2: string): Promise<MatchDocument> {
-  try {
-    const playersChat: ChatDocument = await createChat([username1, username2]);
-    const observersChat: ChatDocument = await createChat([]);
+  const playersChat: ChatDocument = await createChat([username1, username2]);
+  const observersChat: ChatDocument = await createChat([]);
 
-    const match = new MatchModel({
-      player1: { playerUsername: username1 },
-      player2: { playerUsername: username2 },
-      playersChat: playersChat._id,
-      observersChat: observersChat._id,
-    });
-    return match.save();
-  } catch (err) {
-    return Promise.reject(err);
-  }
+  const match = new MatchModel({
+    player1: { playerUsername: username1 },
+    player2: { playerUsername: username2 },
+    playersChat: playersChat._id,
+    observersChat: observersChat._id,
+  });
+  return match.save();
 }
 
 /**
@@ -86,13 +101,9 @@ export async function createMatch(username1: string, username2: string): Promise
  * @memberof Match
  */
 export async function getMatchById(matchId: Types.ObjectId): Promise<MatchDocument> {
-  try {
-    const match = await MatchModel.findOne({ _id: matchId }).exec();
-    if (!match) {
-      return Promise.reject(new StatusError(404, 'Match not found'));
-    }
-    return Promise.resolve(match);
-  } catch (err) {
-    return Promise.reject(err);
+  const match = await MatchModel.findOne({ _id: matchId }).exec();
+  if (!match) {
+    return Promise.reject(new StatusError(404, 'Match not found'));
   }
+  return Promise.resolve(match);
 }

@@ -17,24 +17,22 @@ interface ChatProps {
   /**
    * Add a user to the chat.
    * Return an error if the user is already present in the chat.
-   * @param {string} username
+   * @param username the user username
    */
   adduser: (username: string) => Promise<ChatDocument>;
 
   /**
    * Remove a user from the chat.
    * Return an error if the user is not present in the chat.
-   * @param {string} username
+   * @param username the user username
    */
   removeUser: (username: string) => Promise<ChatDocument>;
 
   /**
-   * Add a message to the chat.
-   * @param author the message author
-   * @param content the message content
-   * @param date the message date
+   * Add the message to the chat.
+   * @param message the message to add
    */
-  addMessage: (author: string, content: string, date: string) => Promise<ChatDocument>;
+  addMessage: (message: Message) => Promise<ChatDocument>;
 }
 
 export interface ChatDocument extends HydratedDocument<Chat, ChatProps> {}
@@ -76,13 +74,8 @@ chatSchema.method(
 
 chatSchema.method(
   'addMessage',
-  function (
-    this: ChatDocument,
-    author: string,
-    content: string,
-    date: string
-  ): Promise<ChatDocument> {
-    this.messages.push({ author, content, date: new Date(date) });
+  function (this: ChatDocument, message: Message): Promise<ChatDocument> {
+    this.messages.push(message);
     return this.save();
   }
 );
@@ -90,9 +83,9 @@ chatSchema.method(
 export const ChatModel = model<Chat, Model<Chat, {}, ChatProps>>('Chat', chatSchema);
 
 /**
- * Create a new chat with the given users.
- * @param {string[]} users the list of user usernames
- * @returns a Promise of `ChatDocument`, i.e. the new chat
+ * Create a new chat for the given users.
+ * @param users the list of user usernames
+ * @returns a Promise of `ChatDocument`, i.e. the new chat created
  * @memberof Chat
  */
 export async function createChat(users: string[]): Promise<ChatDocument> {
@@ -108,7 +101,9 @@ export async function createChat(users: string[]): Promise<ChatDocument> {
  */
 export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument> {
   const chat = await ChatModel.findOne({ _id: chatId }).exec();
-  if (!chat) return Promise.reject(new StatusError(404, 'Chat not found'));
+  if (!chat) {
+    return Promise.reject(new StatusError(404, 'Chat not found'));
+  }
   return Promise.resolve(chat);
 }
 
@@ -120,6 +115,7 @@ export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument>
  */
 export async function deleteChatById(chatId: Types.ObjectId): Promise<void> {
   const chat = await ChatModel.findOneAndDelete({ _id: chatId }).exec();
-  if (!chat) return Promise.reject(new StatusError(404, 'Chat not found'));
-  return Promise.resolve();
+  if (!chat) {
+    return Promise.reject(new StatusError(404, 'Chat not found'));
+  }
 }

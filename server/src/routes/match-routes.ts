@@ -42,7 +42,7 @@ router.put(
 
       const match: MatchDocument = await getMatchById(matchId);
       await match.updatePlayerGrid(playerUsername, req.body.grid);
-      // setReady (?)
+      await match.setPlayerReady(playerUsername);
 
       return res.sendStatus(200);
     } catch (err) {

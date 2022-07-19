@@ -1,9 +1,9 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
-import { ChatDocument, createChat } from '../models/Chat';
+import { ChatDocument } from '../models/Chat';
 import {
-  addChatToRelationship,
+  createRelationshipChat,
   getUserById,
   getUserRelationships,
   UserDocument,
@@ -71,21 +71,33 @@ router.delete(
 );
 
 /**
- * POST /users/:userId/relationships/:friendId/chats
+ * POST /users/:userId/relationships/chat
  */
-router.post('/users/:userId/relationships/:friendId/chats', auth, async (req, res, next) => {
+router.post(
+  '/users/:userId/relationships/chat',
+  auth,
+  async (req: Request<{ userId: string }, {}, { friendId: string }>, res, next) => {
+    try {
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const friendId: Types.ObjectId = retrieveId(req.body.friendId);
+
+      const user: UserDocument = await getUserById(userId);
+      const friend: UserDocument = await getUserById(friendId);
+
+      const chat: ChatDocument = await createRelationshipChat(user, friend);
+      return res.status(200).json(chat);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// TODO
+/**
+ * DELETE /users/:userId/relationships/chat/:chatId
+ */
+router.delete('/users/:userId/relationships/chat/:chatId', auth, async (req, res, next) => {
   try {
-    const userId: Types.ObjectId = retrieveId(req.params.userId);
-    const friendId: Types.ObjectId = retrieveId(req.params.friendId);
-
-    const user: UserDocument = await getUserById(userId);
-    const friend: UserDocument = await getUserById(friendId);
-
-    const chat: ChatDocument = await createChat([user.username, friend.username]);
-    await addChatToRelationship(user, friend._id, chat._id);
-    await addChatToRelationship(friend, user._id, chat._id);
-
-    return res.status(200).json(chat);
   } catch (err) {
     next(err);
   }
