@@ -1,6 +1,5 @@
 import http from 'http';
-import express, { ErrorRequestHandler, Express, RequestHandler } from 'express';
-import { StatusError } from './models/StatusError';
+import express, { Express } from 'express';
 import io from 'socket.io';
 import passport from 'passport';
 import cors from 'cors';
