@@ -82,6 +82,16 @@ interface UserProps {
   hasRole: (role: UserRoles) => boolean;
 
   /**
+   * Check if the user has the Admin role.
+   */
+  isAdmin: () => boolean;
+
+  /**
+   * Check if the user has the Moderator role.
+   */
+  isModerator: () => boolean;
+
+  /**
    * Set the user online status.
    * @param {boolean} isOnline the online status that must be true or false
    */
@@ -218,6 +228,14 @@ userSchema.method('hasRole', function (this: UserDocument, role: UserRoles): boo
   return false;
 });
 
+userSchema.method('isAdmin', function (this: UserDocument): boolean {
+  return this.roles.includes(UserRoles.Admin);
+});
+
+userSchema.method('isModerator', function (this: UserDocument): boolean {
+  return this.roles.includes(UserRoles.Moderator);
+});
+
 userSchema.method(
   'setOnlineStatus',
   async function (this: UserDocument, isOnline: boolean): Promise<UserDocument> {
@@ -273,29 +291,6 @@ userSchema.method(
 );
 
 export const UserModel = model<User, Model<User, {}, UserProps>>('User', userSchema);
-
-/**
- * Auxiliary function.
- * Delete the relationship between the user and the given friend id.
- * Return an error if the relationship does not exists.
- * @param user the user record
- * @param friendId the friend id
- * @returns a Promise of `UserDocument`, i.e. the user record updated
- */
-async function deleteRelationship(
-  user: UserDocument,
-  friendId: Types.ObjectId
-): Promise<UserDocument> {
-  for (let idx in user.relationships) {
-    let relationship = user.relationships[idx];
-    if (relationship.friendId.equals(friendId)) {
-      if (relationship.chatId) await deleteChatById(relationship.chatId);
-      user.relationships.splice(parseInt(idx), 1);
-      return user.save();
-    }
-  }
-  return Promise.reject(new StatusError(404, `Relationship not found`));
-}
 
 /**
  * Create a standard user with the given information.
@@ -408,6 +403,58 @@ export async function getUserRelationships(userId: Types.ObjectId): Promise<User
   } catch (err) {
     return Promise.reject(err);
   }
+}
+
+/**
+ * Auxiliary function.
+ * Delete the relationship between the user and the given friend id.
+ * Return an error if the relationship does not exists.
+ * @param user the user record
+ * @param friendId the friend id
+ * @returns a Promise of `UserDocument`, i.e. the user record updated
+ */
+async function deleteRelationship(
+  user: UserDocument,
+  friendId: Types.ObjectId
+): Promise<UserDocument> {
+  for (let idx in user.relationships) {
+    let relationship = user.relationships[idx];
+    if (relationship.friendId.equals(friendId)) {
+      if (relationship.chatId) await deleteChatById(relationship.chatId);
+      user.relationships.splice(parseInt(idx), 1);
+      return user.save();
+    }
+  }
+  return Promise.reject(new StatusError(404, `Relationship not found`));
+}
+
+/**
+ * Add the id of the chat to the relationship between user and the friend id given in input.
+ * Return an error if the relationship does not exists.
+ * @param user the user record
+ * @param friendId the friend id
+ * @param chatId the chat id
+ * @returns a Promise of `UserDocument`, i.e. the user record updated
+ * @memberof User
+ */
+export async function addChatToRelationship(
+  user: UserDocument,
+  friendId: Types.ObjectId,
+  chatId: Types.ObjectId
+): Promise<UserDocument> {
+  for (let idx in user.relationships) {
+    let relationship = user.relationships[idx];
+    if (relationship.friendId.equals(friendId)) {
+      if (relationship.chatId) {
+        await deleteChatById(chatId);
+        return Promise.reject(new StatusError(400, `Chat already exists`));
+      }
+      relationship.chatId = chatId;
+      return user.save();
+    }
+  }
+  await deleteChatById(chatId);
+  return Promise.reject(new StatusError(404, `Relationship not found`));
 }
 
 /**

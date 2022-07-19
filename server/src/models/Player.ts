@@ -1,23 +1,25 @@
-import { Schema, SchemaTypes, Types } from 'mongoose';
+import { Model, Schema, SchemaTypes } from 'mongoose';
 import { Grid, gridSchema } from './Grid';
 
 /**
  * Interface that represents a player within the database.
+ * Sub-document of the Match document.
  */
 export interface Player {
-  playerId: Types.ObjectId;
+  playerUsername: string;
   grid: Grid;
   ready: boolean;
 }
 
 export const playerSchema = new Schema<Player>({
-  playerId: {
-    type: SchemaTypes.ObjectId,
+  playerUsername: {
+    type: SchemaTypes.String,
     required: true,
   },
   grid: {
     type: gridSchema,
     required: true,
+    default: () => ({}),
   },
   ready: {
     type: SchemaTypes.Boolean,

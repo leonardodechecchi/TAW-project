@@ -1,8 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
-import { createChat, getChatById, deleteChatById, ChatDocument } from '../models/Chat';
-import { StatusError } from '../models/StatusError';
+import { getChatById, deleteChatById, ChatDocument } from '../models/Chat';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -25,19 +24,21 @@ router.get('/chats/:chatId', auth, async (req: Request<{ chatId: string }>, res,
  * POST /chats
  * Create a new chat with the users given in the body.
  * Return an error if no user is provided.
- */
+
 router.post('/chats', auth, async (req: Request<{}, {}, { users: string[] }>, res, next) => {
   try {
     const users: string[] = req.body.users;
-    if (!users || users.length === 0) {
-      return next(new StatusError(400, 'No users provided'));
+    if (!users || users.length < 2) {
+      return next(new StatusError(400, 'The number of users must be at least 2'));
     }
     const chat: ChatDocument = await createChat(req.body.users);
+
     return res.status(200).json(chat);
   } catch (err) {
     next(err);
   }
 });
+ */
 
 /**
  * DELETE /chats/:chatId

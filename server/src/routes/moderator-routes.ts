@@ -19,11 +19,14 @@ router.post(
       const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
       const moderator: UserDocument = await getUserById(moderatorId);
 
-      if (moderator.hasRole(UserRoles.Admin) || moderator.hasRole(UserRoles.Moderator)) {
+      if (moderator.isAdmin() || moderator.isModerator()) {
         const randomPwd: string = process.env.TMP_PWD || '';
-        const username: string = 'moderator' + Math.floor(Date.now() + Math.random());
+        const randomUsername: string = 'moderator' + Math.floor(Date.now() + Math.random());
 
-        const newModerator: UserDocument = await createUser({ username, password: randomPwd });
+        const newModerator: UserDocument = await createUser({
+          username: randomUsername,
+          password: randomPwd,
+        });
         await newModerator.setRole(UserRoles.Moderator);
         return res.status(200).json(formatUser(newModerator));
       }
@@ -44,9 +47,14 @@ router.delete(
     try {
       const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
       const userId: Types.ObjectId = retrieveId(req.params.userId);
-      const moderator: UserDocument = await getUserById(moderatorId);
 
-      if (moderator.hasRole(UserRoles.Admin) || moderator.hasRole(UserRoles.Moderator)) {
+      const moderator: UserDocument = await getUserById(moderatorId);
+      const userToDelete: UserDocument = await getUserById(userId);
+
+      if (moderator.isAdmin() || moderator.isModerator()) {
+        if (userToDelete.isAdmin() || userToDelete.isModerator()) {
+          return next(new StatusError(401, 'Unauthorized'));
+        }
         await deleteUserById(userId);
         return res.sendStatus(200);
       }
