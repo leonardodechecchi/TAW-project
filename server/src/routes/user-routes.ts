@@ -1,7 +1,8 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
-import { getUserById, getUserByUsername, UserDocument } from '../models/User';
+import { getUserById, getUserByUsername, User, UserDocument } from '../models/User';
+import { UserStats } from '../models/UserStats';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
 
@@ -44,6 +45,24 @@ router.put(
       const user: UserDocument = await getUserById(userId);
       await user.setPassword(req.body.password);
       return res.sendStatus(200);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * PUT /users/:userId/stats
+ */
+router.put(
+  '/users/:userId/stats',
+  auth,
+  async (req: Request<{ userId: string }, {}, { stats: UserStats }>, res, next) => {
+    try {
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const user: UserDocument = await getUserById(userId);
+      await user.updateStats(req.body.stats);
+      return res.status(200).json(user);
     } catch (err) {
       next(err);
     }

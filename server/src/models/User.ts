@@ -98,6 +98,12 @@ interface UserProps {
   setOnlineStatus: (isOnline: boolean) => Promise<UserDocument>;
 
   /**
+   * Update the user statistics.
+   * @param stats the new stats
+   */
+  updateStats: (stats: UserStats) => Promise<UserDocument>;
+
+  /**
    * Create a symmetrical relationship between the user and the one given in input.
    * Return an error if the given friend id does not exists.
    * @param {Types.ObjectId} friendId the friend id
@@ -242,6 +248,14 @@ userSchema.method(
   'setOnlineStatus',
   async function (this: UserDocument, isOnline: boolean): Promise<UserDocument> {
     this.online = isOnline;
+    return this.save();
+  }
+);
+
+userSchema.method(
+  'updateStats',
+  async function (this: UserDocument, stats: UserStats): Promise<UserDocument> {
+    this.stats = stats;
     return this.save();
   }
 );
