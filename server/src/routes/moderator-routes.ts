@@ -53,7 +53,9 @@ router.delete(
 
       if (moderator.isAdmin() || moderator.isModerator()) {
         if (userToDelete.isAdmin() || userToDelete.isModerator()) {
-          return next(new StatusError(401, 'Unauthorized'));
+          return next(
+            new StatusError(401, 'You cannot delete a user with a moderator or admin role')
+          );
         }
         await deleteUserById(userId);
         return res.sendStatus(200);
