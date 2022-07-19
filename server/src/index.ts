@@ -7,12 +7,19 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
+import { registerRoutes } from './utils/register-routes';
 
 dotenv.config();
 colors.enable();
 
 // Retrieve http server port number
 const port: string | undefined = process.env.PORT;
+
+declare module 'socket.io' {
+  interface Socket {
+    userId: string;
+  }
+}
 
 // Setup db connection and establish connection
 require('./config/db');
@@ -45,29 +52,20 @@ app.use(
 );
 app.use(cors());
 
-// Middleware for error handling
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  if (err instanceof StatusError) {
-    return res.status(err.statusCode).send(err.message);
-  }
-  console.log(err);
-  return res.status(500).send(err.message);
-};
+// ioServer configuration
+ioServer.use((client, next) => {
+  const userId = client.handshake.auth.userId;
+  client.userId = userId;
+  next();
+});
 
-// Middleware for invalid endpoint
-const invalidEndpoint: RequestHandler = (req, res, next) => {
-  return res.status(404).send('Invalid endpoint');
-};
+ioServer.on('connection', (client: io.Socket) => {
+  client.join(client.userId);
+  console.log(`[${colors.blue('socket')}]: client ${client.userId} connected`);
+});
 
 // Register routes
-app.use(require('./routes/auth-routes'));
-app.use(require('./routes/moderator-routes'));
-app.use(require('./routes/user-routes'));
-app.use(require('./routes/relationship-routes'));
-app.use(require('./routes/notification-routes'));
-app.use(require('./routes/chat-routes'));
-app.use(errorHandler);
-app.use(invalidEndpoint);
+registerRoutes(app);
 
 // Finally start http server
 httpServer.listen(port, () => {

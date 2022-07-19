@@ -15,7 +15,9 @@ router.post(
       const { email, password } = req.body;
       const user = await getUserByEmail(email);
       const validate = await user.validatePassword(password);
-      if (!validate) return next(new StatusError(401, 'Invalid username or password'));
+      if (!validate) {
+        return next(new StatusError(401, 'Invalid username or password'));
+      }
       const token = issueJwt(user);
       return res.status(200).json(token);
     } catch (err) {
