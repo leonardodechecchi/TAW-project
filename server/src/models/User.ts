@@ -312,7 +312,6 @@ export const UserModel = model<User, Model<User, {}, UserProps>>('User', userSch
  * Create a standard user with the given information.
  * @param data the user email, username, password
  * @returns a Promise of `UserDocument`, i.e. the new user
- * @memberof User
  */
 export async function createUser(data: {
   email?: string;
@@ -330,7 +329,6 @@ export async function createUser(data: {
  * Return an error if the user does not exists.
  * @param userId the user id
  * @returns an empty Promise
- * @memberof User
  */
 export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
   const user = await UserModel.findOneAndDelete({ _id: userId }).exec();
@@ -344,7 +342,6 @@ export async function deleteUserById(userId: Types.ObjectId): Promise<void> {
  * Return an error if the user does not exists.
  * @param userId the user id
  * @returns a Promise of `UserDocument`, i.e. the user found
- * @memberof User
  */
 export async function getUserById(userId: Types.ObjectId): Promise<UserDocument> {
   const user = await UserModel.findOne({ _id: userId }).exec();
@@ -359,7 +356,6 @@ export async function getUserById(userId: Types.ObjectId): Promise<UserDocument>
  * Return an error if the user does not exists.
  * @param username the user username
  * @returns a Promise of `UserDocument`, i.e. the user found
- * @memberof User
  */
 export async function getUserByUsername(username: string): Promise<UserDocument> {
   const user = await UserModel.findOne({ username }).exec();
@@ -374,7 +370,6 @@ export async function getUserByUsername(username: string): Promise<UserDocument>
  * Return an error if the user does not exists.
  * @param email the user email
  * @returns a Promise of `UserDocument`, i.e. the user found
- * @memberof User
  */
 export async function getUserByEmail(email: string): Promise<UserDocument> {
   const user = await UserModel.findOne({ email }).exec();
@@ -388,7 +383,6 @@ export async function getUserByEmail(email: string): Promise<UserDocument> {
  * Return the list of the user relationships.
  * @param userId the user id
  * @returns an array of `Relationship`, i.e. the user relationships
- * @memberof User
  */
 export async function getUserRelationships(userId: Types.ObjectId): Promise<UserRelationships> {
   const user = await UserModel.findOne({ _id: userId })
@@ -457,7 +451,6 @@ async function addChatIdToRelationship(
  * @param user the user record
  * @param friend the friend record
  * @returns a Promise of `ChatDocument`, i.e. the chat created
- * @memberof User
  */
 export async function createRelationshipChat(
   user: UserDocument,
@@ -473,7 +466,6 @@ export async function createRelationshipChat(
  * Return the list of the user notifications.
  * @param userId the user id
  * @returns an array of `Notification`, i.e. the user notifications
- * @memberof User
  */
 export async function getUserNotifications(userId: Types.ObjectId): Promise<UserNotifications> {
   const user = await UserModel.findOne({ _id: userId })

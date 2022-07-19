@@ -78,7 +78,6 @@ export const MatchModel = model<Match, Model<Match, {}, MatchProps>>('Match', ma
  * @param username1 the username of the first user
  * @param username2 the username of the second user
  * @returns a Promise of `MatchDocument`, i.e. the match created
- * @memberof Match
  */
 export async function createMatch(username1: string, username2: string): Promise<MatchDocument> {
   const playersChat: ChatDocument = await createChat([username1, username2]);
@@ -98,7 +97,6 @@ export async function createMatch(username1: string, username2: string): Promise
  * Return an error if the match does not exists.
  * @param matchId the match id
  * @returns a Promise of `MatchDocument`, i.e. the match found
- * @memberof Match
  */
 export async function getMatchById(matchId: Types.ObjectId): Promise<MatchDocument> {
   const match = await MatchModel.findOne({ _id: matchId }).exec();

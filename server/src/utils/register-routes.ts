@@ -15,6 +15,10 @@ const invalidEndpoint: RequestHandler = (req, res, next) => {
   return res.status(404).send('Invalid endpoint');
 };
 
+/**
+ * Register all the app routes.
+ * @param app the express app
+ */
 export function registerRoutes(app: Express) {
   app.use(require('../routes/auth-routes'));
   app.use(require('../routes/moderator-routes'));

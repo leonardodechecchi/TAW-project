@@ -86,7 +86,6 @@ export const ChatModel = model<Chat, Model<Chat, {}, ChatProps>>('Chat', chatSch
  * Create a new chat for the given users.
  * @param users the list of user usernames
  * @returns a Promise of `ChatDocument`, i.e. the new chat created
- * @memberof Chat
  */
 export async function createChat(users: string[]): Promise<ChatDocument> {
   return ChatModel.create({ users });
@@ -97,7 +96,6 @@ export async function createChat(users: string[]): Promise<ChatDocument> {
  * Return an error if the chat does not exists.
  * @param chatId the chat id
  * @returns a Promise of `ChatDocument`, i.e. the chat found
- * @memberof Chat
  */
 export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument> {
   const chat = await ChatModel.findOne({ _id: chatId }).exec();
@@ -111,7 +109,6 @@ export async function getChatById(chatId: Types.ObjectId): Promise<ChatDocument>
  * Delete the chat.
  * Return an error if the chat does not exists.
  * @param chatId the chat id
- * @memberof Chat
  */
 export async function deleteChatById(chatId: Types.ObjectId): Promise<void> {
   const chat = await ChatModel.findOneAndDelete({ _id: chatId }).exec();

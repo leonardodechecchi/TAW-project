@@ -9,7 +9,6 @@ const privKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtR
  * Issue a jwt token signed with a private key.
  * @param {User} user the user to get the information from
  * @returns the token
- * @memberof utils
  */
 export const issueJwt = (user: User): string => {
   const payload = {
