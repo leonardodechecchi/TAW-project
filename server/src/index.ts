@@ -7,6 +7,8 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
 import { registerRoutes } from './utils/register-routes';
+import { ChatJoinedListener } from './socket/listeners/ChatJoined';
+import { ServerJoined } from './socket/listeners/ServerJoined';
 
 dotenv.config();
 colors.enable();
@@ -33,7 +35,7 @@ const app: Express = express();
 export const auth = passport.authenticate('jwt', { session: false });
 
 // Http server creation
-const httpServer: http.Server = http.createServer(app);
+export const httpServer: http.Server = http.createServer(app);
 
 // Io server creation
 const ioServer: io.Server = new io.Server(httpServer, {
@@ -59,8 +61,17 @@ ioServer.use((client, next) => {
 });
 
 ioServer.on('connection', (client: io.Socket) => {
-  client.join(client.userId);
-  console.log(`[${colors.blue('socket')}]: client ${client.userId} connected`);
+  /**
+   *
+   */
+  const serverJoined = new ServerJoined(client);
+  serverJoined.listen();
+
+  /**
+   *
+   */
+  const chatJoined = new ChatJoinedListener(client);
+  chatJoined.listen();
 });
 
 // Register routes
