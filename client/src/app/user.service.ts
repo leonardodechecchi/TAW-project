@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { User, UserStats } from './models/User';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +10,54 @@ import { Observable } from 'rxjs';
 export class UserService {
   constructor(private http: HttpClient) {}
 
-  getUser(userId: string) {}
+  /**
+   * `GET` method.
+   * Retrieve the user who match `userId`
+   * @param userId the user id
+   * @returns an Observable of `User`, i.e. the user found
+   */
+  getUser(userId: string): Observable<User> {
+    return this.http.get<User>(`${environment.user_endpoint}/${userId}`);
+  }
 
-  getUsers(userIds: string[]) {}
+  /**
+   * `GET` method.
+   * Retrieve the user who match `username`.
+   * @param username the user username
+   * @returns an Observable of `User`, i.e. the user found
+   */
+  getUserByUsername(username: string): Observable<User> {
+    const params = new HttpParams().set('username', username);
+    return this.http.get<User>(environment.user_endpoint, { params });
+  }
 
-  modifiyPassword(password: string) {}
+  /**
+   * `PUT` method.
+   * Update the user password.
+   * @param userId the user id
+   * @param password the new password
+   * @returns an Observable of `void`
+   */
+  modifiyPassword(userId: string, password: string): Observable<void> {
+    const body = { password };
+    return this.http.put<void>(
+      `${environment.user_endpoint}/${userId}/password`,
+      body
+    );
+  }
 
-  updateUserStats(stats: {}) {}
+  /**
+   * `PUT` method.
+   * Update the user stats.
+   * @param userId the user id
+   * @param stats the new stats
+   * @returns an Observable of `User`, i.e. the user record updated
+   */
+  updateUserStats(userId: string, stats: UserStats): Observable<User> {
+    const body = { stats };
+    return this.http.put<User>(
+      `${environment.user_endpoint}/${userId}/stats`,
+      body
+    );
+  }
 }

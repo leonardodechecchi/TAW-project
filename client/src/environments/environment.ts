@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  auth_endpoint: 'http://localhost:8000/auth',
+  user_endpoint: 'http://localhost:8000/users',
 };
 
 /*
