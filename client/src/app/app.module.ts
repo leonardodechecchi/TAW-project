@@ -28,6 +28,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -42,6 +43,7 @@ const routes: Routes = [
     LoginComponent,
     RegisterComponent,
     HomeComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,

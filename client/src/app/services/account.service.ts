@@ -27,8 +27,8 @@ export class AccountService {
    *
    * @param token
    */
-  updateToken(token: Token): void {
-    this.token = token;
+  updateToken(token: string): void {
+    this.token = jwt_decode<Token>(token);
   }
 
   /**

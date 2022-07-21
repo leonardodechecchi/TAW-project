@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Token } from '../models/Token';
 
 @Injectable({
   providedIn: 'root',
@@ -11,13 +10,17 @@ import { Token } from '../models/Token';
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(email: string, password: string, remember: boolean): Observable<Token> {
+  login(
+    email: string,
+    password: string,
+    remember: boolean
+  ): Observable<string> {
     const body = { email, password };
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
     return this.http
-      .post<Token>(`${environment.auth_endpoint}/login`, body, options)
+      .post<string>(`${environment.auth_endpoint}/login`, body, options)
       .pipe(
         tap((token) => {
           remember
