@@ -53,7 +53,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.setItem('token', '');
-    this.accountService.updateToken(null);
+    this.accountService.updateToken('');
     this.router.navigate(['/auth']);
   }
 }

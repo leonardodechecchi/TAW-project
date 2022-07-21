@@ -18,12 +18,20 @@ export class AccountService {
     this.token = this.tokenSubject as Observable<string>;
   }
 
-  get tokenValue() {
+  get tokenValue(): Token {
     return jwt_decode<Token>(this.tokenSubject.value);
   }
 
   updateToken(token: string): void {
     this.tokenSubject.next(token);
+  }
+
+  getId(): string {
+    return this.tokenValue.userId;
+  }
+
+  getUsername(): string {
+    return this.tokenValue.username;
   }
 
   isAdmin(): boolean {
