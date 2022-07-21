@@ -1,5 +1,4 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { UserService } from './user.service';
@@ -13,8 +12,8 @@ export class SocketService implements OnInit, OnDestroy {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    const userId = this.userService.getId();
-    this.socket = io(environment.base_endpoint, { auth: { userId } });
+    // const userId = this.userService.getId();
+    this.socket = io(environment.base_endpoint, { auth: { userId: 'userId' } });
     console.log('socket connected');
     this.socket.emit('server-joined');
   }

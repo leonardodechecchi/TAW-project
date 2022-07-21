@@ -3,12 +3,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private accountService: AccountService,
+    private router: Router
+  ) {}
 
   login(
     email: string,
@@ -48,6 +53,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.setItem('token', '');
-    this.router.navigate(['/login']);
+    this.accountService.updateToken(null);
+    this.router.navigate(['/auth']);
   }
 }
