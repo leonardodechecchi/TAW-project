@@ -1,61 +1,53 @@
-<div class="card col-md-6 offset-md-3 mt-5 shadow-5">
-  <div class="card-header"><h5>Register</h5></div>
-  <div class="card-body">
-    <form [formGroup]="form">
-      <div class="d-grid gap-4">
-        <mdb-form-control>
-          <input
-            mdbInput
-            type="text"
-            id="username"
-            class="form-control"
-            formControlName="username"
-            required
-          />
-          <label mdbLabel class="form-label" for="username">Username</label>
-        </mdb-form-control>
-        <mdb-form-control>
-          <input
-            mdbInput
-            type="text"
-            id="email"
-            class="form-control"
-            formControlName="email"
-            required
-          />
-          <label mdbLabel class="form-label" for="email">Email</label>
-        </mdb-form-control>
-        <mdb-form-control>
-          <input
-            mdbInput
-            type="password"
-            id="password"
-            class="form-control"
-            formControlName="password"
-            required
-          />
-          <label mdbLabel class="form-label" for="password">Password</label>
-        </mdb-form-control>
-        <mdb-form-control>
-          <input
-            mdbInput
-            type="password"
-            id="repeatPassword"
-            class="form-control"
-            formControlName="repeatPassword"
-            required
-          />
-          <label mdbLabel class="form-label" for="repeatPassword"
-            >Repeat password</label
-          >
-        </mdb-form-control>
-        <button mdbRipple class="btn btn-primary" (click)="submit()">
-          Sign up
-        </button>
-        <div class="text-center">
-          <span>Go back to <a routerLink="/login">login</a> page</span>
-        </div>
-      </div>
-    </form>
+<form [formGroup]="form">
+  <div class="d-grid gap-3 me-2">
+    <mdb-form-control>
+      <input
+        mdbInput
+        type="text"
+        id="username"
+        class="form-control"
+        formControlName="username"
+        required
+      />
+      <label mdbLabel class="form-label" for="username">Username</label>
+    </mdb-form-control>
+    <mdb-form-control>
+      <input
+        mdbInput
+        type="text"
+        id="registerEmail"
+        class="form-control"
+        formControlName="email"
+        required
+      />
+      <label mdbLabel class="form-label" for="registerEmail">Email</label>
+    </mdb-form-control>
+    <mdb-form-control>
+      <input
+        mdbInput
+        type="password"
+        id="registerPassword"
+        class="form-control"
+        formControlName="password"
+        required
+      />
+      <label mdbLabel class="form-label" for="registerPassword">Password</label>
+    </mdb-form-control>
+    <mdb-form-control>
+      <input
+        mdbInput
+        type="password"
+        id="repeatPassword"
+        class="form-control"
+        formControlName="repeatPassword"
+        required
+      />
+      <label mdbLabel class="form-label" for="repeatPassword"
+        >Repeat password</label
+      >
+    </mdb-form-control>
+    <button mdbRipple class="btn btn-primary mb-2" (click)="submit()">
+      Sign up
+    </button>
   </div>
-</div>
+</form>
