@@ -7,6 +7,15 @@ export enum UserStatus {
 }
 
 /**
+ * Enum that represents the user roles.
+ */
+export enum UserRoles {
+  Admin = 'Admin',
+  Moderator = 'Moderator',
+  Standard = 'Standard',
+}
+
+/**
  * Interface that represents a user stats.
  */
 export interface UserStats {
@@ -26,5 +35,5 @@ export interface User {
   status: UserStatus;
   online: boolean;
   stats: UserStats;
-  roles: string[];
+  roles: UserRoles[];
 }
