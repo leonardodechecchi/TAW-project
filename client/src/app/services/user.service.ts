@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User, UserStats } from './models/User';
+import { User, UserStats } from '../models/User';
 import { environment } from 'src/environments/environment';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,7 @@ export class UserService {
    * @param password the new password
    * @returns an Observable of `void`
    */
-  modifiyPassword(userId: string, password: string): Observable<void> {
+  modifyPassword(userId: string, password: string): Observable<void> {
     const body = { password };
     return this.http.put<void>(
       `${environment.user_endpoint}/${userId}/password`,
@@ -59,5 +60,31 @@ export class UserService {
       `${environment.user_endpoint}/${userId}/stats`,
       body
     );
+  }
+
+  /**
+   *
+   * @returns
+   */
+  getToken(): string {
+    return localStorage.getItem('token');
+  }
+
+  /**
+   *
+   * @returns
+   */
+  getId(): string {
+    const token = localStorage.getItem('token');
+    return (jwt_decode(token) as User).userId;
+  }
+
+  /**
+   *
+   * @returns
+   */
+  getUsername(): string {
+    const token = localStorage.getItem('token');
+    return (jwt_decode(token) as User).username;
   }
 }
