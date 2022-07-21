@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Token } from '../models/Token';
 
 @Injectable({
   providedIn: 'root',
@@ -10,22 +11,18 @@ import { environment } from 'src/environments/environment';
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(
-    email: string,
-    password: string,
-    remember: boolean
-  ): Observable<string> {
+  login(email: string, password: string, remember: boolean): Observable<Token> {
     const body = { email, password };
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
     return this.http
-      .post<string>(`${environment.auth_endpoint}/login`, body, options)
+      .post<Token>(`${environment.auth_endpoint}/login`, body, options)
       .pipe(
         tap((token) => {
           remember
-            ? localStorage.setItem('token', token)
-            : sessionStorage.setItem('token', token);
+            ? localStorage.setItem('token', JSON.stringify(token))
+            : sessionStorage.setItem('token', JSON.stringify(token));
         })
       );
   }

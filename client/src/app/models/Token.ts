@@ -1,4 +1,4 @@
-import { UserRoles, UserStatus } from './User';
+import { UserStatus, UserRoles } from './User';
 
 export interface Token {
   userId: string;

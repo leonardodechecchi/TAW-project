@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private accountService: AccountService,
     private router: Router
   ) {}
 
@@ -42,9 +44,11 @@ export class LoginComponent implements OnInit {
       this.authService
         .login(this.email.value, this.password.value, this.remember.value)
         .subscribe({
-          next: () => {
-            this.errorMessage = '';
-            this.router.navigate(['/']);
+          next: (token) => {
+            this.accountService.updateToken(token);
+            this.accountService.isModerator() && !this.accountService.isActive()
+              ? this.router.navigate(['/account'])
+              : this.router.navigate(['/home']);
           },
           error: (err) => {
             console.error(err);

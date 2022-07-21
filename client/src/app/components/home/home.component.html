@@ -1,0 +1,76 @@
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- Left elements -->
+    <div class="d-flex">
+      <!-- Brand -->
+      <a class="navbar-brand me-2 mb-1" routerLink="/home">Home</a>
+    </div>
+    <!-- Left elements -->
+
+    <!-- Right elements -->
+
+    <ul class="navbar-nav flex-row">
+      <!-- Friends button -->
+      <li class="nav-item me-3 me-lg-1">
+        <a class="nav-link" routerLink="/friends">
+          <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
+        </a>
+      </li>
+
+      <!-- Chats button -->
+      <li class="nav-item me-3 me-lg-1">
+        <a class="nav-link" routerLink="/chats">
+          <span><i class="fas fa-comments fa-lg fa-fw"></i></span>
+        </a>
+      </li>
+      <!-- Notifications button -->
+      <li class="nav-item me-3 me-lg-1">
+        <a class="nav-link" routerLink="/notifications">
+          <span><i class="fas fa-bell fa-lg fa-fw"></i></span>
+        </a>
+      </li>
+      <!-- Profile button -->
+      <li mdbDropdown class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle d-flex align-items-center"
+          id="navbarDropdownMenuLink"
+          role="button"
+          mdbDropdownToggle
+          aria-expanded="false"
+        >
+          <img
+            src="https://mdbootstrap.com/img/Photos/Avatars/img (31).webp"
+            class="rounded-circle"
+            height="22"
+            loading="lazy"
+          />
+        </a>
+        <ul
+          mdbDropdownMenu
+          class="dropdown-menu dropdown-menu-end shadow-5"
+          aria-labelledby="navbarDropdownMenuLink"
+        >
+          <li>
+            <button class="dropdown-item">
+              <i class="fas fa-user me-3"></i>My profile
+            </button>
+          </li>
+          <li>
+            <button class="dropdown-item">
+              <i class="fas fa-cog me-3"></i>Settings
+            </button>
+          </li>
+          <li>
+            <hr class="dropdown-divider" />
+          </li>
+          <li>
+            <button class="dropdown-item">
+              <i class="fas fa-sign-out-alt me-3"></i>Logout
+            </button>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <!-- Right elements -->
+  </div>
+</nav>

@@ -27,10 +27,11 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
-
+  { path: 'home', component: HomeComponent },
   { path: '', redirectTo: 'auth', pathMatch: 'full' },
 ];
 
@@ -40,6 +41,7 @@ const routes: Routes = [
     AuthComponent,
     LoginComponent,
     RegisterComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

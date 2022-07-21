@@ -3,8 +3,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, UserStats } from '../models/User';
 import { environment } from 'src/environments/environment';
-import jwt_decode from 'jwt-decode';
-import { Token } from '../models/Token';
 
 @Injectable({
   providedIn: 'root',
@@ -61,63 +59,5 @@ export class UserService {
       `${environment.user_endpoint}/${userId}/stats`,
       body
     );
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getToken(): string {
-    return localStorage.getItem('token') || sessionStorage.getItem('token');
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getId(): string {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-    return (jwt_decode(token) as Token).userId;
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getUsername(): string {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-    return (jwt_decode(token) as Token).username;
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getEmail(): string {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-    return (jwt_decode(token) as Token).email;
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getStatus(): string {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-    return (jwt_decode(token) as Token).status;
-  }
-
-  /**
-   *
-   * @returns
-   */
-  getRoles(): string[] {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-    return (jwt_decode(token) as Token).roles;
   }
 }
