@@ -1,0 +1,50 @@
+<div class="card col-md-6 offset-md-3 mt-5 shadow-5">
+  <div class="card-header"><h5>Login</h5></div>
+  <div class="card-body">
+    <form [formGroup]="form">
+      <div class="d-grid gap-4">
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="text"
+            id="email"
+            class="form-control"
+            formControlName="email"
+            required
+          />
+          <label mdbLabel class="form-label" for="email">Email</label>
+        </mdb-form-control>
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+            required
+          />
+          <label mdbLabel class="form-label" for="password">Password</label>
+        </mdb-form-control>
+        <div class="d-flex">
+          <div class="form-check">
+            <input
+              mdbCheckbox
+              class="form-check-input"
+              type="checkbox"
+              id="remember"
+              formControlName="remember"
+            />
+          </div>
+          <label class="form-check-label" for="remember">Remember me</label>
+          <a class="ms-auto" routerLink="">Forgot password?</a>
+        </div>
+        <button mdbRipple class="btn btn-primary" (click)="submit()">
+          Sign in
+        </button>
+        <div class="text-center">
+          <span>Not a member? <a routerLink="/register">Register</a></span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
