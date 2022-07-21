@@ -1,7 +1,7 @@
 /**
  * Enum that represents the user status.
  */
-enum UserStatus {
+export enum UserStatus {
   Pending = 'Pending',
   Active = 'Active',
 }
