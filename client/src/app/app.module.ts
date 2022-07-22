@@ -29,6 +29,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { UpdatePasswordComponent } from './components/update-password/update-password.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -44,6 +45,7 @@ const routes: Routes = [
     RegisterComponent,
     HomeComponent,
     NavbarComponent,
+    UpdatePasswordComponent,
   ],
   imports: [
     BrowserModule,
