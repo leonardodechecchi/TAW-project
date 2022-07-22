@@ -1,0 +1,13 @@
+<div class="card text-center mt-3" *ngIf="relationships.length === 0">
+  <div class="card-body">
+    <p class="card-text">No chat found</p>
+  </div>
+</div>
+<div *ngFor="let relationship of relationships">
+  <div class="card mt-3">
+    <div class="card-body" [routerLink]="['/chats', relationship.chatId]">
+      <h5 class="card-title">{{ relationship.friendUsername }}</h5>
+      <p class="card-text"><!-- TODO --></p>
+    </div>
+  </div>
+</div>

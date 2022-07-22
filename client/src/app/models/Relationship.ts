@@ -9,4 +9,5 @@ export interface Relationship {
     online: boolean;
     stats: UserStats;
   };
+  chatId: string;
 }

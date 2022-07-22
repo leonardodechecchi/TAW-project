@@ -31,10 +31,16 @@ import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { UpdatePasswordComponent } from './components/update-password/update-password.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
+  {
+    path: 'chats',
+    component: ChatListComponent,
+    canActivate: [AuthGuardService],
+  },
   { path: 'update-password', component: UpdatePasswordComponent },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
@@ -48,6 +54,7 @@ const routes: Routes = [
     HomeComponent,
     NavbarComponent,
     UpdatePasswordComponent,
+    ChatListComponent,
   ],
   imports: [
     BrowserModule,
