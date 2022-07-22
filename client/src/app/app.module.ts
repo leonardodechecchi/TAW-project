@@ -32,6 +32,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { UpdatePasswordComponent } from './components/update-password/update-password.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
+import { AuthInterceptor } from './helpers/auth.interceptor';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -79,7 +80,9 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
