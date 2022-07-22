@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
           next: (token) => {
             this.accountService.updateToken(token);
             this.accountService.isModerator() && !this.accountService.isActive()
-              ? this.router.navigate(['/account'])
+              ? this.router.navigate(['/update-password'])
               : this.router.navigate(['/home']);
           },
           error: (err) => {
