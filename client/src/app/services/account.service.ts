@@ -18,7 +18,7 @@ export class AccountService {
     this.token = this.tokenSubject as Observable<string>;
   }
 
-  get tokenValue(): Token {
+  private get tokenValue(): Token {
     return jwt_decode<Token>(this.tokenSubject.value);
   }
 
@@ -32,6 +32,10 @@ export class AccountService {
 
   getUsername(): string {
     return this.tokenValue.username;
+  }
+
+  isExpired(): boolean {
+    return Date.now() < this.tokenValue.exp * 1000 ? false : true;
   }
 
   isAdmin(): boolean {

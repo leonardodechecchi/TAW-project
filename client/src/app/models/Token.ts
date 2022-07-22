@@ -6,4 +6,6 @@ export interface Token {
   email: string;
   status: UserStatus;
   roles: UserRoles[];
+  iat: number;
+  exp: number;
 }
