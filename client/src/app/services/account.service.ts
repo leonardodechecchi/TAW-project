@@ -26,6 +26,10 @@ export class AccountService {
     this.tokenSubject.next(token);
   }
 
+  isTokenExpired(): boolean {
+    return Date.now() < this.tokenValue.exp * 1000 ? false : true;
+  }
+
   getId(): string {
     return this.tokenValue.userId;
   }
@@ -34,8 +38,8 @@ export class AccountService {
     return this.tokenValue.username;
   }
 
-  isExpired(): boolean {
-    return Date.now() < this.tokenValue.exp * 1000 ? false : true;
+  getEmail(): string {
+    return this.tokenValue.email;
   }
 
   isAdmin(): boolean {
