@@ -4,10 +4,10 @@ import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'chat-list',
-  templateUrl: './chat-list.component.html',
+  selector: 'friend-list',
+  templateUrl: './friend-list.component.html',
 })
-export class ChatListComponent implements OnInit {
+export class FriendListComponent implements OnInit {
   public relationships: Relationship[];
 
   constructor(
@@ -18,16 +18,14 @@ export class ChatListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.populateChatList();
+    this.populateFriendList();
   }
 
-  private populateChatList(): void {
+  private populateFriendList(): void {
     const userId: string = this.accountService.getId();
     this.userService.getRelationships(userId).subscribe({
       next: (relationships) => {
-        this.relationships = relationships.filter((relationship) => {
-          relationship.chatId;
-        });
+        this.relationships = relationships;
       },
     });
   }

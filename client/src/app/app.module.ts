@@ -33,10 +33,16 @@ import { UpdatePasswordComponent } from './components/update-password/update-pas
 import { AuthGuardService } from './services/auth-guard.service';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { AuthInterceptor } from './helpers/auth.interceptor';
+import { FriendListComponent } from './components/friend-list/friend-list.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
+  {
+    path: 'friends',
+    component: FriendListComponent,
+    canActivate: [AuthGuardService],
+  },
   {
     path: 'chats',
     component: ChatListComponent,
@@ -56,6 +62,7 @@ const routes: Routes = [
     NavbarComponent,
     UpdatePasswordComponent,
     ChatListComponent,
+    FriendListComponent,
   ],
   imports: [
     BrowserModule,
