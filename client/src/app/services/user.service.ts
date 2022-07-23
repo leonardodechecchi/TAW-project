@@ -71,8 +71,7 @@ export class UserService {
    */
   getRelationships(userId: string): Observable<Relationship[]> {
     return this.http.get<Relationship[]>(
-      `${environment.user_endpoint}/${userId}/relationships`,
-      { headers: { 'Cache-control': 'no-cache' } }
+      `${environment.user_endpoint}/${userId}/relationships`
     );
   }
 

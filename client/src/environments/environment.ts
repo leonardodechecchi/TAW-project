@@ -7,6 +7,7 @@ export const environment = {
   base_endpoint: 'http://localhost:8000',
   auth_endpoint: 'http://localhost:8000/auth',
   user_endpoint: 'http://localhost:8000/users',
+  chat_endpoint: 'http://localhost:8000/chats',
 };
 
 /*
