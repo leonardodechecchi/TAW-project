@@ -20,13 +20,7 @@ export class ModalComponent {
   removeFriend() {
     const userId: string = this.accountService.getId();
     const friendId: string = this.relationship.friendId._id;
-    this.userService.deleteRelationship(userId, friendId).subscribe({
-      next: () => {
-        console.log('Friend removed');
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+    this.userService.deleteRelationship(userId, friendId).subscribe();
+    this.modalRef.close();
   }
 }
