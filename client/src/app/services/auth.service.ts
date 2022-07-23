@@ -29,8 +29,8 @@ export class AuthService {
       .pipe(
         tap((token) => {
           remember
-            ? localStorage.setItem('token', JSON.stringify(token))
-            : sessionStorage.setItem('token', JSON.stringify(token));
+            ? localStorage.setItem('token', token)
+            : sessionStorage.setItem('token', token);
         })
       );
   }

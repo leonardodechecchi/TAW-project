@@ -22,6 +22,10 @@ export class AccountService {
     return jwt_decode<Token>(this.tokenSubject.value);
   }
 
+  getToken(): string {
+    return this.tokenSubject.value;
+  }
+
   updateToken(token: string): void {
     this.tokenSubject.next(token);
   }
