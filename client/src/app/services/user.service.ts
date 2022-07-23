@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { User, UserStats } from '../models/User';
 import { environment } from 'src/environments/environment';
 import { Relationship } from '../models/Relationship';
+import { Notification } from '../models/Notification';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +67,7 @@ export class UserService {
    * `GET` method.
    * Retrieve the user relationships.
    * @param userId the user id
-   * @returns an empty `Observable`
+   * @returns an `Observable` of `Relationship[]`, i.e. the user relationships
    */
   getRelationships(userId: string): Observable<Relationship[]> {
     return this.http.get<Relationship[]>(
@@ -100,6 +101,18 @@ export class UserService {
   deleteRelationship(userId: string, friendId: string): Observable<void> {
     return this.http.delete<void>(
       `${environment.user_endpoint}/${userId}/relationships/${friendId}`
+    );
+  }
+
+  /**
+   * `GET` method.
+   * Retrieve the user notifications.
+   * @param userId the user id
+   * @returns an `Observable` of `Notification[]`, i.e. the user notifications
+   */
+  getNotifications(userId: string): Observable<Notification[]> {
+    return this.http.get<Notification[]>(
+      `${environment.user_endpoint}/${userId}/notifications`
     );
   }
 }

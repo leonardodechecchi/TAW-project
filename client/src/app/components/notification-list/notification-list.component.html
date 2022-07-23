@@ -1,0 +1,13 @@
+<div class="card text-center mt-3" *ngIf="notifications.length === 0">
+  <div class="card-body">
+    <p class="card-text">All notifications read</p>
+  </div>
+</div>
+<div *ngFor="let notification of notifications">
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ notification.type }}</h5>
+      <p class="card-text">{{ notification.senderId.username }}</p>
+    </div>
+  </div>
+</div>

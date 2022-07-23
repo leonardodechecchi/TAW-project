@@ -7,7 +7,8 @@
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title">{{ relationship.friendId.username }}</h5>
-      <p class="card-text"><!-- TODO --></p>
+      <p class="card-text" *ngIf="relationship.friendId.online">online</p>
+      <p class="card-text" *ngIf="!relationship.friendId.online">offline</p>
     </div>
   </div>
 </div>

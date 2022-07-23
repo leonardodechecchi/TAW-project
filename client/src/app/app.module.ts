@@ -34,6 +34,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { AuthInterceptor } from './helpers/auth.interceptor';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
+import { NotificationListComponent } from './components/notification-list/notification-list.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -46,6 +47,11 @@ const routes: Routes = [
   {
     path: 'chats',
     component: ChatListComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'notifications',
+    component: NotificationListComponent,
     canActivate: [AuthGuardService],
   },
   { path: 'update-password', component: UpdatePasswordComponent },
@@ -63,6 +69,7 @@ const routes: Routes = [
     UpdatePasswordComponent,
     ChatListComponent,
     FriendListComponent,
+    NotificationListComponent,
   ],
   imports: [
     BrowserModule,

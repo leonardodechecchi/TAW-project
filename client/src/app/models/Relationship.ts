@@ -5,6 +5,7 @@ import { UserStats } from './User';
  */
 export interface Relationship {
   friendId: {
+    _id: string;
     username: string;
     online: boolean;
     stats: UserStats;
