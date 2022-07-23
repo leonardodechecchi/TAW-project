@@ -162,7 +162,6 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
     type: [SchemaTypes.String],
     required: true,
     enum: UserRoles,
-    default: [UserRoles.Standard],
   },
   online: {
     type: SchemaTypes.Boolean,

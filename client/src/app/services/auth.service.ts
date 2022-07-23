@@ -53,6 +53,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.setItem('token', '');
+    sessionStorage.setItem('token', '');
     this.accountService.updateToken('');
     this.router.navigate(['/auth']);
   }

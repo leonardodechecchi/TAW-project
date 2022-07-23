@@ -22,6 +22,8 @@ declare module 'socket.io' {
   }
 }
 
+require('./models/User');
+
 // Setup db connection and establish connection
 require('./config/db');
 
@@ -34,14 +36,6 @@ const app: Express = express();
 // Get passport middleware
 export const auth = passport.authenticate('jwt', { session: false });
 
-// Http server creation
-export const httpServer: http.Server = http.createServer(app);
-
-// Io server creation
-const ioServer: io.Server = new io.Server(httpServer, {
-  cors: { origin: `http://localhost:${port}` },
-});
-
 // Register useful middleware
 app.use(express.json());
 app.use(
@@ -52,6 +46,24 @@ app.use(
   )
 );
 app.use(cors());
+
+// Register routes
+app.use(require('./routes/auth-routes'));
+app.use(require('./routes/moderator-routes'));
+app.use(require('./routes/user-routes'));
+app.use(require('./routes/relationship-routes'));
+app.use(require('./routes/notification-routes'));
+app.use(require('./routes/chat-routes'));
+
+registerRoutes(app);
+
+// Http server creation
+export const httpServer: http.Server = http.createServer(app);
+
+// Io server creation
+const ioServer: io.Server = new io.Server(httpServer, {
+  cors: { origin: `http://localhost:4200` },
+});
 
 // ioServer configuration
 ioServer.use((client, next) => {
@@ -73,9 +85,6 @@ ioServer.on('connection', (client: io.Socket) => {
   const chatJoined = new ChatJoinedListener(client);
   chatJoined.listen();
 });
-
-// Register routes
-registerRoutes(app);
 
 // Finally start http server
 httpServer.listen(port, () => {

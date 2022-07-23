@@ -7,7 +7,7 @@ const privKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtR
 
 /**
  * Issue a jwt token signed with a private key.
- * @param {User} user the user to get the information from
+ * @param user the user to get the information from
  * @returns the token
  */
 export const issueJwt = (user: User): string => {
@@ -18,5 +18,5 @@ export const issueJwt = (user: User): string => {
     status: user.status,
     roles: user.roles,
   };
-  return jsonwebtoken.sign(payload, privKey, { expiresIn: '1d', algorithm: 'RS256' });
+  return jsonwebtoken.sign(payload, privKey, { expiresIn: '30d', algorithm: 'RS256' });
 };

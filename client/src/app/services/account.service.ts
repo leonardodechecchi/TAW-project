@@ -27,6 +27,7 @@ export class AccountService {
   }
 
   isTokenExpired(): boolean {
+    if (!this.tokenSubject.value) return true;
     return Date.now() < this.tokenValue.exp * 1000 ? false : true;
   }
 
