@@ -274,8 +274,8 @@ userSchema.method(
   'deleteRelationship',
   async function (this: UserDocument, friendId: Types.ObjectId): Promise<UserDocument> {
     const friend = await getUserById(friendId);
-    await deleteUserRelationship(friend, this._id);
-    return deleteUserRelationship(this, friendId);
+    await deleteUserRelationship(friend, this);
+    return deleteUserRelationship(this, friend);
   }
 );
 
@@ -403,12 +403,20 @@ export async function getUserRelationships(userId: Types.ObjectId): Promise<User
  */
 async function deleteUserRelationship(
   user: UserDocument,
-  friendId: Types.ObjectId
+  friend: UserDocument
 ): Promise<UserDocument> {
   for (let idx in user.relationships) {
     let relationship = user.relationships[idx];
-    if (relationship.friendId.equals(friendId)) {
-      if (relationship.chatId) await deleteChatById(relationship.chatId);
+    if (relationship.friendId.equals(friend._id)) {
+      if (relationship.chatId) {
+        await deleteChatById(relationship.chatId);
+        for (let idx in friend.relationships) {
+          if (friend.relationships[idx].friendId.equals(user._id)) {
+            friend.relationships[idx].chatId = undefined;
+            await friend.save();
+          }
+        }
+      }
       user.relationships.splice(parseInt(idx), 1);
       return user.save();
     }

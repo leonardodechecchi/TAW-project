@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
@@ -11,6 +11,7 @@ import { ModalComponent } from '../modal/modal.component';
 })
 export class FriendListComponent implements OnInit {
   public relationships: Relationship[];
+  private modalRef: MdbModalRef<ModalComponent>;
 
   constructor(
     private accountService: AccountService,
@@ -24,6 +25,7 @@ export class FriendListComponent implements OnInit {
     this.populateFriendList();
   }
 
+  // OK
   private populateFriendList(): void {
     const userId: string = this.accountService.getId();
     this.userService.getRelationships(userId).subscribe({
@@ -33,10 +35,14 @@ export class FriendListComponent implements OnInit {
     });
   }
 
-  public viewProfile(relationship: Relationship) {
-    this.modalService.open(ModalComponent, {
+  // OK
+  public openModal(relationship: Relationship) {
+    this.modalRef = this.modalService.open(ModalComponent, {
       data: { relationship },
       modalClass: 'modal-fullscreen-sm-down',
+    });
+    this.modalRef.onClose.subscribe(() => {
+      this.populateFriendList();
     });
   }
 }

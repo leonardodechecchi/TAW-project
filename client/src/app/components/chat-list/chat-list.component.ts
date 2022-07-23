@@ -26,7 +26,7 @@ export class ChatListComponent implements OnInit {
     this.userService.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationships = relationships.filter((relationship) => {
-          relationship.chatId;
+          return !!relationship.chatId;
         });
       },
     });

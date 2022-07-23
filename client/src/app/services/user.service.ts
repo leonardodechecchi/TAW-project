@@ -97,8 +97,11 @@ export class UserService {
    * @param friendId the friend id
    * @returns an empty `Observable`
    */
-  deleteRelationship(userId: string, friendId: string): Observable<void> {
-    return this.http.delete<void>(
+  deleteRelationship(
+    userId: string,
+    friendId: string
+  ): Observable<Relationship[]> {
+    return this.http.delete<Relationship[]>(
       `${environment.user_endpoint}/${userId}/relationships/${friendId}`
     );
   }
