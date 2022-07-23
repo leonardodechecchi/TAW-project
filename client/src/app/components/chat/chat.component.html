@@ -1,0 +1,11 @@
+<div *ngFor="let message of messages">
+  <div class="card mt-3" class="{{ cssClass(message) }}">
+    <div class="card-body">
+      <h5 class="card-title">
+        {{ message.author }}
+      </h5>
+      <div class="card-text">{{ message.content }}</div>
+    </div>
+    <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
+  </div>
+</div>

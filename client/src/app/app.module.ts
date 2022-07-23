@@ -74,6 +74,7 @@ const routes: Routes = [
     NavbarComponent,
     UpdatePasswordComponent,
     ChatListComponent,
+    ChatComponent,
     FriendListComponent,
     NotificationListComponent,
   ],

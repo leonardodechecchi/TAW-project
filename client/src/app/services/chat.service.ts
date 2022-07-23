@@ -12,8 +12,8 @@ export class ChatService {
   constructor(private http: HttpClient) {}
 
   /**
-   *
-   * @param chatId
+   * `GET` method.
+   * @param chatId the chat id
    * @returns
    */
   getChat(chatId: string): Observable<Chat> {
@@ -21,8 +21,8 @@ export class ChatService {
   }
 
   /**
-   *
-   * @param chatId
+   * `DELETE` method.
+   * @param chatId the chat id
    * @returns
    */
   deleteChat(chatId: string): Observable<void> {
@@ -30,9 +30,9 @@ export class ChatService {
   }
 
   /**
-   *
-   * @param chatId
-   * @param message
+   * `POST` method.
+   * @param chatId the chat id
+   * @param message the message to add
    * @returns
    */
   addMessage(chatId: string, message: Message) {
@@ -44,9 +44,9 @@ export class ChatService {
   }
 
   /**
-   *
-   * @param chatId
-   * @param username
+   * `POST` method.
+   * @param chatId the chat id
+   * @param username the user username
    * @returns
    */
   addUser(chatId: string, username: string): Observable<Chat> {
@@ -58,9 +58,9 @@ export class ChatService {
   }
 
   /**
-   *
-   * @param chatId
-   * @param username
+   * `DELETE` method.
+   * @param chatId the chat id
+   * @param username the user username
    */
   removeUser(chatId: string, username: string): Observable<void> {
     const params = new HttpParams().set('username', username);
