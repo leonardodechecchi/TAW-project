@@ -15,7 +15,6 @@ const options: StrategyOptions = {
 passport.use(
   new Strategy(options, async (payload, done) => {
     try {
-      console.log(payload);
       const user = await getUserById(payload.userId);
       if (!user) return done(null, false);
       return done(null, user);

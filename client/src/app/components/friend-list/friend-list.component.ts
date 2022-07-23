@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'friend-list',
@@ -12,7 +14,8 @@ export class FriendListComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private userService: UserService
+    private userService: UserService,
+    private modalService: MdbModalService
   ) {
     this.relationships = [];
   }
@@ -27,6 +30,13 @@ export class FriendListComponent implements OnInit {
       next: (relationships) => {
         this.relationships = relationships;
       },
+    });
+  }
+
+  public viewProfile(relationship: Relationship) {
+    this.modalService.open(ModalComponent, {
+      data: { relationship },
+      modalClass: 'modal-fullscreen-sm-down',
     });
   }
 }

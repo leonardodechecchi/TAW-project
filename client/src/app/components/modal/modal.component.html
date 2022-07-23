@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel">
+    {{ relationship.friendId.username }}
+  </h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modalRef.close()"
+  ></button>
+</div>
+<div class="modal-body">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      Games won: {{ relationship.friendId.stats.gamesWon }}
+    </li>
+    <li class="list-group-item">
+      Ships destroyed: {{ relationship.friendId.stats.shipsDestroyed }}
+    </li>
+    <li class="list-group-item">
+      Total shots: {{ relationship.friendId.stats.totalShots }}
+    </li>
+  </ul>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" (click)="modalRef.close()">
+    Remove friend
+  </button>
+</div>

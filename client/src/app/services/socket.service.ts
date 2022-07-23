@@ -1,6 +1,8 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscriber } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { Message } from '../models/Message';
 import { AccountService } from './account.service';
 
 @Injectable({
@@ -23,7 +25,25 @@ export class SocketService implements OnInit, OnDestroy {
     this.socket.disconnect();
   }
 
-  // connectNotifications() {}
+  /**
+   *
+   */
+  connectUserNotifications() {}
 
-  // connectMessages() {}
+  /**
+   *
+   * @param chatId the chat id
+   * @returns
+   */
+  connectChatMessages(chatId: string) {
+    return new Observable<Message>((subscriber: Subscriber<Message>) => {
+      this.socket.emit('chat-joined', chatId);
+      this.socket.on('new-message', (message: Message) => {
+        subscriber.next(message);
+      });
+      return () => {
+        // this.socket.emit('leave-room', this.user.username, chatId);
+      };
+    });
+  }
 }

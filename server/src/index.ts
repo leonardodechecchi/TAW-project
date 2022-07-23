@@ -73,6 +73,7 @@ ioServer.use((client, next) => {
 });
 
 ioServer.on('connection', (client: io.Socket) => {
+  console.log('connected!');
   /**
    *
    */
