@@ -1,16 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
 import { Message } from 'src/app/models/Message';
 import { AccountService } from 'src/app/services/account.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { SocketService } from 'src/app/services/socket.service';
 
+@UntilDestroy()
 @Component({
   selector: 'chat',
   templateUrl: './chat.component.html',
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit {
   public chatId: string;
   public messages: Message[];
   public messageText: FormControl;
@@ -30,13 +33,16 @@ export class ChatComponent implements OnInit, OnDestroy {
       next: (params) => {
         this.chatId = params['id'];
         this.populateMessageList();
-        // this.socketService.connectChatMessages(this.chatId);
+        this.socketService
+          .connectChatMessages(this.chatId)
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: (message) => {
+              this.messages.push(message);
+            },
+          });
       },
     });
-  }
-
-  ngOnDestroy(): void {
-    // TODO unsubscribe
   }
 
   private populateMessageList(): void {
@@ -55,6 +61,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     return classes.join(' ');
   }
 
+  // OK
   sendMessage(): void {
     const message: Message = {
       author: this.accountService.getUsername(),

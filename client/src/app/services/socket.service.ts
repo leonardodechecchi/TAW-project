@@ -11,14 +11,15 @@ import { AccountService } from './account.service';
 export class SocketService implements OnInit, OnDestroy {
   private socket: Socket;
 
-  constructor(private accountService: AccountService) {}
-
-  ngOnInit(): void {
+  // why it works only inside the constructor?
+  constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
     this.socket = io(environment.base_endpoint, { auth: { userId } });
-    console.log('socket connected');
+    if (this.socket) console.log('socket connected');
     this.socket.emit('server-joined');
   }
+
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.socket.emit('server-left');
@@ -42,7 +43,7 @@ export class SocketService implements OnInit, OnDestroy {
         subscriber.next(message);
       });
       return () => {
-        // this.socket.emit('leave-room', this.user.username, chatId);
+        this.socket.emit('chat-left', chatId);
       };
     });
   }
