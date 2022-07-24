@@ -1,5 +1,8 @@
 import { Socket } from 'socket.io';
 
+/**
+ *
+ */
 export abstract class Listener<T> {
   protected client: Socket;
   protected eventName: string;

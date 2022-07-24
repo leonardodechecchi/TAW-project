@@ -59,6 +59,9 @@ router.post(
         date: new Date(date),
       };
       await chat.addMessage(message);
+
+      // SOCKET
+
       return res.status(200).json(message);
     } catch (err) {
       next(err);
