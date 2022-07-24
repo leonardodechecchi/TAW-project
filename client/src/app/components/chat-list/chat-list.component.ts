@@ -21,6 +21,7 @@ export class ChatListComponent implements OnInit {
     this.populateChatList();
   }
 
+  // OK
   private populateChatList(): void {
     const userId: string = this.accountService.getId();
     this.userService.getRelationships(userId).subscribe({

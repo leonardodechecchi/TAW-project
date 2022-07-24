@@ -42,12 +42,24 @@ router.delete('/chats/:chatId', auth, async (req: Request<{ chatId: string }>, r
 router.post(
   '/chats/:chatId/messages',
   auth,
-  async (req: Request<{ chatId: string }, {}, { message: Message }>, res, next) => {
+  async (
+    req: Request<{ chatId: string }, {}, { author: string; content: string; date: string }>,
+    res,
+    next
+  ) => {
     try {
+      console.log(req.body);
       const chatId: Types.ObjectId = retrieveId(req.params.chatId);
       const chat: ChatDocument = await getChatById(chatId);
-      await chat.addMessage(req.body.message);
-      return res.sendStatus(200);
+      const { author, content, date } = req.body;
+
+      const message: Message = {
+        author,
+        content,
+        date: new Date(date),
+      };
+      await chat.addMessage(message);
+      return res.status(200).json(message);
     } catch (err) {
       next(err);
     }

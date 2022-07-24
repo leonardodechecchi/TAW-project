@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Chat } from '../models/Chat';
@@ -35,11 +35,10 @@ export class ChatService {
    * @param message the message to add
    * @returns
    */
-  addMessage(chatId: string, message: Message) {
-    const body = { message };
-    return this.http.post(
+  addMessage(chatId: string, message: Message): Observable<Message> {
+    return this.http.post<Message>(
       `${environment.chat_endpoint}/${chatId}/messages`,
-      body
+      message
     );
   }
 

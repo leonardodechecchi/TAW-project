@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Message } from 'src/app/models/Message';
 import { AccountService } from 'src/app/services/account.service';
@@ -12,6 +13,7 @@ import { SocketService } from 'src/app/services/socket.service';
 export class ChatComponent implements OnInit, OnDestroy {
   public chatId: string;
   public messages: Message[];
+  public messageText: FormControl;
 
   constructor(
     private chatService: ChatService,
@@ -23,6 +25,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.messageText = new FormControl('');
     this.route.params.subscribe({
       next: (params) => {
         this.chatId = params['id'];
@@ -50,5 +53,19 @@ export class ChatComponent implements OnInit, OnDestroy {
       classes.push('text-white', 'text-end', 'bg-primary');
     }
     return classes.join(' ');
+  }
+
+  sendMessage(): void {
+    const message: Message = {
+      author: this.accountService.getUsername(),
+      content: this.messageText.value,
+      date: new Date(),
+    };
+    this.chatService.addMessage(this.chatId, message).subscribe({
+      next: () => {
+        this.messageText.setValue('');
+        this.populateMessageList();
+      },
+    });
   }
 }
