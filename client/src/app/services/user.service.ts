@@ -1,16 +1,51 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User, UserStats } from '../models/User';
 import { environment } from 'src/environments/environment';
 import { Relationship } from '../models/Relationship';
-import { Notification } from '../models/Notification';
+import { Notification, NotificationType } from '../models/Notification';
+import { AccountService } from './account.service';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
-  constructor(private http: HttpClient) {}
+export class UserService implements OnInit {
+  private notificationsSubject: BehaviorSubject<Notification[]>;
+  public notifications: Observable<Notification[]>;
+
+  constructor(
+    private http: HttpClient,
+    private accountService: AccountService,
+    private socketService: SocketService
+  ) {
+    this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
+    this.notifications = this.notificationsSubject.asObservable();
+
+    // SOCKET NOTIFICATIONS
+    this.socketService.connectUserNotifications().subscribe({
+      next: (notification) => {
+        let notifications: Notification[] = this.notificationsSubject.value;
+        notifications.push(notification);
+        this.notificationsSubject.next(notifications);
+      },
+    });
+  }
+
+  ngOnInit(): void {
+    const userId: string = this.accountService.getId();
+    this.getNotifications(userId).subscribe({
+      next: (notifications) => {
+        this.notificationsSubject.next(notifications);
+      },
+    });
+  }
+
+  updateNotifications(notification: Notification) {
+    this.notificationsSubject.value.push(notification);
+    this.notificationsSubject.next(this.notificationsSubject.value);
+  }
 
   /**
    * `GET` method.
@@ -115,6 +150,41 @@ export class UserService {
   getNotifications(userId: string): Observable<Notification[]> {
     return this.http.get<Notification[]>(
       `${environment.user_endpoint}/${userId}/notifications`
+    );
+  }
+
+  /**
+   *
+   * @param recipientId
+   * @param notification
+   * @returns
+   */
+  postNotification(
+    recipientId: string,
+    notification: { senderId: string; type: NotificationType }
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${environment.user_endpoint}/${recipientId}/notifications`,
+      notification
+    );
+  }
+
+  /**
+   *
+   * @param userId
+   * @param notification
+   * @returns
+   */
+  deleteNotification(
+    userId: string,
+    notification: { senderId: string; type: NotificationType }
+  ): Observable<void> {
+    const params = new HttpParams()
+      .set('senderId', notification.senderId)
+      .set('type', notification.type);
+    return this.http.delete<void>(
+      `${environment.user_endpoint}/${userId}/notifications`,
+      { params }
     );
   }
 }

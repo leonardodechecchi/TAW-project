@@ -45,7 +45,7 @@ router.post(
       const notificationEmitter = new NotificationEmitter(ioServer, user._id.toString());
       notificationEmitter.emit({ senderId, type });
 
-      return res.sendStatus(200);
+      return res.status(200).json({ senderId, type });
     } catch (err) {
       next(err);
     }
@@ -71,7 +71,7 @@ router.delete(
 
       const user: UserDocument = await getUserById(userId);
       await user.deleteNotification(senderId, type);
-      return res.sendStatus(200);
+      return res.status(200).json({});
     } catch (err) {
       next(err);
     }

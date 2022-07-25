@@ -21,7 +21,9 @@ export class ModalComponent {
     private router: Router
   ) {}
 
-  public goToChat() {
+  public match() {}
+
+  public chat() {
     const userId: string = this.accountService.getId();
     const friendId: string = this.relationship.friendId._id;
     if (this.relationship.chatId) {

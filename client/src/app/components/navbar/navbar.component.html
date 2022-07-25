@@ -17,6 +17,11 @@
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/notifications">
           <span><i class="fas fa-bell fa-lg fa-fw"></i></span>
+          <span
+            *ngIf="notifications.length > 0"
+            class="badge rounded-pill badge-notification bg-danger"
+            >{{ notifications.length }}</span
+          >
         </a>
       </li>
       <li mdbDropdown class="nav-item dropdown">

@@ -15,9 +15,7 @@ export class SocketService implements OnDestroy {
   // why it works only inside the constructor?
   constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
-    console.log('calling constructor from socket service ' + userId);
     this.socket = io(environment.base_endpoint, { auth: { userId } });
-    if (this.socket) console.log('socket connected');
     this.socket.emit('server-joined');
   }
 

@@ -286,7 +286,11 @@ userSchema.method(
     senderId: Types.ObjectId,
     type: NotificationType
   ): Promise<UserDocument> {
-    // TODO check senderId and notification type (?)
+    for (let notification of this.notifications) {
+      if (notification.senderId.equals(senderId) && notification.type === type) {
+        return Promise.reject(new StatusError(400, 'Notification already sent'));
+      }
+    }
     this.notifications.push({ senderId, type });
     return this.save();
   }
