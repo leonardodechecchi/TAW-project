@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
@@ -9,13 +9,11 @@ import { AccountService } from './account.service';
 @Injectable({
   providedIn: 'root',
 })
-export class SocketService implements OnInit, OnDestroy {
+export class SocketService implements OnDestroy {
   private socket: Socket;
 
   // why it works only inside the constructor?
-  constructor(private accountService: AccountService) {}
-
-  ngOnInit(): void {
+  constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
     console.log('calling constructor from socket service ' + userId);
     this.socket = io(environment.base_endpoint, { auth: { userId } });
@@ -24,8 +22,6 @@ export class SocketService implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('disconnecting from socket service');
-    this.socket.emit('server-left');
     this.socket.disconnect();
   }
 

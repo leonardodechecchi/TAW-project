@@ -10,6 +10,7 @@ import { registerRoutes } from './utils/register-routes';
 import { ChatJoinedListener } from './socket/listeners/ChatJoined';
 import { ServerJoined } from './socket/listeners/ServerJoined';
 import { ChatLeftListener } from './socket/listeners/ChatLeft';
+import { ServerLeft } from './socket/listeners/ServerLeft';
 
 dotenv.config();
 colors.enable();
@@ -79,6 +80,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const serverJoined = new ServerJoined(client);
   serverJoined.listen();
+
+  /**
+   *
+   */
+  const serverLeft = new ServerLeft(client);
+  serverLeft.listen();
 
   /**
    *
