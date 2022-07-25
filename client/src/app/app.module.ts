@@ -36,29 +36,35 @@ import { AuthInterceptor } from './helpers/auth.interceptor';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { ModeratorGuardService } from './services/moderator-guard.service';
+import { ModalComponent } from './components/modal/modal.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuardService, ModeratorGuardService],
+  },
   {
     path: 'friends',
     component: FriendListComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuardService, ModeratorGuardService],
   },
   {
     path: 'chats',
     component: ChatListComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuardService, ModeratorGuardService],
   },
   {
     path: 'chats/:id',
     component: ChatComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuardService, ModeratorGuardService],
   },
   {
     path: 'notifications',
     component: NotificationListComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuardService, ModeratorGuardService],
   },
   { path: 'update-password', component: UpdatePasswordComponent },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
@@ -77,6 +83,7 @@ const routes: Routes = [
     ChatComponent,
     FriendListComponent,
     NotificationListComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,

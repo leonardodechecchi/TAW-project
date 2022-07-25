@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AccountService } from './account.service';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ import { AccountService } from './account.service';
 export class AuthService {
   constructor(
     private http: HttpClient,
-    private accountService: AccountService,
+    private localStorageService: LocalStorageService,
     private router: Router
   ) {}
 
@@ -29,8 +29,8 @@ export class AuthService {
       .pipe(
         tap((token) => {
           remember
-            ? localStorage.setItem('token', token)
-            : sessionStorage.setItem('token', token);
+            ? this.localStorageService.setLocal('token', token)
+            : this.localStorageService.setSession('token', token);
         })
       );
   }
@@ -52,9 +52,8 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.setItem('token', '');
-    sessionStorage.setItem('token', '');
-    this.accountService.updateToken('');
+    this.localStorageService.removeLocal('token');
+    this.localStorageService.removeSession('token');
     this.router.navigate(['/auth']);
   }
 }

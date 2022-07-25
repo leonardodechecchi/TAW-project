@@ -20,7 +20,7 @@ export class AuthGuardService implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (this.accountService.isTokenExpired()) {
+    if (!this.accountService.isTokenValid()) {
       this.authService.logout();
       return false;
     }

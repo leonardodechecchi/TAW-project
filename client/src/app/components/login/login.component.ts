@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { AccountService } from 'src/app/services/account.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'login',
@@ -45,10 +45,8 @@ export class LoginComponent implements OnInit {
         .login(this.email.value, this.password.value, this.remember.value)
         .subscribe({
           next: (token) => {
-            this.accountService.updateToken(token);
-            this.accountService.isModerator() && !this.accountService.isActive()
-              ? this.router.navigate(['/update-password'])
-              : this.router.navigate(['/home']);
+            this.accountService.setToken(token);
+            this.router.navigate(['home']);
           },
           error: (err) => {
             console.error(err);

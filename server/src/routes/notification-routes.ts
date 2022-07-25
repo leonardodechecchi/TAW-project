@@ -1,8 +1,9 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth } from '..';
+import { auth, ioServer } from '..';
 import { NotificationType } from '../models/Notification';
 import { getUserById, getUserNotifications, UserDocument, UserNotifications } from '../models/User';
+import { NotificationEmitter } from '../socket/emitters/Notification';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -39,6 +40,11 @@ router.post(
 
       const user: UserDocument = await getUserById(userId);
       await user.addNotification(senderId, type);
+
+      // SOCKET
+      const notificationEmitter = new NotificationEmitter(ioServer, user._id.toString());
+      notificationEmitter.emit({ senderId, type });
+
       return res.sendStatus(200);
     } catch (err) {
       next(err);

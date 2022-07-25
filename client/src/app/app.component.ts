@@ -13,16 +13,7 @@ export class AppComponent implements OnInit {
   public title = 'Battleship';
   public token: string;
 
-  constructor(
-    public accountService: AccountService,
-    private socketService: SocketService
-  ) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.accountService.token.pipe(untilDestroyed(this)).subscribe({
-      next: (token) => {
-        this.token = token;
-      },
-    });
-  }
+  ngOnInit(): void {}
 }

@@ -48,6 +48,15 @@ mongoose.connection.on('connected', async () => {
       // adding relationships for testing purposes
       await admin.addRelationship(user1._id);
       await admin.addRelationship(user2._id);
+
+      // moderator1
+      const user3 = new UserModel({
+        email: 'moderator1@battleship.it',
+        username: 'moderator1',
+      });
+      await user3.setPassword('moderator');
+      await user3.setRole(UserRoles.Standard);
+      await user3.setRole(UserRoles.Moderator);
     }
     console.log(`${strColor}: Mongoose connection open to mongodb://${dbURI}`);
   } catch (err) {
