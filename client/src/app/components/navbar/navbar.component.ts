@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -6,5 +7,8 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    public accountService: AccountService
+  ) {}
 }

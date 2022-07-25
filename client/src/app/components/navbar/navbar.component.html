@@ -50,6 +50,17 @@
             </button>
           </li>
           <li>
+            <button
+              class="dropdown-item"
+              *ngIf="
+                this.accountService.isModerator() ||
+                this.accountService.isAdmin()
+              "
+            >
+              <i class="fas fa-hammer me-3"></i>Moderator dashboard
+            </button>
+          </li>
+          <li>
             <hr class="dropdown-divider" />
           </li>
           <li>

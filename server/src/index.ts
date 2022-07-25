@@ -24,8 +24,6 @@ declare module 'socket.io' {
   }
 }
 
-require('./models/User');
-
 // Setup db connection and establish connection
 require('./config/db');
 
@@ -50,30 +48,24 @@ app.use(
 app.use(cors());
 
 // Register routes
-app.use(require('./routes/auth-routes'));
-app.use(require('./routes/moderator-routes'));
-app.use(require('./routes/user-routes'));
-app.use(require('./routes/relationship-routes'));
-app.use(require('./routes/notification-routes'));
-app.use(require('./routes/chat-routes'));
-
 registerRoutes(app);
 
 // Http server creation
 export const httpServer: http.Server = http.createServer(app);
 
-// Io server creation
+// Socket server creation
 export const ioServer: io.Server = new io.Server(httpServer, {
   cors: { origin: `http://localhost:4200` },
 });
 
-// ioServer configuration
+// Socket server configuration
 ioServer.use((client, next) => {
   const userId = client.handshake.auth.userId;
   client.userId = userId;
   next();
 });
 
+// Socket server events
 ioServer.on('connection', (client: io.Socket) => {
   /**
    *
