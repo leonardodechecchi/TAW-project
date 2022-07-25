@@ -62,7 +62,7 @@ registerRoutes(app);
 export const httpServer: http.Server = http.createServer(app);
 
 // Io server creation
-const ioServer: io.Server = new io.Server(httpServer, {
+export const ioServer: io.Server = new io.Server(httpServer, {
   cors: { origin: `http://localhost:4200` },
 });
 

@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
 import { Message } from 'src/app/models/Message';
 import { AccountService } from 'src/app/services/account.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -38,6 +37,7 @@ export class ChatComponent implements OnInit {
           .pipe(untilDestroyed(this))
           .subscribe({
             next: (message) => {
+              // avoid to GET messages again
               this.messages.push(message);
             },
           });

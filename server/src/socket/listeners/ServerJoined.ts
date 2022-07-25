@@ -7,7 +7,7 @@ export class ServerJoined extends Listener<{}> {
     super(client, 'server-joined');
   }
 
-  listen() {
+  public listen() {
     super.listen(() => {
       this.client.join(this.client.userId);
       console.log(`[${colors.blue('socket')}]: client ${this.client.userId} connected`);

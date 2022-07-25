@@ -1,8 +1,9 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth } from '..';
+import { auth, ioServer } from '..';
 import { getChatById, deleteChatById, ChatDocument } from '../models/Chat';
 import { Message } from '../models/Message';
+import { ChatMessageEmitter } from '../socket/emitters/ChatMessage';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -48,7 +49,6 @@ router.post(
     next
   ) => {
     try {
-      console.log(req.body);
       const chatId: Types.ObjectId = retrieveId(req.params.chatId);
       const chat: ChatDocument = await getChatById(chatId);
       const { author, content, date } = req.body;
@@ -61,6 +61,8 @@ router.post(
       await chat.addMessage(message);
 
       // SOCKET
+      const chatMessageEmitter = new ChatMessageEmitter(ioServer, chat._id.toString());
+      chatMessageEmitter.emit(message);
 
       return res.status(200).json(message);
     } catch (err) {

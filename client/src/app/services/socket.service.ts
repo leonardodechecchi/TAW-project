@@ -14,6 +14,7 @@ export class SocketService implements OnInit, OnDestroy {
   // why it works only inside the constructor?
   constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
+    console.log('calling constructor from socket service ' + userId);
     this.socket = io(environment.base_endpoint, { auth: { userId } });
     if (this.socket) console.log('socket connected');
     this.socket.emit('server-joined');
@@ -39,7 +40,7 @@ export class SocketService implements OnInit, OnDestroy {
   connectChatMessages(chatId: string) {
     return new Observable<Message>((subscriber: Subscriber<Message>) => {
       this.socket.emit('chat-joined', chatId);
-      this.socket.on('new-message', (message: Message) => {
+      this.socket.on('chat-message', (message: Message) => {
         subscriber.next(message);
       });
       return () => {

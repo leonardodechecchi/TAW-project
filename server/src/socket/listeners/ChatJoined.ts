@@ -7,7 +7,7 @@ export class ChatJoinedListener extends Listener<string> {
     super(client, 'chat-joined');
   }
 
-  listen() {
+  public listen() {
     super.listen((chatId) => {
       this.client.join(chatId);
       console.log(`[${colors.blue('socket')}]: client ${this.client.userId} joined room ${chatId}`);
