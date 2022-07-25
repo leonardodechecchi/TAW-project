@@ -38,6 +38,7 @@ import { NotificationListComponent } from './components/notification-list/notifi
 import { ChatComponent } from './components/chat/chat.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
 import { ModalComponent } from './components/modal/modal.component';
+import { BackNavbarComponent } from './components/back-navbar/back-navbar.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -84,6 +85,7 @@ const routes: Routes = [
     FriendListComponent,
     NotificationListComponent,
     ModalComponent,
+    BackNavbarComponent,
   ],
   imports: [
     BrowserModule,

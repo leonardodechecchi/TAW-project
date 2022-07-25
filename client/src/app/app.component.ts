@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { AccountService } from './services/account.service';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { SocketService } from './services/socket.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
-@UntilDestroy()
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   public title = 'Battleship';
   public token: string;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
-  ngOnInit(): void {}
+  /**
+   * Check if the router url contains the specified route
+   *
+   * @param {string} regexp
+   * @returns
+   * @memberof BackNavbarComponent
+   */
+  hasRoute(regexp: string): boolean {
+    return !!this.router.url.match(regexp);
+  }
 }
