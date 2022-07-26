@@ -43,7 +43,9 @@ router.post(
 
       const user: UserDocument = await getUserById(userId);
       await user.addRelationship(friendId);
-      return res.sendStatus(200);
+
+      const relationships: UserRelationships = await getUserRelationships(userId);
+      return res.status(200).json(relationships);
     } catch (err) {
       next(err);
     }

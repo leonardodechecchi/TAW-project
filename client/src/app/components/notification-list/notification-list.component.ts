@@ -38,26 +38,31 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
-  // TODO
-  public acceptFriendRequest(friendId: string) {
+  // OK
+  private deleteNotification(
+    notification: { senderId: string; type: string },
+    error?: (err: any) => void
+  ): void {
     const userId: string = this.accountService.getId();
-    this.userService.createRelationship(userId, friendId).subscribe({
-      error: (err) => {
-        console.error(err.error);
-      },
-    });
-  }
-
-  public rejectFriendRequest(senderId: string, type: NotificationType) {
-    const userId: string = this.accountService.getId();
-    this.userService.deleteNotification(userId, { senderId, type }).subscribe({
+    this.userService.deleteNotification(userId, notification).subscribe({
       next: (notifications) => {
         this.userService.updateNotifications(notifications);
       },
-      error: (err) => {
-        console.error(err.error);
-      },
+      error,
     });
+  }
+
+  // OK
+  public acceptFriendRequest(senderId: string, type: NotificationType) {
+    this.deleteNotification({ senderId, type });
+
+    const userId: string = this.accountService.getId();
+    this.userService.createRelationship(userId, senderId).subscribe();
+  }
+
+  // OK
+  public rejectFriendRequest(senderId: string, type: NotificationType) {
+    this.deleteNotification({ senderId, type });
   }
 
   // TODO

@@ -178,7 +178,7 @@ export class UserService {
    */
   deleteNotification(
     userId: string,
-    notification: { senderId: string; type: NotificationType }
+    notification: { senderId: string; type: string }
   ): Observable<Notification[]> {
     const params = new HttpParams()
       .set('senderId', notification.senderId)
