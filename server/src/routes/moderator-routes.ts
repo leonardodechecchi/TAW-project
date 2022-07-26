@@ -2,11 +2,36 @@ import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
 import { StatusError } from '../models/StatusError';
-import { createUser, deleteUserById, getUserById, UserDocument, UserRoles } from '../models/User';
+import {
+  createUser,
+  deleteUserById,
+  getUserById,
+  UserDocument,
+  UserModel,
+  UserRoles,
+} from '../models/User';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
+
+/**
+ * GET /users
+ */
+router.get('/moderators/:moderatorId/users', auth, async (req, res, next) => {
+  try {
+    const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
+    const moderator: UserDocument = await getUserById(moderatorId);
+
+    if (moderator.isAdmin() || moderator.isModerator()) {
+      const users: UserDocument[] = await UserModel.find({ _id: { $nin: moderatorId } }).exec();
+      return res.status(200).json(users);
+    }
+    return next(new StatusError(401, 'Unauthorized'));
+  } catch (err) {
+    next(err);
+  }
+});
 
 /**
  * POST /moderators/:moderatorId/users
