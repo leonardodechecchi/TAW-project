@@ -36,48 +36,53 @@ import { AuthInterceptor } from './helpers/auth.interceptor';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
 import { ChatComponent } from './components/chat/chat.component';
-import { ModeratorGuardService } from './services/moderator-guard.service';
+import { FirstLoginGuardService } from './services/first-login-guard.service';
 import { ModalComponent } from './components/modal/modal.component';
 import { BackNavbarComponent } from './components/back-navbar/back-navbar.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { ModeratorGuardService } from './services/moderator-guard.service';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'friends',
     component: FriendListComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'chats',
     component: ChatListComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'chats/:id',
     component: ChatComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'admin-dashboard',
     component: AdminDashboardComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      ModeratorGuardService,
+    ],
   },
   {
     path: 'notifications',
     component: NotificationListComponent,
-    canActivate: [AuthGuardService, ModeratorGuardService],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   { path: 'update-password', component: UpdatePasswordComponent },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
