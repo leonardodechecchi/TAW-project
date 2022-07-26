@@ -23,6 +23,14 @@ export class AccountService {
   }
 
   /**
+   * Reuturn the token saved in the local storage.
+   * @returns the token
+   */
+  getToken(): string {
+    return this.localStorageService.get('token');
+  }
+
+  /**
    * Set and decode the given token.
    * If the given token is invalid, the user must log in again.
    * @param token the token to set

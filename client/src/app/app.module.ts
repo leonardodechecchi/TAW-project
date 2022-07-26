@@ -70,6 +70,11 @@ const routes: Routes = [
     canActivate: [AuthGuardService, ModeratorGuardService],
   },
   {
+    path: 'admin-dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuardService, ModeratorGuardService],
+  },
+  {
     path: 'notifications',
     component: NotificationListComponent,
     canActivate: [AuthGuardService, ModeratorGuardService],

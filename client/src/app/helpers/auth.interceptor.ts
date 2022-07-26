@@ -11,14 +11,13 @@ import { AccountService } from '../services/account.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor(private accountService: AccountService) {}
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token') || '';
+    const token: string = this.accountService.getToken();
     req = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
     });
