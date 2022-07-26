@@ -26,7 +26,6 @@ export class UserService {
 
     this.getNotifications(userId).subscribe({
       next: (notifications) => {
-        console.log('from user service ' + notifications);
         this.notificationsSubject.next(notifications);
       },
     });
@@ -41,15 +40,14 @@ export class UserService {
   }
 
   /**
-   *
-   * @param notifications
+   * Update the notification list and send it to all subscribers.
+   * @param notifications the new notifications
    */
   updateNotifications(notifications: Notification[]): void {
     this.notificationsSubject.next(notifications);
   }
 
   /**
-   * `GET` method.
    * Retrieve the user who match `userId`
    * @param userId the user id
    * @returns an Observable of `User`, i.e. the user found
@@ -59,7 +57,6 @@ export class UserService {
   }
 
   /**
-   * `GET` method.
    * Retrieve the user who match `username`.
    * @param username the user username
    * @returns an Observable of `User`, i.e. the user found
@@ -70,7 +67,6 @@ export class UserService {
   }
 
   /**
-   * `PUT` method.
    * Update the user password.
    * @param userId the user id
    * @param password the new password
@@ -85,7 +81,6 @@ export class UserService {
   }
 
   /**
-   * `PUT` method.
    * Update the user stats.
    * @param userId the user id
    * @param stats the new stats
@@ -100,7 +95,6 @@ export class UserService {
   }
 
   /**
-   * `GET` method.
    * Retrieve the user relationships.
    * @param userId the user id
    * @returns an `Observable` of `Relationship[]`, i.e. the user relationships
@@ -112,7 +106,6 @@ export class UserService {
   }
 
   /**
-   * `POST` method.
    * Create a relationship between the two users.
    * @param userId the user id
    * @param friendId the friend id
@@ -127,7 +120,6 @@ export class UserService {
   }
 
   /**
-   * `DELETE` method.
    * Delete the relationship between the two users.
    * @param userId the user id
    * @param friendId the friend id
@@ -143,7 +135,6 @@ export class UserService {
   }
 
   /**
-   * `GET` method.
    * Retrieve the user notifications.
    * @param userId the user id
    * @returns an `Observable` of `Notification[]`, i.e. the user notifications
@@ -155,10 +146,10 @@ export class UserService {
   }
 
   /**
-   *
-   * @param recipientId
-   * @param notification
-   * @returns
+   * Post a notification to the specified user.
+   * @param recipientId the recipient id
+   * @param notification the notification to send
+   * @returns an empty Observable
    */
   postNotification(
     recipientId: string,
@@ -171,10 +162,11 @@ export class UserService {
   }
 
   /**
-   *
-   * @param userId
-   * @param notification
-   * @returns
+   * Delete the notification for the specified user.
+   * @param userId the user id
+   * @param notification the notification to delete
+   * @returns an Observable of `Notification[]`, i.e. the user notifications
+   * updated
    */
   deleteNotification(
     userId: string,
