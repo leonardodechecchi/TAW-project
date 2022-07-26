@@ -39,6 +39,8 @@ import { ChatComponent } from './components/chat/chat.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
 import { ModalComponent } from './components/modal/modal.component';
 import { BackNavbarComponent } from './components/back-navbar/back-navbar.component';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -60,6 +62,11 @@ const routes: Routes = [
   {
     path: 'chats/:id',
     component: ChatComponent,
+    canActivate: [AuthGuardService, ModeratorGuardService],
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
     canActivate: [AuthGuardService, ModeratorGuardService],
   },
   {
@@ -86,6 +93,8 @@ const routes: Routes = [
     NotificationListComponent,
     ModalComponent,
     BackNavbarComponent,
+    AdminDashboardComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

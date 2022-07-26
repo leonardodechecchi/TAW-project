@@ -1,0 +1,82 @@
+<div class="card mt-3">
+  <div class="card-header">Edit profile</div>
+  <div class="card-body">
+    <div class="text-center">
+      <img
+        src="https://mdbootstrap.com/img/Photos/Others/placeholder1.webp"
+        alt="Generic placeholder image"
+        class="rounded-circle"
+      />
+    </div>
+
+    <!-- Profile form -->
+    <form [formGroup]="profileForm">
+      <div class="d-grid gap-3 mt-3">
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="text"
+            id="username"
+            class="form-control"
+            formControlName="username"
+          />
+          <label mdbLabel class="form-label" for="username">Username</label>
+        </mdb-form-control>
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="text"
+            id="email"
+            class="form-control"
+            formControlName="email"
+            [readonly]="true"
+          />
+          <label mdbLabel class="form-label" for="email">Email</label>
+        </mdb-form-control>
+        <button mdbRipple class="btn btn-primary" (click)="updateProfile()">
+          Update profile
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header">Update password</div>
+  <div class="card-body">
+    <!-- Password form -->
+    <form [formGroup]="passwordForm">
+      <div class="d-grid gap-3">
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="password"
+            id="newPassword"
+            class="form-control"
+            formControlName="newPassword"
+            required
+          />
+          <label mdbLabel class="form-label" for="newPassword"
+            >New password</label
+          >
+        </mdb-form-control>
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="password"
+            id="repeatPassword"
+            class="form-control"
+            formControlName="repeatPassword"
+            required
+          />
+          <label mdbLabel class="form-label" for="repeatPassword"
+            >Repeat password</label
+          >
+        </mdb-form-control>
+        <button mdbRipple class="btn btn-primary" (click)="updatePassword()">
+          Update password
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
