@@ -58,6 +58,7 @@ export class FriendListComponent implements OnInit {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
       next: (user) => {
         this.searchField.setValue('');
+        // ???
         this.userFound =
           user.username === this.accountService.getUsername() ? null : user;
       },
@@ -68,6 +69,7 @@ export class FriendListComponent implements OnInit {
     });
   }
 
+  // OK
   addFriend() {
     const senderId: string = this.accountService.getId();
     const type: NotificationType = NotificationType.FriendRequest;

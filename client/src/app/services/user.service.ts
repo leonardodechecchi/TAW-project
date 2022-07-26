@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User, UserStats } from '../models/User';
@@ -11,7 +11,7 @@ import { SocketService } from './socket.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UserService implements OnInit {
+export class UserService {
   private notificationsSubject: BehaviorSubject<Notification[]>;
   public notifications: Observable<Notification[]>;
 
@@ -20,31 +20,32 @@ export class UserService implements OnInit {
     private accountService: AccountService,
     private socketService: SocketService
   ) {
+    const userId: string = this.accountService.getId();
     this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
     this.notifications = this.notificationsSubject.asObservable();
 
-    // SOCKET NOTIFICATIONS
-    this.socketService.connectUserNotifications().subscribe({
-      next: (notification) => {
-        let notifications: Notification[] = this.notificationsSubject.value;
-        notifications.push(notification);
-        this.notificationsSubject.next(notifications);
-      },
-    });
-  }
-
-  ngOnInit(): void {
-    const userId: string = this.accountService.getId();
     this.getNotifications(userId).subscribe({
       next: (notifications) => {
+        console.log('from user service ' + notifications);
         this.notificationsSubject.next(notifications);
+      },
+    });
+
+    // socket notifications
+    this.socketService.connectUserNotifications().subscribe({
+      next: (notification) => {
+        this.notificationsSubject.value.push(notification);
+        this.updateNotifications(this.notificationsSubject.value);
       },
     });
   }
 
-  updateNotifications(notification: Notification) {
-    this.notificationsSubject.value.push(notification);
-    this.notificationsSubject.next(this.notificationsSubject.value);
+  /**
+   *
+   * @param notifications
+   */
+  updateNotifications(notifications: Notification[]): void {
+    this.notificationsSubject.next(notifications);
   }
 
   /**
@@ -178,11 +179,11 @@ export class UserService implements OnInit {
   deleteNotification(
     userId: string,
     notification: { senderId: string; type: NotificationType }
-  ): Observable<void> {
+  ): Observable<Notification[]> {
     const params = new HttpParams()
       .set('senderId', notification.senderId)
       .set('type', notification.type);
-    return this.http.delete<void>(
+    return this.http.delete<Notification[]>(
       `${environment.user_endpoint}/${userId}/notifications`,
       { params }
     );

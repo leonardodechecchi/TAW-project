@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Notification } from 'src/app/models/Notification';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 
+@UntilDestroy()
 @Component({
   selector: 'navbar',
   templateUrl: './navbar.component.html',
@@ -20,17 +22,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.populateNotificationList();
-    this.userService.notifications.subscribe({
-      next: (notifications) => {
-        this.notifications = notifications;
-      },
-    });
-  }
-
-  private populateNotificationList(): void {
-    const userId: string = this.accountService.getId();
-    this.userService.getNotifications(userId).subscribe({
+    this.userService.notifications.pipe(untilDestroyed(this)).subscribe({
       next: (notifications) => {
         this.notifications = notifications;
       },

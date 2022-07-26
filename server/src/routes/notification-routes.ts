@@ -71,7 +71,9 @@ router.delete(
 
       const user: UserDocument = await getUserById(userId);
       await user.deleteNotification(senderId, type);
-      return res.status(200).json({});
+
+      const notifications: UserNotifications = await getUserNotifications(userId);
+      return res.status(200).json(notifications);
     } catch (err) {
       next(err);
     }
