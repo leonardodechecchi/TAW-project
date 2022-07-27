@@ -1,6 +1,15 @@
+import { Types } from 'mongoose';
 import { Server } from 'socket.io';
-import { Notification } from '../../models/Notification';
+import { NotificationType } from '../../models/Notification';
 import { RoomEmitter } from './RoomEmitter';
+
+interface Notification {
+  senderId: {
+    _id: Types.ObjectId;
+    username: string;
+  };
+  type: NotificationType;
+}
 
 export class NotificationEmitter extends RoomEmitter<Notification> {
   /**

@@ -39,11 +39,12 @@ router.post(
         NotificationType[req.body.type as keyof typeof NotificationType];
 
       const user: UserDocument = await getUserById(userId);
+      const sender: UserDocument = await getUserById(senderId);
       await user.addNotification(senderId, type);
 
       // SOCKET
       const notificationEmitter = new NotificationEmitter(ioServer, user._id.toString());
-      notificationEmitter.emit({ senderId, type });
+      notificationEmitter.emit({ senderId: { _id: senderId, username: sender.username }, type });
 
       return res.status(200).json({ senderId, type });
     } catch (err) {
