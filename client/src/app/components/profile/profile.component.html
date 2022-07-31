@@ -3,14 +3,27 @@
   <div class="card-body">
     <div class="text-center">
       <img
-        src="https://mdbootstrap.com/img/Photos/Others/placeholder1.webp"
-        alt="Generic placeholder image"
-        class="rounded-circle"
+        class="rounded-circle hover-shadow"
+        [src]="imageData"
+        [alt]="alt"
+        (click)="selectPicture()"
       />
+      <h3 class="mt-3">{{ accountService.getUsername() }}</h3>
     </div>
 
     <!-- Profile form -->
-    <form [formGroup]="profileForm">
+    <form [formGroup]="profileForm" enctype="multipart/form-data">
+      <input
+        type="file"
+        style="display: none"
+        name="image"
+        class="form-control"
+        id="updateProfilePicture"
+        aria-describedby="updateProfilePicture"
+        aria-label="Upload"
+        (change)="onFileSelect($event)"
+      />
+
       <div class="d-grid gap-3 mt-3">
         <mdb-form-control>
           <input
@@ -41,10 +54,10 @@
   </div>
 </div>
 
+<!-- Update password -->
 <div class="card mt-3">
   <div class="card-header"><strong>Update password</strong></div>
   <div class="card-body">
-    <!-- Password form -->
     <form [formGroup]="passwordForm">
       <div class="d-grid gap-3">
         <mdb-form-control>

@@ -38,6 +38,18 @@ export class SocketService implements OnDestroy {
   }
 
   /**
+   *
+   * @returns
+   */
+  connectFriendOnline(): Observable<void> {
+    return new Observable<void>((subscriber: Subscriber<void>) => {
+      this.socket.on('friend-online', () => {
+        subscriber.next();
+      });
+    });
+  }
+
+  /**
    * Connect to chat messages socket service.
    * @param chatId the chat id
    * @returns an Observable of `Message`

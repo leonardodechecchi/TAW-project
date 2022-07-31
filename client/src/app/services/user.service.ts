@@ -15,18 +15,35 @@ export class UserService {
   private notificationsSubject: BehaviorSubject<Notification[]>;
   public notifications: Observable<Notification[]>;
 
+  private relationshipsSubject: BehaviorSubject<Relationship[]>;
+  public relationships: Observable<Relationship[]>;
+
   constructor(
     private http: HttpClient,
     private accountService: AccountService,
     private socketService: SocketService
   ) {
     const userId: string = this.accountService.getId();
+
+    //
     this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
     this.notifications = this.notificationsSubject.asObservable();
 
+    //
+    this.relationshipsSubject = new BehaviorSubject<Relationship[]>([]);
+    this.relationships = this.relationshipsSubject.asObservable();
+
+    //
     this.getNotifications(userId).subscribe({
       next: (notifications) => {
         this.notificationsSubject.next(notifications);
+      },
+    });
+
+    //
+    this.getRelationships(userId).subscribe({
+      next: (relationships) => {
+        this.relationshipsSubject.next(relationships);
       },
     });
 
@@ -37,6 +54,17 @@ export class UserService {
         this.updateNotifications(this.notificationsSubject.value);
       },
     });
+
+    // friend online service
+    this.socketService.connectFriendOnline().subscribe({
+      next: () => {
+        this.getRelationships(userId).subscribe({
+          next: (relationships) => {
+            this.updateRelationships(relationships);
+          },
+        });
+      },
+    });
   }
 
   /**
@@ -45,6 +73,14 @@ export class UserService {
    */
   updateNotifications(notifications: Notification[]): void {
     this.notificationsSubject.next(notifications);
+  }
+
+  /**
+   *
+   * @param relationships
+   */
+  updateRelationships(relationships: Relationship[]): void {
+    this.relationshipsSubject.next(relationships);
   }
 
   /**
@@ -77,6 +113,19 @@ export class UserService {
     return this.http.put<void>(
       `${environment.user_endpoint}/${userId}/password`,
       body
+    );
+  }
+
+  /**
+   * Update a new profile picture.
+   * @param userId the user id
+   * @param formData
+   * @returns an empty Observable
+   */
+  uploadPicture(userId: string, formData: FormData): Observable<void> {
+    return this.http.put<void>(
+      `${environment.user_endpoint}/${userId}/picture`,
+      formData
     );
   }
 

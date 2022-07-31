@@ -1,7 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth } from '..';
-import { getUserById, getUserByUsername, User, UserDocument } from '../models/User';
+import { auth, storage } from '..';
+import { getUserById, getUserByUsername, UserDocument } from '../models/User';
 import { UserStats } from '../models/UserStats';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
@@ -50,6 +50,25 @@ router.put(
     }
   }
 );
+
+/**
+ *
+ */
+router.put('/users/:userId/picture', storage, async (req, res, next) => {
+  try {
+    const userId: Types.ObjectId = retrieveId(req.params.userId);
+    const imagePath = 'http://localhost:8000/images/' + req.file?.filename;
+
+    console.log('yeahh');
+
+    const user: UserDocument = await getUserById(userId);
+    await user.updateProfilePicture(imagePath);
+
+    return res.status(200).json({});
+  } catch (err) {
+    next(err);
+  }
+});
 
 /**
  * PUT /users/:userId/stats

@@ -6,6 +6,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
+import multer from 'multer';
+import path from 'path';
 import { registerRoutes } from './utils/register-routes';
 import { ChatJoinedListener } from './socket/listeners/ChatJoined';
 import { ServerJoined } from './socket/listeners/ServerJoined';
@@ -46,6 +48,27 @@ app.use(
   )
 );
 app.use(cors());
+app.use('/images', express.static(path.join(__dirname, '../images')));
+
+// Picture upload config
+const diskStorage: multer.Options['storage'] = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './images');
+  },
+  filename: (req, file, cb) => {
+    const mimeType = file.mimetype.split('/');
+    const fileType = mimeType[1];
+    const fileName = file.originalname + '.' + fileType;
+    cb(null, fileName);
+  },
+});
+
+const fileFilter: multer.Options['fileFilter'] = (req, file, cb) => {
+  const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+  allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(null, false);
+};
+
+export const storage = multer({ storage: diskStorage, fileFilter: fileFilter }).single('image');
 
 // Register routes
 registerRoutes(app);

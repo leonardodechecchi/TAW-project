@@ -2,6 +2,8 @@ import Router, { Request } from 'express';
 import { createUser, getUserByEmail } from '../models/User';
 import { StatusError } from '../models/StatusError';
 import { issueJwt } from '../utils/issue-jwt';
+import { FriendOnlineEmitter } from '../socket/emitters/FriendOnline';
+import { ioServer } from '..';
 
 const router = Router();
 
@@ -19,6 +21,11 @@ router.post(
         return next(new StatusError(401, 'Invalid username or password'));
       }
       await user.setOnlineStatus(true);
+
+      user.relationships.map((relationship) => {
+        new FriendOnlineEmitter(ioServer, relationship.friendId.toString()).emit();
+      });
+
       const token = issueJwt(user);
       return res.status(200).json(token);
     } catch (err) {

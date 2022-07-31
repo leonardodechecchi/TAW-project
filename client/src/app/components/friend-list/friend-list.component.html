@@ -59,12 +59,7 @@
   <div class="card mt-3" (click)="openModal(relationship)">
     <div class="card-body">
       <div class="d-flex align-items-center">
-        <img
-          src="https://mdbootstrap.com/img/Photos/Others/placeholder1.webp"
-          alt="Generic placeholder image"
-          class="rounded-circle"
-        />
-        <div class="flex-column ms-3">
+        <div class="flex-column">
           <h5>{{ relationship.friendId.username }}</h5>
           <p class="card-text" *ngIf="relationship.friendId.online">online</p>
           <p class="card-text" *ngIf="!relationship.friendId.online">offline</p>

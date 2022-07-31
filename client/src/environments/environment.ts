@@ -9,6 +9,7 @@ export const environment = {
   user_endpoint: 'http://localhost:8000/users',
   moderator_endpoint: 'http://localhost:8000/moderators',
   chat_endpoint: 'http://localhost:8000/chats',
+  profile_picture: 'http://localhost:8000/images/default_profile_picture.jpg',
 };
 
 /*

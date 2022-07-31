@@ -35,5 +35,6 @@ export interface User {
   status: UserStatus;
   online: boolean;
   stats: UserStats;
+  imagePath: string;
   roles: UserRoles[];
 }

@@ -17,6 +17,7 @@ export const issueJwt = (user: User): string => {
     email: user.email,
     status: user.status,
     roles: user.roles,
+    imagePath: user.imagePath,
   };
   return jsonwebtoken.sign(payload, privKey, { expiresIn: '30d', algorithm: 'RS256' });
 };

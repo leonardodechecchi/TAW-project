@@ -35,6 +35,7 @@ export interface User {
   roles: string[];
   online: boolean;
   stats: UserStats;
+  imagePath: string;
   relationships: Relationship[];
   notifications: Notification[];
 }
@@ -104,6 +105,12 @@ interface UserProps {
   updateStats: (stats: UserStats) => Promise<UserDocument>;
 
   /**
+   * Update the user profile picture.
+   * @param imagePath the new path
+   */
+  updateProfilePicture: (imagePath: string) => Promise<UserDocument>;
+
+  /**
    * Create a symmetrical relationship between the user and the one given in input.
    * Return an error if the given friend id does not exists.
    * @param {Types.ObjectId} friendId the friend id
@@ -170,6 +177,11 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
   stats: {
     type: userStatsSchema,
     default: () => ({}),
+  },
+  imagePath: {
+    type: SchemaTypes.String,
+    required: true,
+    default: 'http://localhost:8000/images/default_profile_picture.jpg',
   },
   relationships: {
     type: [relationshipSchema],
@@ -255,6 +267,14 @@ userSchema.method(
   'updateStats',
   async function (this: UserDocument, stats: UserStats): Promise<UserDocument> {
     this.stats = stats;
+    return this.save();
+  }
+);
+
+userSchema.method(
+  'updateProfilePicture',
+  async function (this: UserDocument, imagePath: string): Promise<UserDocument> {
+    this.imagePath = imagePath;
     return this.save();
   }
 );

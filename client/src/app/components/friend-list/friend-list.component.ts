@@ -31,6 +31,11 @@ export class FriendListComponent implements OnInit {
   ngOnInit(): void {
     this.searchField = new FormControl('');
     this.populateFriendList();
+    this.userService.relationships.subscribe({
+      next: (relationships) => {
+        this.relationships = relationships;
+      },
+    });
   }
 
   // OK
@@ -54,6 +59,7 @@ export class FriendListComponent implements OnInit {
     });
   }
 
+  // OK
   searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
       next: (user) => {
