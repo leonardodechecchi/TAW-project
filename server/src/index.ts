@@ -14,6 +14,7 @@ import { ServerJoined } from './socket/listeners/ServerJoined';
 import { ChatLeftListener } from './socket/listeners/ChatLeft';
 import { ServerLeft } from './socket/listeners/ServerLeft';
 import { MatchJoinedListener } from './socket/listeners/MatchJoined';
+import { MatchLeftListener } from './socket/listeners/MatchLeft';
 
 dotenv.config();
 colors.enable();
@@ -120,6 +121,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchJoined = new MatchJoinedListener(client);
   matchJoined.listen();
+
+  /**
+   *
+   */
+  const matchLeft = new MatchLeftListener(client);
+  matchLeft.listen();
 });
 
 // Finally start http server
