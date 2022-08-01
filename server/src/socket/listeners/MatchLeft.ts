@@ -4,14 +4,14 @@ import { Listener } from './Listener';
 /**
  *
  */
-export class ChatJoinedListener extends Listener<string> {
+export class MatchLeftListener extends Listener<string> {
   constructor(client: Socket) {
-    super(client, 'chat-joined');
+    super(client, 'match-left');
   }
 
   public listen() {
-    super.listen((chatId) => {
-      this.client.join(chatId);
+    super.listen((matchId) => {
+      this.client.leave(matchId);
     });
   }
 }

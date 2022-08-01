@@ -13,6 +13,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ModalComponent {
   public relationship: Relationship;
+  public matchLoading: boolean;
 
   constructor(
     public modalRef: MdbModalRef<ModalComponent>,
@@ -20,7 +21,9 @@ export class ModalComponent {
     private userService: UserService,
     private relationshipService: RelationshipService,
     private router: Router
-  ) {}
+  ) {
+    this.matchLoading = false;
+  }
 
   public match(): void {
     const userId: string = this.accountService.getId();
@@ -30,7 +33,8 @@ export class ModalComponent {
     this.userService
       .postNotification(recipientId, { senderId: userId, type })
       .subscribe();
-    this.modalRef.close();
+
+    this.modalRef.close((this.matchLoading = true));
   }
 
   // OK
@@ -46,10 +50,10 @@ export class ModalComponent {
         .subscribe({
           next: (chat) => {
             this.router.navigate(['/chats', chat._id]);
+            this.modalRef.close();
           },
         });
     }
-    this.modalRef.close();
   }
 
   // OK

@@ -6,6 +6,7 @@ import { Notification, NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { User } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -16,31 +17,41 @@ import { ModalComponent } from '../modal/modal.component';
 export class FriendListComponent implements OnInit {
   public relationships: Relationship[];
   public searchField: FormControl;
-  public userFound: User;
-  private modalRef: MdbModalRef<ModalComponent>;
+  public userFound: User | null;
   public basicCollapse: MdbCollapseDirective;
+  private modalRef: MdbModalRef<ModalComponent> | null;
+  public matchLoading: boolean;
 
   constructor(
     private accountService: AccountService,
     private userService: UserService,
-    private modalService: MdbModalService
+    private modalService: MdbModalService,
+    private socketService: SocketService
   ) {
     this.relationships = [];
+    this.searchField = new FormControl('');
+    this.userFound = null;
+    this.matchLoading = false;
   }
 
   ngOnInit(): void {
-    this.searchField = new FormControl('');
     this.populateFriendList();
+
     this.userService.relationships.subscribe({
       next: (relationships) => {
         this.relationships = relationships;
       },
+    });
+
+    this.socketService.on('reject-match-request', () => {
+      this.matchLoading = false;
     });
   }
 
   // OK
   private populateFriendList(): void {
     const userId: string = this.accountService.getId();
+
     this.userService.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationships = relationships;
@@ -54,22 +65,19 @@ export class FriendListComponent implements OnInit {
       data: { relationship },
       modalClass: 'modal-fullscreen-sm-down',
     });
-    this.modalRef.onClose.subscribe(() => {
+    this.modalRef.onClose.subscribe((matchLoading: boolean) => {
       this.populateFriendList();
+      if (matchLoading) this.matchLoading = matchLoading;
     });
   }
 
   // OK
   searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
-      next: (user) => {
+      next: () => {
         this.searchField.setValue('');
-        // ???
-        this.userFound =
-          user.username === this.accountService.getUsername() ? null : user;
       },
-      error: (err) => {
-        console.error(err.error);
+      error: () => {
         this.userFound = null;
       },
     });
@@ -79,6 +87,7 @@ export class FriendListComponent implements OnInit {
   addFriend() {
     const senderId: string = this.accountService.getId();
     const type: NotificationType = NotificationType.FriendRequest;
+
     this.userService
       .postNotification(this.userFound.userId, {
         senderId,

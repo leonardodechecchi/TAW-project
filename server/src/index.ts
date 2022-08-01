@@ -13,6 +13,7 @@ import { ChatJoinedListener } from './socket/listeners/ChatJoined';
 import { ServerJoined } from './socket/listeners/ServerJoined';
 import { ChatLeftListener } from './socket/listeners/ChatLeft';
 import { ServerLeft } from './socket/listeners/ServerLeft';
+import { MatchJoinedListener } from './socket/listeners/MatchJoined';
 
 dotenv.config();
 colors.enable();
@@ -113,6 +114,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const chatLeft = new ChatLeftListener(client);
   chatLeft.listen();
+
+  /**
+   *
+   */
+  const matchJoined = new MatchJoinedListener(client);
+  matchJoined.listen();
 });
 
 // Finally start http server

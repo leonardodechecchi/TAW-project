@@ -65,4 +65,22 @@ export class SocketService implements OnDestroy {
       };
     });
   }
+
+  /**
+   *
+   * @param eventName
+   * @param data
+   */
+  public emit<T>(eventName: string, data?: T): void {
+    this.socket.emit(eventName, data);
+  }
+
+  /**
+   *
+   * @param eventName
+   * @param listener
+   */
+  public on<T>(eventName: string, listener: (data?: T) => void): void {
+    this.socket.on(eventName, listener);
+  }
 }

@@ -23,7 +23,9 @@
           </button>
           <button
             class="btn btn-danger flex-fill"
-            (click)="reject(notification.senderId._id, notification.type)"
+            (click)="
+              rejectFriendRequest(notification.senderId._id, notification.type)
+            "
           >
             Reject
           </button>
@@ -47,7 +49,9 @@
           </button>
           <button
             class="btn btn-danger flex-fill"
-            (click)="reject(notification.senderId._id, notification.type)"
+            (click)="
+              rejectMatchRequest(notification.senderId._id, notification.type)
+            "
           >
             Reject
           </button>

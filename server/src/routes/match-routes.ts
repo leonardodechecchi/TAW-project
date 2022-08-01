@@ -17,7 +17,9 @@ router.post(
     try {
       const { username1, username2 } = req.body;
       const match: MatchDocument = await createMatch(username1, username2);
+
       // TODO emit message that the opponent accepted the match
+
       return res.status(200).json(match);
     } catch (err) {
       next(err);

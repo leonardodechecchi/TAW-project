@@ -1,70 +1,88 @@
-<div class="card mt-3">
-  <div class="card-body">
-    <div class="d-flex">
-      <mdb-form-control class="flex-grow-1">
-        <input
-          mdbInput
-          [formControl]="searchField"
-          id="textArea"
-          class="form-control"
-          rows="1"
-          (input)="basicCollapse.hide()"
-        />
-        <label mdbLabel class="form-label" for="textArea"
-          >Enter a username</label
-        >
-      </mdb-form-control>
-      <button
-        mdbRipple
-        class="btn btn-primary ms-2"
-        [disabled]="!searchField.value"
-        (click)="basicCollapse.toggle()"
-        [attr.aria-expanded]="!basicCollapse.collapsed"
-        (click)="searchUser()"
-      >
-        Search
-      </button>
-    </div>
-  </div>
-</div>
-
-<div
-  class="card mt-3"
-  id="collapseExample"
-  mdbCollapse
-  #basicCollapse="mdbCollapse"
->
-  <div class="card-body">
-    <p class="card-text" *ngIf="!userFound">User not found</p>
-    <div class="d-flex align-items-center" *ngIf="userFound">
-      <span class="card-text">{{ userFound.username }}</span>
-      <button
-        class="btn btn-success ms-auto"
-        (click)="basicCollapse.toggle()"
-        (click)="addFriend()"
-      >
-        Add
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="card text-center mt-3" *ngIf="relationships.length === 0">
-  <div class="card-body">
-    <p class="card-text">No friends found</p>
-  </div>
-</div>
-
-<div *ngFor="let relationship of relationships">
-  <div class="card mt-3" (click)="openModal(relationship)">
+<div *ngIf="!matchLoading">
+  <!-- Search field -->
+  <div class="card mt-3">
     <div class="card-body">
-      <div class="d-flex align-items-center">
-        <div class="flex-column">
-          <h5>{{ relationship.friendId.username }}</h5>
-          <p class="card-text" *ngIf="relationship.friendId.online">online</p>
-          <p class="card-text" *ngIf="!relationship.friendId.online">offline</p>
+      <div class="d-flex">
+        <mdb-form-control class="flex-grow-1">
+          <input
+            mdbInput
+            [formControl]="searchField"
+            id="textArea"
+            class="form-control"
+            rows="1"
+            (input)="basicCollapse.hide()"
+          />
+          <label mdbLabel class="form-label" for="textArea"
+            >Enter a username</label
+          >
+        </mdb-form-control>
+        <button
+          mdbRipple
+          class="btn btn-primary ms-2"
+          [disabled]="!searchField.value"
+          (click)="basicCollapse.toggle()"
+          [attr.aria-expanded]="!basicCollapse.collapsed"
+          (click)="searchUser()"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search field collapsed -->
+  <div
+    class="card mt-3"
+    id="collapseExample"
+    mdbCollapse
+    #basicCollapse="mdbCollapse"
+  >
+    <div class="card-body">
+      <p class="card-text" *ngIf="!userFound">User not found</p>
+      <div class="d-flex align-items-center" *ngIf="userFound">
+        <span class="card-text">{{ userFound.username }}</span>
+        <button
+          class="btn btn-success ms-auto"
+          (click)="basicCollapse.toggle()"
+          (click)="addFriend()"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No relationships found -->
+  <div class="card text-center mt-3" *ngIf="relationships.length === 0">
+    <div class="card-body">
+      <p class="card-text">No friends found</p>
+    </div>
+  </div>
+
+  <!-- Relationships list -->
+  <div *ngFor="let relationship of relationships">
+    <div class="card mt-3" (click)="openModal(relationship)">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="flex-column">
+            <h5>{{ relationship.friendId.username }}</h5>
+            <p class="card-text" *ngIf="relationship.friendId.online">online</p>
+            <p class="card-text" *ngIf="!relationship.friendId.online">
+              offline
+            </p>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div *ngIf="matchLoading">
+  <div class="d-flex align-items-center flex-column justify-content-center">
+    <div class="spinner-border text-primary mt-2" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <span class="mt-2">Waiting for the opponent...</span>
+    <button class="btn btn-danger mt-2">Cancel</button>
   </div>
 </div>
