@@ -25,22 +25,22 @@ export class UserService {
   ) {
     const userId: string = this.accountService.getId();
 
-    //
+    // create notifications BehaviorSubject
     this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
     this.notifications = this.notificationsSubject.asObservable();
 
-    //
+    // create relationships BehaviorSubject
     this.relationshipsSubject = new BehaviorSubject<Relationship[]>([]);
     this.relationships = this.relationshipsSubject.asObservable();
 
-    //
+    // init notifications
     this.getNotifications(userId).subscribe({
       next: (notifications) => {
         this.notificationsSubject.next(notifications);
       },
     });
 
-    //
+    // init relationships
     this.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationshipsSubject.next(relationships);

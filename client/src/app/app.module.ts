@@ -42,6 +42,7 @@ import { BackNavbarComponent } from './components/back-navbar/back-navbar.compon
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
+import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-opponent.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -105,6 +106,7 @@ const routes: Routes = [
     BackNavbarComponent,
     AdminDashboardComponent,
     ProfileComponent,
+    WaitingOpponentComponent,
   ],
   imports: [
     BrowserModule,
