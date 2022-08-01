@@ -160,9 +160,12 @@ export class UserService {
    * @param friendId the friend id
    * @returns an empty `Observable`
    */
-  createRelationship(userId: string, friendId: string): Observable<void> {
+  createRelationship(
+    userId: string,
+    friendId: string
+  ): Observable<Relationship[]> {
     const body = { friendId };
-    return this.http.post<void>(
+    return this.http.post<Relationship[]>(
       `${environment.user_endpoint}/${userId}/relationships`,
       body
     );

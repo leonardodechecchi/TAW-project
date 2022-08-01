@@ -53,21 +53,26 @@ export class NotificationListComponent implements OnInit {
   }
 
   // OK
-  public acceptFriendRequest(senderId: string, type: NotificationType) {
+  public acceptFriendRequest(senderId: string, type: NotificationType): void {
     this.deleteNotification({ senderId, type });
 
     const userId: string = this.accountService.getId();
-    this.userService.createRelationship(userId, senderId).subscribe();
+    this.userService.createRelationship(userId, senderId).subscribe({
+      next: (relationships) => {
+        this.userService.updateRelationships(relationships);
+      },
+    });
+  }
+
+  // TODO
+  public acceptMatchRequest(senderId: string, type: NotificationType): void {
+    this.deleteNotification({ senderId, type });
+
+    // ...
   }
 
   // OK
-  public rejectFriendRequest(senderId: string, type: NotificationType) {
+  public reject(senderId: string, type: NotificationType): void {
     this.deleteNotification({ senderId, type });
   }
-
-  // TODO
-  public acceptMatchRequest() {}
-
-  // TODO
-  public rejectMatchRequest() {}
 }

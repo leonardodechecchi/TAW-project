@@ -5,6 +5,7 @@
 </div>
 <div *ngFor="let notification of notifications">
   <div class="card mt-3">
+    <!-- Friend Request -->
     <div *ngIf="notification.type === 'FriendRequest'">
       <div class="card-body">
         <h5 class="card-title">Friend request</h5>
@@ -14,15 +15,39 @@
         <div class="d-flex">
           <button
             class="btn btn-success me-2 flex-fill"
-            (click)="acceptFriendRequest(notification.senderId._id)"
+            (click)="
+              acceptFriendRequest(notification.senderId._id, notification.type)
+            "
           >
             Accept
           </button>
           <button
             class="btn btn-danger flex-fill"
-            (click)="
-              rejectFriendRequest(notification.senderId._id, notification.type)
-            "
+            (click)="reject(notification.senderId._id, notification.type)"
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match Request -->
+    <div *ngIf="notification.type === 'MatchRequest'">
+      <div class="card-body">
+        <h5 class="card-title">Match request</h5>
+        <p class="card-text">
+          <i>{{ notification.senderId.username }}</i> sent you a match request!
+        </p>
+        <div class="d-flex">
+          <button
+            class="btn btn-success me-2 flex-fill"
+            (click)="acceptMatchRequest(notification.senderId._id)"
+          >
+            Accept
+          </button>
+          <button
+            class="btn btn-danger flex-fill"
+            (click)="reject(notification.senderId._id, notification.type)"
           >
             Reject
           </button>

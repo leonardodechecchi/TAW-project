@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MdbModalRef } from 'mdb-angular-ui-kit/modal';
+import { NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
 import { RelationshipService } from 'src/app/services/relationship.service';
@@ -21,11 +22,22 @@ export class ModalComponent {
     private router: Router
   ) {}
 
-  public match() {}
+  public match(): void {
+    const userId: string = this.accountService.getId();
+    const recipientId: string = this.relationship.friendId._id;
+    const type: NotificationType = NotificationType.MatchRequest;
 
-  public chat() {
+    this.userService
+      .postNotification(recipientId, { senderId: userId, type })
+      .subscribe();
+    this.modalRef.close();
+  }
+
+  // OK
+  public chat(): void {
     const userId: string = this.accountService.getId();
     const friendId: string = this.relationship.friendId._id;
+
     if (this.relationship.chatId) {
       this.router.navigate(['/chats', this.relationship.chatId]);
     } else {
@@ -40,11 +52,14 @@ export class ModalComponent {
     this.modalRef.close();
   }
 
-  public removeFriend() {
+  // OK
+  public removeFriend(): void {
     const userId: string = this.accountService.getId();
     const friendId: string = this.relationship.friendId._id;
+
     this.userService.deleteRelationship(userId, friendId).subscribe({
-      next: () => {
+      next: (relationships) => {
+        this.userService.updateRelationships(relationships);
         this.modalRef.close();
       },
     });

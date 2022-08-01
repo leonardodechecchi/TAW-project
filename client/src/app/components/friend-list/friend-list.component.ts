@@ -84,10 +84,6 @@ export class FriendListComponent implements OnInit {
         senderId,
         type,
       })
-      .subscribe({
-        error: (err) => {
-          console.error(err.error);
-        },
-      });
+      .subscribe();
   }
 }
