@@ -14,7 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class NavbarComponent implements OnInit {
   public notifications: Notification[];
-  public numFriendsOnline: number;
+  public friendsOnline: number;
 
   constructor(
     public authService: AuthService,
@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit {
     private socketService: SocketService
   ) {
     this.notifications = [];
-    this.numFriendsOnline = 0;
+    this.friendsOnline = 0;
   }
 
   ngOnInit(): void {
@@ -35,9 +35,9 @@ export class NavbarComponent implements OnInit {
 
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
-        this.numFriendsOnline = 0;
+        this.friendsOnline = 0;
         for (let relationship of relationships) {
-          if (relationship.friendId.online) this.numFriendsOnline++;
+          if (relationship.friendId.online) this.friendsOnline++;
         }
       },
     });
