@@ -12,11 +12,10 @@ import { AccountService } from './account.service';
 export class SocketService implements OnDestroy {
   private socket: Socket;
 
-  // why it works only inside the constructor?
   constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
     this.socket = io(environment.base_endpoint, { auth: { userId } });
-    this.socket.emit('server-joined');
+    this.emit('server-joined');
   }
 
   ngOnDestroy(): void {
@@ -24,52 +23,9 @@ export class SocketService implements OnDestroy {
   }
 
   /**
-   * Connect to user notification socket service.
-   * @returns an Observable of `Message`
-   */
-  connectUserNotifications(): Observable<Notification> {
-    return new Observable<Notification>(
-      (subscriber: Subscriber<Notification>) => {
-        this.socket.on('notification', (notification: Notification) => {
-          subscriber.next(notification);
-        });
-      }
-    );
-  }
-
-  /**
    *
-   * @returns
-   */
-  connectFriendOnline(): Observable<void> {
-    return new Observable<void>((subscriber: Subscriber<void>) => {
-      this.socket.on('friend-online', () => {
-        subscriber.next();
-      });
-    });
-  }
-
-  /**
-   * Connect to chat messages socket service.
-   * @param chatId the chat id
-   * @returns an Observable of `Message`
-   */
-  connectChatMessages(chatId: string): Observable<Message> {
-    return new Observable<Message>((subscriber: Subscriber<Message>) => {
-      this.socket.emit('chat-joined', chatId);
-      this.socket.on('chat-message', (message: Message) => {
-        subscriber.next(message);
-      });
-      return () => {
-        this.socket.emit('chat-left', chatId);
-      };
-    });
-  }
-
-  /**
-   *
-   * @param eventName
-   * @param data
+   * @param eventName the event name
+   * @param data the data to send
    */
   public emit<T>(eventName: string, data?: T): void {
     this.socket.emit(eventName, data);
@@ -77,10 +33,53 @@ export class SocketService implements OnDestroy {
 
   /**
    *
-   * @param eventName
-   * @param listener
+   * @param eventName the event name
+   * @param listener the handler
    */
   public on<T>(eventName: string, listener: (data?: T) => void): void {
     this.socket.on(eventName, listener);
+  }
+
+  /**
+   * Connect to user notification socket service.
+   * @returns an Observable of `Message`
+   */
+  notifications(): Observable<Notification> {
+    return new Observable<Notification>(
+      (subscriber: Subscriber<Notification>) => {
+        this.on<Notification>('notification', (notification) => {
+          subscriber.next(notification);
+        });
+      }
+    );
+  }
+
+  /**
+   * Connect to chat messages socket service.
+   * @param chatId the chat id
+   * @returns an Observable of `Message`
+   */
+  chatMessages(chatId: string): Observable<Message> {
+    return new Observable<Message>((subscriber: Subscriber<Message>) => {
+      this.emit<string>('chat-joined', chatId);
+      this.on<Message>('chat-message', (message) => {
+        subscriber.next(message);
+      });
+      return () => {
+        this.emit<string>('chat-left', chatId);
+      };
+    });
+  }
+
+  /**
+   * Connect to friend online socket service.
+   * @returns an Observable of `string`
+   */
+  friendsOnline(): Observable<string> {
+    return new Observable<string>((subscriber: Subscriber<string>) => {
+      this.on<string>('friend-online', (userId) => {
+        subscriber.next(userId);
+      });
+    });
   }
 }
