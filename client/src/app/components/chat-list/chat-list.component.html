@@ -1,20 +1,18 @@
-<div class="card text-center mt-3" *ngIf="relationships.length === 0">
+<div
+  class="card col-md-6 offset-md-3 text-center mt-3"
+  *ngIf="relationships.length === 0"
+>
   <div class="card-body">
     <p class="card-text">No chat found</p>
   </div>
 </div>
 <div *ngFor="let relationship of relationships">
-  <div class="card mt-3">
+  <div class="card col-md-6 offset-md-3 mt-3">
     <div class="card-body" [routerLink]="['/chats', relationship.chatId]">
       <div class="d-flex align-items-center">
-        <img
-          src="https://mdbootstrap.com/img/Photos/Others/placeholder1.webp"
-          alt="Generic placeholder image"
-          class="rounded-circle"
-        />
-        <div class="flex-column ms-3">
+        <div class="flex-column">
           <h5 class="card-title">{{ relationship.friendId.username }}</h5>
-          <p class="card-text">last message</p>
+          <p class="card-text">{{ this.lastMessage }}</p>
         </div>
       </div>
     </div>

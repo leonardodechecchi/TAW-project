@@ -6,7 +6,7 @@
     <ul class="navbar-nav flex-row">
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/friends">
-          <span><i class="fas fa-user-friends fa-fw"></i></span>
+          <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
           <span
             *ngIf="numFriendsOnline > 0"
             class="badge rounded-pill badge-notification bg-success"
@@ -16,12 +16,12 @@
       </li>
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/chats">
-          <span><i class="fas fa-comments fa-fw"></i></span>
+          <span><i class="fas fa-comments fa-lg fa-fw"></i></span>
         </a>
       </li>
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/notifications">
-          <span><i class="fas fa-bell fa-fw"></i></span>
+          <span><i class="fas fa-bell fa-lg fa-fw"></i></span>
           <span
             *ngIf="notifications.length > 0"
             class="badge rounded-pill badge-notification bg-danger"
@@ -65,7 +65,7 @@
             <hr class="dropdown-divider" />
           </li>
           <li>
-            <button class="dropdown-item" (click)="this.authService.logout()">
+            <button class="dropdown-item" (click)="logout()">
               <i class="fas fa-sign-out-alt me-3"></i>Logout
             </button>
           </li>

@@ -48,7 +48,7 @@ export class UserService {
     });
 
     // socket notifications
-    this.socketService.connectUserNotifications().subscribe({
+    this.socketService.notifications().subscribe({
       next: (notification) => {
         this.notificationsSubject.value.push(notification);
         this.updateNotifications(this.notificationsSubject.value);
@@ -56,7 +56,7 @@ export class UserService {
     });
 
     // friend online service
-    this.socketService.connectFriendOnline().subscribe({
+    this.socketService.friendsOnline().subscribe({
       next: () => {
         this.getRelationships(userId).subscribe({
           next: (relationships) => {
@@ -100,6 +100,20 @@ export class UserService {
   getUserByUsername(username: string): Observable<User> {
     const params = new HttpParams().set('username', username);
     return this.http.get<User>(environment.user_endpoint, { params });
+  }
+
+  /**
+   * Update the user username.
+   * @param userId the user id
+   * @param username the username to set
+   * @returns an Observable of `User`, i.e. the user record updated
+   */
+  updateUsername(userId: string, username: string): Observable<User> {
+    const body = { username };
+    return this.http.put<User>(
+      `${environment.user_endpoint}/${userId}/username`,
+      body
+    );
   }
 
   /**

@@ -16,6 +16,9 @@ import { ServerLeft } from './socket/listeners/ServerLeft';
 import { MatchJoinedListener } from './socket/listeners/MatchJoined';
 import { MatchLeftListener } from './socket/listeners/MatchLeft';
 import { MatchRequestRejectedListener } from './socket/listeners/MatchRequestRejected';
+import { getUserById, UserDocument } from './models/User';
+import { Types } from 'mongoose';
+import { retrieveId } from './utils/param-checking';
 
 dotenv.config();
 colors.enable();
@@ -134,6 +137,19 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchRequestRejected = new MatchRequestRejectedListener(ioServer, client);
   matchRequestRejected.listen();
+
+  /**
+   *
+   */
+  client.on('offline', async () => {
+    const userId: Types.ObjectId = retrieveId(client.userId);
+    const user: UserDocument = await getUserById(userId);
+
+    user.relationships.map((relationship) => {
+      const friendId: string = relationship.friendId.toString();
+      ioServer.to(friendId).emit('friend-offline', friendId);
+    });
+  });
 });
 
 // Finally start http server

@@ -1,6 +1,6 @@
 <div *ngIf="!matchLoading">
   <!-- Search field -->
-  <div class="card mt-3">
+  <div class="card col-md-6 offset-md-3 mt-3">
     <div class="card-body">
       <div class="d-flex">
         <mdb-form-control class="flex-grow-1">
@@ -32,7 +32,7 @@
 
   <!-- Search field collapsed -->
   <div
-    class="card mt-3"
+    class="card col-md-6 offset-md-3 mt-3"
     id="collapseExample"
     mdbCollapse
     #basicCollapse="mdbCollapse"
@@ -53,7 +53,10 @@
   </div>
 
   <!-- No relationships found -->
-  <div class="card text-center mt-3" *ngIf="relationships.length === 0">
+  <div
+    class="card col-md-6 offset-md-3 text-center mt-3"
+    *ngIf="relationships.length === 0"
+  >
     <div class="card-body">
       <p class="card-text">No friends found</p>
     </div>
@@ -61,7 +64,10 @@
 
   <!-- Relationships list -->
   <div *ngFor="let relationship of relationships">
-    <div class="card mt-3" (click)="openModal(relationship)">
+    <div
+      class="card col-md-6 offset-md-3 mt-3"
+      (click)="openModal(relationship)"
+    >
       <div class="card-body">
         <div class="d-flex align-items-center">
           <div class="flex-column">

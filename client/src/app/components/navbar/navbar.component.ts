@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Notification } from 'src/app/models/Notification';
-import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 
 @UntilDestroy()
@@ -19,7 +19,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public accountService: AccountService,
-    public userService: UserService
+    public userService: UserService,
+    private socketService: SocketService
   ) {
     this.notifications = [];
     this.numFriendsOnline = 0;
@@ -31,6 +32,7 @@ export class NavbarComponent implements OnInit {
         this.notifications = notifications;
       },
     });
+
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.numFriendsOnline = 0;
@@ -39,5 +41,10 @@ export class NavbarComponent implements OnInit {
         }
       },
     });
+  }
+
+  logout() {
+    this.socketService.emit('offline');
+    this.authService.logout();
   }
 }

@@ -24,20 +24,19 @@ export class ChatComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.messages = [];
+    this.messageText = new FormControl('');
   }
 
   ngOnInit(): void {
-    this.messageText = new FormControl('');
     this.route.params.subscribe({
       next: (params) => {
         this.chatId = params['id'];
         this.populateMessageList();
         this.socketService
-          .connectChatMessages(this.chatId)
+          .chatMessages(this.chatId)
           .pipe(untilDestroyed(this))
           .subscribe({
             next: (message) => {
-              // avoid to GET messages again
               this.messages.push(message);
             },
           });
@@ -45,6 +44,7 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  // OK
   private populateMessageList(): void {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
@@ -53,6 +53,7 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  // OK
   cssClass(message: Message): string {
     const classes: string[] = [];
     if (message.author === this.accountService.getUsername()) {

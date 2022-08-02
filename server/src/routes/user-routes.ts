@@ -34,6 +34,24 @@ router.get('/users', auth, async (req: Request<{}, {}, {}, { username: string }>
 });
 
 /**
+ * PUT /users/:userId/username
+ */
+router.put(
+  '/users/:userId/username',
+  async (req: Request<{ userId: string }, {}, { username: string }>, res, next) => {
+    try {
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const user: UserDocument = await getUserById(userId);
+
+      await user.setUsername(req.body.username);
+      return res.status(200).json(formatUser(user));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * PUT /users/:userId/password
  */
 router.put(
@@ -43,8 +61,28 @@ router.put(
     try {
       const userId: Types.ObjectId = retrieveId(req.params.userId);
       const user: UserDocument = await getUserById(userId);
+
       await user.setPassword(req.body.password);
-      return res.sendStatus(200);
+      return res.status(200).json(formatUser(user));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * PUT /users/:userId/stats
+ */
+router.put(
+  '/users/:userId/stats',
+  auth,
+  async (req: Request<{ userId: string }, {}, { stats: UserStats }>, res, next) => {
+    try {
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const user: UserDocument = await getUserById(userId);
+
+      await user.updateStats(req.body.stats);
+      return res.status(200).json(formatUser(user));
     } catch (err) {
       next(err);
     }
@@ -59,8 +97,6 @@ router.put('/users/:userId/picture', storage, async (req, res, next) => {
     const userId: Types.ObjectId = retrieveId(req.params.userId);
     const imagePath = 'http://localhost:8000/images/' + req.file?.filename;
 
-    console.log('yeahh');
-
     const user: UserDocument = await getUserById(userId);
     await user.updateProfilePicture(imagePath);
 
@@ -69,23 +105,5 @@ router.put('/users/:userId/picture', storage, async (req, res, next) => {
     next(err);
   }
 });
-
-/**
- * PUT /users/:userId/stats
- */
-router.put(
-  '/users/:userId/stats',
-  auth,
-  async (req: Request<{ userId: string }, {}, { stats: UserStats }>, res, next) => {
-    try {
-      const userId: Types.ObjectId = retrieveId(req.params.userId);
-      const user: UserDocument = await getUserById(userId);
-      await user.updateStats(req.body.stats);
-      return res.status(200).json(user);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 export = router;

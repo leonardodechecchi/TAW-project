@@ -1,10 +1,13 @@
-<div class="card text-center mt-3" *ngIf="notifications.length === 0">
+<div
+  class="card col-md-6 offset-md-3 text-center mt-3"
+  *ngIf="notifications.length === 0"
+>
   <div class="card-body">
     <p class="card-text">All notifications read</p>
   </div>
 </div>
 <div *ngFor="let notification of notifications">
-  <div class="card mt-3">
+  <div class="card col-md-6 offset-md-3 mt-3">
     <!-- Friend Request -->
     <div *ngIf="notification.type === 'FriendRequest'">
       <div class="card-body">

@@ -43,7 +43,8 @@ export class FriendListComponent implements OnInit {
       },
     });
 
-    this.socketService.on('reject-match-request', () => {
+    //
+    this.socketService.on('match-rejected', () => {
       this.matchLoading = false;
     });
   }

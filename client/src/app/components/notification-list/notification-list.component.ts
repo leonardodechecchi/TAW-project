@@ -84,6 +84,6 @@ export class NotificationListComponent implements OnInit {
     this.deleteNotification({ senderId, type });
 
     // ...
-    this.socketService.emit<string>('reject-match-request', senderId);
+    this.socketService.emit<string>('match-rejected', senderId);
   }
 }

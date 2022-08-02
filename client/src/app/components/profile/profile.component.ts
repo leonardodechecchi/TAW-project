@@ -18,8 +18,6 @@ import { environment } from 'src/environments/environment';
 export class ProfileComponent implements OnInit {
   public profileForm: FormGroup;
   public passwordForm: FormGroup;
-  public imageData: string;
-  public alt: string = environment.profile_picture;
 
   constructor(
     public accountService: AccountService,
@@ -27,14 +25,12 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.imageData = this.accountService.getImagePath();
     this.profileForm = new FormGroup({
       username: new FormControl(this.accountService.getUsername(), [
         Validators.required,
         Validators.minLength(2),
       ]),
       email: new FormControl(this.accountService.getEmail()),
-      image: new FormControl(null),
     });
 
     this.passwordForm = new FormGroup(
@@ -53,10 +49,6 @@ export class ProfileComponent implements OnInit {
     return this.profileForm.get('username');
   }
 
-  get image(): AbstractControl {
-    return this.profileForm.get('image');
-  }
-
   get newPassword(): AbstractControl {
     return this.passwordForm.get('newPassword');
   }
@@ -65,6 +57,7 @@ export class ProfileComponent implements OnInit {
     return this.passwordForm.get('repeatPassword');
   }
 
+  /*
   updateProfile() {
     if (this.profileForm.valid) {
       if (this.image.value) {
@@ -77,7 +70,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  updatePassword() {}
+  
 
   onFileSelect(event: Event) {
     const file = (event.target as HTMLInputElement).files[0];
@@ -100,8 +93,15 @@ export class ProfileComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('submit profile');
     this.profileForm.reset();
-    this.imageData = null;
   }
+  */
+
+  updateUsername(): void {
+    if (this.profileForm.invalid) return;
+    const userId: string = this.accountService.getId();
+    this.userService.updateUsername(userId, this.username.value).subscribe();
+  }
+
+  updatePassword() {}
 }

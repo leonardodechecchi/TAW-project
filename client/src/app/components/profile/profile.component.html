@@ -1,18 +1,17 @@
-<div class="card mt-3">
+<div class="card col-md-6 offset-md-3 mt-3">
   <div class="card-header"><strong>Edit profile</strong></div>
   <div class="card-body">
-    <div class="text-center">
-      <img
-        class="rounded-circle hover-shadow"
-        [src]="imageData"
-        [alt]="alt"
-        (click)="selectPicture()"
-      />
-      <h3 class="mt-3">{{ accountService.getUsername() }}</h3>
-    </div>
-
-    <!-- Profile form -->
-    <form [formGroup]="profileForm" enctype="multipart/form-data">
+    <!--
+      <div class="text-center">
+        <img
+          class="rounded-circle hover-shadow"
+          [src]="imageData"
+          [alt]="alt"
+          (click)="selectPicture()"
+        />
+        <h3 class="mt-3">{{ accountService.getUsername() }}</h3>
+      </div>
+  
       <input
         type="file"
         style="display: none"
@@ -24,17 +23,26 @@
         (change)="onFileSelect($event)"
       />
 
-      <div class="d-grid gap-3 mt-3">
-        <mdb-form-control>
-          <input
-            mdbInput
-            type="text"
-            id="username"
-            class="form-control"
-            formControlName="username"
-          />
-          <label mdbLabel class="form-label" for="username">Username</label>
-        </mdb-form-control>
+    -->
+
+    <!-- Profile form -->
+    <form [formGroup]="profileForm">
+      <div class="d-grid gap-3">
+        <div class="d-flex">
+          <mdb-form-control class="flex-grow-1 me-2">
+            <input
+              mdbInput
+              type="text"
+              id="username"
+              class="form-control"
+              formControlName="username"
+            />
+            <label mdbLabel class="form-label" for="username">Username</label>
+          </mdb-form-control>
+          <button mdbRipple class="btn btn-primary" (click)="updateUsername()">
+            Update
+          </button>
+        </div>
         <mdb-form-control>
           <input
             mdbInput
@@ -46,20 +54,30 @@
           />
           <label mdbLabel class="form-label" for="email">Email</label>
         </mdb-form-control>
-        <button mdbRipple class="btn btn-primary" (click)="updateProfile()">
-          Update profile
-        </button>
       </div>
     </form>
   </div>
 </div>
 
 <!-- Update password -->
-<div class="card mt-3">
+<div class="card col-md-6 offset-md-3 mt-3">
   <div class="card-header"><strong>Update password</strong></div>
   <div class="card-body">
     <form [formGroup]="passwordForm">
       <div class="d-grid gap-3">
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="password"
+            id="currentPassword"
+            class="form-control"
+            formControlName="newPassword"
+            required
+          />
+          <label mdbLabel class="form-label" for="currentPassword"
+            >Current password</label
+          >
+        </mdb-form-control>
         <mdb-form-control>
           <input
             mdbInput
@@ -86,8 +104,10 @@
             >Repeat password</label
           >
         </mdb-form-control>
+      </div>
+      <div class="mt-3 d-flex justify-content-center">
         <button mdbRipple class="btn btn-primary" (click)="updatePassword()">
-          Update password
+          Change password
         </button>
       </div>
     </form>

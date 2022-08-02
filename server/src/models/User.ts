@@ -45,8 +45,14 @@ interface UserProps {
   notifications: Types.DocumentArray<Notification>;
 
   /**
+   * Set a new username to current user.
+   * @param username the username to set
+   */
+  setUsername: (username: string) => Promise<UserDocument>;
+
+  /**
    * Set a new encrypted password to current user.
-   * @param {string} password the password to use
+   * @param {string} password the password to set
    */
   setPassword: (password: string) => Promise<UserDocument>;
 
@@ -190,6 +196,14 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
     type: [notificationSchema],
   },
 });
+
+userSchema.method(
+  'setUsername',
+  async function (this: UserDocument, username: string): Promise<UserDocument> {
+    this.username = username;
+    return this.save();
+  }
+);
 
 userSchema.method(
   'setPassword',
