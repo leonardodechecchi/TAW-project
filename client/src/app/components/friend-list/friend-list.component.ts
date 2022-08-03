@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MdbCollapseDirective } from 'mdb-angular-ui-kit/collapse';
 import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
-import { Notification, NotificationType } from 'src/app/models/Notification';
+import { NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { User } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
@@ -19,8 +19,8 @@ export class FriendListComponent implements OnInit {
   public searchField: FormControl;
   public userFound: User | null;
   public basicCollapse: MdbCollapseDirective;
-  private modalRef: MdbModalRef<ModalComponent> | null;
   public matchLoading: boolean;
+  private modalRef: MdbModalRef<ModalComponent> | null;
 
   constructor(
     private accountService: AccountService,
@@ -52,7 +52,6 @@ export class FriendListComponent implements OnInit {
   // OK
   private populateFriendList(): void {
     const userId: string = this.accountService.getId();
-
     this.userService.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationships = relationships;
@@ -89,7 +88,6 @@ export class FriendListComponent implements OnInit {
   addFriend() {
     const senderId: string = this.accountService.getId();
     const type: NotificationType = NotificationType.FriendRequest;
-
     this.userService
       .postNotification(this.userFound.userId, {
         senderId,
