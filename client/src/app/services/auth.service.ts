@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LocalStorageService } from './local-storage.service';
-import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root',

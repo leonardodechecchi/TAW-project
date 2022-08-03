@@ -12,6 +12,7 @@ export class ServerJoined extends Listener<{}> {
   public listen() {
     super.listen(() => {
       this.client.join(this.client.userId);
+      console.log(`${this.client.userId} connected!`);
     });
   }
 }

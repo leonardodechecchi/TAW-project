@@ -16,14 +16,17 @@ router.post(
     try {
       const { email, password } = req.body;
       const user = await getUserByEmail(email);
+
       const validate = await user.validatePassword(password);
       if (!validate) {
         return next(new StatusError(401, 'Invalid username or password'));
       }
-      await user.setOnlineStatus(true);
 
+      await user.setOnlineStatus(true);
       user.relationships.map((relationship) => {
-        new FriendOnlineEmitter(ioServer, relationship.friendId.toString()).emit();
+        new FriendOnlineEmitter(ioServer, relationship.friendId.toString()).emit(
+          user._id.toString()
+        );
       });
 
       const token = issueJwt(user);

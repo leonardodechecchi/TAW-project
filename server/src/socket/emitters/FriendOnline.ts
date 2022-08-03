@@ -1,12 +1,15 @@
 import { Server } from 'socket.io';
 import { RoomEmitter } from './RoomEmitter';
 
-export class FriendOnlineEmitter extends RoomEmitter<{}> {
+/**
+ *
+ */
+export class FriendOnlineEmitter extends RoomEmitter<string> {
   /**
    * @param ioServer the socket server
-   * @param roomId the room id to send the message
+   * @param friendId the friend id
    */
-  constructor(ioServer: Server, roomId: string) {
-    super(ioServer, 'friend-online', roomId);
+  constructor(ioServer: Server, friendId: string) {
+    super(ioServer, 'friend-online', friendId);
   }
 }

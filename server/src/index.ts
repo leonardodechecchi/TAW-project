@@ -97,25 +97,25 @@ ioServer.use((client, next) => {
 // Socket server events
 ioServer.on('connection', (client: io.Socket) => {
   /**
-   *
+   * OK
    */
   const serverJoined = new ServerJoined(client);
   serverJoined.listen();
 
   /**
-   *
+   * OK (works only when a user close a tab)
    */
   const serverLeft = new ServerLeft(client);
   serverLeft.listen();
 
   /**
-   *
+   * OK
    */
   const chatJoined = new ChatJoinedListener(client);
   chatJoined.listen();
 
   /**
-   *
+   * OK
    */
   const chatLeft = new ChatLeftListener(client);
   chatLeft.listen();
@@ -133,23 +133,10 @@ ioServer.on('connection', (client: io.Socket) => {
   matchLeft.listen();
 
   /**
-   *
+   * ???
    */
   const matchRequestRejected = new MatchRequestRejectedListener(ioServer, client);
   matchRequestRejected.listen();
-
-  /**
-   *
-   */
-  client.on('offline', async () => {
-    const userId: Types.ObjectId = retrieveId(client.userId);
-    const user: UserDocument = await getUserById(userId);
-
-    user.relationships.map((relationship) => {
-      const friendId: string = relationship.friendId.toString();
-      ioServer.to(friendId).emit('friend-offline', friendId);
-    });
-  });
 });
 
 // Finally start http server

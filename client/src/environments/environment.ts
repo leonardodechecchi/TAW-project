@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  base_endpoint: 'http://localhost:8000',
+  base_endpoint: 'ws://localhost:8000',
   auth_endpoint: 'http://localhost:8000/auth',
   user_endpoint: 'http://localhost:8000/users',
   moderator_endpoint: 'http://localhost:8000/moderators',

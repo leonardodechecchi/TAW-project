@@ -67,16 +67,16 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
+  // OK
+  public rejectFriendRequest(senderId: string, type: NotificationType): void {
+    this.deleteNotification({ senderId, type });
+  }
+
   // TODO
   public acceptMatchRequest(senderId: string, type: NotificationType): void {
     this.deleteNotification({ senderId, type });
 
     // ...
-  }
-
-  // OK
-  public rejectFriendRequest(senderId: string, type: NotificationType): void {
-    this.deleteNotification({ senderId, type });
   }
 
   // TODO

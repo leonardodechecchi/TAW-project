@@ -13,7 +13,6 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class NavbarComponent implements OnInit {
   public notifications: Notification[];
-  public friendsOnline: number;
 
   constructor(
     public authService: AuthService,
@@ -21,22 +20,12 @@ export class NavbarComponent implements OnInit {
     public userService: UserService
   ) {
     this.notifications = [];
-    this.friendsOnline = 0;
   }
 
   ngOnInit(): void {
     this.userService.notifications.pipe(untilDestroyed(this)).subscribe({
       next: (notifications) => {
         this.notifications = notifications;
-      },
-    });
-
-    this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
-      next: (relationships) => {
-        this.friendsOnline = 0;
-        for (let relationship of relationships) {
-          if (relationship.friendId.online) this.friendsOnline++;
-        }
       },
     });
   }

@@ -70,16 +70,4 @@ export class SocketService implements OnDestroy {
       };
     });
   }
-
-  /**
-   * Connect to friend online socket service.
-   * @returns an Observable of `string`
-   */
-  friendsOnline(): Observable<string> {
-    return new Observable<string>((subscriber: Subscriber<string>) => {
-      this.on<string>('friend-online', (userId) => {
-        subscriber.next(userId);
-      });
-    });
-  }
 }

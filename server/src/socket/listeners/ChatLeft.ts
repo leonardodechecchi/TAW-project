@@ -12,6 +12,7 @@ export class ChatLeftListener extends Listener<string> {
   public listen() {
     super.listen((chatId) => {
       this.client.leave(chatId);
+      console.log(`${this.client.userId} left room ${chatId}!`);
     });
   }
 }

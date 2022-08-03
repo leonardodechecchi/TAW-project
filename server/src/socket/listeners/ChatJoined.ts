@@ -12,6 +12,7 @@ export class ChatJoinedListener extends Listener<string> {
   public listen() {
     super.listen((chatId) => {
       this.client.join(chatId);
+      console.log(`${this.client.userId} joined room ${chatId}!`);
     });
   }
 }
