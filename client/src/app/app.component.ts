@@ -12,14 +12,11 @@ export class AppComponent {
 
   constructor(private router: Router) {}
 
-  /**
-   * Check if the router url contains the specified route
-   *
-   * @param {string} regexp
-   * @returns
-   * @memberof BackNavbarComponent
-   */
-  hasRoute(regexp: string): boolean {
-    return !!this.router.url.match(regexp);
+  hasRoute(routes: string[]): boolean {
+    const currentRoute: string[] = this.router.url.split('/');
+    for (let route of routes) {
+      if (currentRoute.includes(route)) return true;
+    }
+    return false;
   }
 }

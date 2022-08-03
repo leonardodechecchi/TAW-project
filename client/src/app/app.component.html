@@ -1,5 +1,5 @@
-<navbar *ngIf="hasRoute('home')"></navbar>
-<back-navbar *ngIf="!hasRoute('home')"></back-navbar>
+<navbar *ngIf="hasRoute(['home'])"></navbar>
+<back-navbar *ngIf="!hasRoute(['home', 'auth'])"></back-navbar>
 
 <div class="container">
   <router-outlet></router-outlet>
