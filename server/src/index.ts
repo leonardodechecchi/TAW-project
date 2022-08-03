@@ -121,13 +121,13 @@ ioServer.on('connection', (client: io.Socket) => {
   chatLeft.listen();
 
   /**
-   *
+   * TODO
    */
   const matchJoined = new MatchJoinedListener(client);
   matchJoined.listen();
 
   /**
-   *
+   * TODO
    */
   const matchLeft = new MatchLeftListener(client);
   matchLeft.listen();

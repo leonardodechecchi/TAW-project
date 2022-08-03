@@ -10,7 +10,7 @@ export class ServerLeft extends Listener<{}> {
   }
 
   public listen() {
-    super.listen(() => {
+    super.listen(async () => {
       for (let room in this.client.rooms) this.client.leave(room);
       console.log(`${this.client.userId} disconnected!`);
     });
