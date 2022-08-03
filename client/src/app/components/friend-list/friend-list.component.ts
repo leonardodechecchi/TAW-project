@@ -43,9 +43,16 @@ export class FriendListComponent implements OnInit {
       },
     });
 
-    //
     this.socketService.on('match-rejected', () => {
       this.matchLoading = false;
+    });
+
+    this.socketService.on<string>('friend-offline', (friendId) => {
+      this.populateFriendList();
+    });
+
+    this.socketService.on<string>('friend-online', (friendId) => {
+      this.populateFriendList();
     });
   }
 
