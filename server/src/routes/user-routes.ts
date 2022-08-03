@@ -1,6 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth, storage } from '..';
+import { StatusError } from '../models/StatusError';
 import { getUserById, getUserByUsername, UserDocument } from '../models/User';
 import { UserStats } from '../models/UserStats';
 import { formatUser } from '../utils/format-user';
@@ -57,13 +58,21 @@ router.put(
 router.put(
   '/users/:userId/password',
   auth,
-  async (req: Request<{ userId: string }, {}, { password: string }>, res, next) => {
+  async (
+    req: Request<{ userId: string }, {}, { currentPassword: string; password: string }>,
+    res,
+    next
+  ) => {
     try {
       const userId: Types.ObjectId = retrieveId(req.params.userId);
       const user: UserDocument = await getUserById(userId);
 
-      await user.setPassword(req.body.password);
-      return res.status(200).json(formatUser(user));
+      const validatePassword = await user.validatePassword(req.body.currentPassword);
+      if (validatePassword) {
+        await user.setPassword(req.body.password);
+        return res.status(200).json(formatUser(user));
+      }
+      return next(new StatusError(401, 'Wrong password'));
     } catch (err) {
       next(err);
     }

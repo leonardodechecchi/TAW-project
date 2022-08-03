@@ -19,8 +19,7 @@ export class NavbarComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public accountService: AccountService,
-    public userService: UserService,
-    private socketService: SocketService
+    public userService: UserService
   ) {
     this.notifications = [];
     this.friendsOnline = 0;
@@ -44,7 +43,6 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    this.socketService.emit('offline');
     this.authService.logout();
   }
 }

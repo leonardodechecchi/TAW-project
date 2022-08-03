@@ -1,4 +1,4 @@
-<div class="card mt-3">
+<div class="card col-md-6 offset-md-3 mt-3">
   <div class="table-responsive">
     <table class="table align-middle mb-0 bg-white">
       <thead class="bg-light">
@@ -27,6 +27,17 @@
               class="badge rounded-pill d-inline"
               >{{ user.status }}</span
             >
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-link btn-rounded btn-sm fw-bold"
+              mdbRipple
+              rippleColor="dark"
+              (click)="deleteUser(user._id)"
+            >
+              DELETE
+            </button>
           </td>
         </tr>
       </tbody>

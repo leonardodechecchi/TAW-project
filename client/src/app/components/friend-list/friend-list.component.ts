@@ -75,7 +75,8 @@ export class FriendListComponent implements OnInit {
   // OK
   searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
-      next: () => {
+      next: (user) => {
+        this.userFound = user;
         this.searchField.setValue('');
       },
       error: () => {

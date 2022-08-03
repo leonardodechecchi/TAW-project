@@ -12,11 +12,11 @@ import { SocketService } from './socket.service';
   providedIn: 'root',
 })
 export class UserService {
-  private notificationsSubject: BehaviorSubject<Notification[]>;
-  public notifications: Observable<Notification[]>;
-
   private relationshipsSubject: BehaviorSubject<Relationship[]>;
   public relationships: Observable<Relationship[]>;
+
+  private notificationsSubject: BehaviorSubject<Notification[]>;
+  public notifications: Observable<Notification[]>;
 
   constructor(
     private http: HttpClient,
@@ -25,44 +25,28 @@ export class UserService {
   ) {
     const userId: string = this.accountService.getId();
 
-    // create notifications BehaviorSubject
-    this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
-    this.notifications = this.notificationsSubject.asObservable();
-
-    // create relationships BehaviorSubject
     this.relationshipsSubject = new BehaviorSubject<Relationship[]>([]);
     this.relationships = this.relationshipsSubject.asObservable();
 
-    // init notifications
-    this.getNotifications(userId).subscribe({
-      next: (notifications) => {
-        this.notificationsSubject.next(notifications);
-      },
-    });
+    this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
+    this.notifications = this.notificationsSubject.asObservable();
 
-    // init relationships
     this.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationshipsSubject.next(relationships);
       },
     });
 
-    // socket notifications
+    this.getNotifications(userId).subscribe({
+      next: (notifications) => {
+        this.notificationsSubject.next(notifications);
+      },
+    });
+
     this.socketService.notifications().subscribe({
       next: (notification) => {
         this.notificationsSubject.value.push(notification);
         this.updateNotifications(this.notificationsSubject.value);
-      },
-    });
-
-    // friend online service
-    this.socketService.friendsOnline().subscribe({
-      next: () => {
-        this.getRelationships(userId).subscribe({
-          next: (relationships) => {
-            this.updateRelationships(relationships);
-          },
-        });
       },
     });
   }
@@ -122,8 +106,12 @@ export class UserService {
    * @param password the new password
    * @returns an empty Observable
    */
-  modifyPassword(userId: string, password: string): Observable<void> {
-    const body = { password };
+  updatePassword(
+    userId: string,
+    currentPassword: string,
+    password: string
+  ): Observable<void> {
+    const body = { currentPassword, password };
     return this.http.put<void>(
       `${environment.user_endpoint}/${userId}/password`,
       body

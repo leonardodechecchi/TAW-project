@@ -82,8 +82,11 @@ router.delete(
             new StatusError(401, 'You cannot delete a user with a moderator or admin role')
           );
         }
+        for (let relationship of userToDelete.relationships)
+          await userToDelete.deleteRelationship(relationship.friendId);
+
         await deleteUserById(userId);
-        return res.sendStatus(200);
+        return res.status(200).json({});
       }
       return next(new StatusError(401, 'Unauthorized'));
     } catch (err) {

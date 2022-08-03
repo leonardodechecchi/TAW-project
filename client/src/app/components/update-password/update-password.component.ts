@@ -20,9 +20,14 @@ export class UpdatePasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
+      currentPassword: [''],
       newPassword: ['', Validators.required],
       repeatPassword: ['', Validators.required],
     });
+  }
+
+  get currentPassword() {
+    return this.form.get('currentPassword');
   }
 
   get newPassword() {
@@ -32,10 +37,13 @@ export class UpdatePasswordComponent implements OnInit {
   submit() {
     if (this.form.valid) {
       this.userService
-        .modifyPassword(this.accountService.getId(), this.newPassword.value)
+        .updatePassword(
+          this.accountService.getId(),
+          this.currentPassword.value,
+          this.newPassword.value
+        )
         .subscribe({
           next: () => {
-            console.log('Password updated');
             this.router.navigate(['/auth']);
           },
           error: (err) => {

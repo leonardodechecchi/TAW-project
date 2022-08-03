@@ -8,7 +8,6 @@ import {
 import { CustomValidators } from 'src/app/helpers/CustomValidators';
 import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'profile',

@@ -16,10 +16,24 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.populateUsersList();
+  }
+
+  // OK
+  private populateUsersList(): void {
     const moderatorId: string = this.accountService.getId();
     this.moderatorService.getUsers(moderatorId).subscribe({
       next: (users) => {
         this.users = users;
+      },
+    });
+  }
+
+  public deleteUser(userId: string) {
+    const moderatorId: string = this.accountService.getId();
+    this.moderatorService.deleteUser(moderatorId, userId).subscribe({
+      next: () => {
+        this.populateUsersList();
       },
     });
   }
