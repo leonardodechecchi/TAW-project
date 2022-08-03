@@ -12,9 +12,7 @@
             rows="1"
             (input)="basicCollapse.hide()"
           />
-          <label mdbLabel class="form-label" for="textArea"
-            >Enter a username</label
-          >
+          <label mdbLabel class="form-label" for="textArea">Find a user</label>
         </mdb-form-control>
         <button
           mdbRipple
@@ -24,7 +22,7 @@
           [attr.aria-expanded]="!basicCollapse.collapsed"
           (click)="searchUser()"
         >
-          Search
+          <i class="fas fa-search"></i>
         </button>
       </div>
     </div>
@@ -37,16 +35,24 @@
     mdbCollapse
     #basicCollapse="mdbCollapse"
   >
+    <div class="card-header d-flex align-items-center">
+      <span><strong>Search result</strong></span>
+      <button class="btn-transparent ms-auto" (click)="basicCollapse.hide()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
     <div class="card-body">
       <p class="card-text" *ngIf="!userFound">User not found</p>
       <div class="d-flex align-items-center" *ngIf="userFound">
-        <span class="card-text">{{ userFound.username }}</span>
+        <span
+          ><div class="card-text">{{ userFound.username }}</div></span
+        >
         <button
           class="btn btn-success ms-auto"
           (click)="basicCollapse.toggle()"
           (click)="addFriend()"
         >
-          Add
+          <i class="fas fa-user-plus"></i>
         </button>
       </div>
     </div>
@@ -72,10 +78,6 @@
         <div class="d-flex align-items-center">
           <div class="flex-column">
             <h5>{{ relationship.friendId.username }}</h5>
-            <p class="card-text" *ngIf="relationship.friendId.online">online</p>
-            <p class="card-text" *ngIf="!relationship.friendId.online">
-              offline
-            </p>
           </div>
         </div>
       </div>
