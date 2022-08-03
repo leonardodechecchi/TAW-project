@@ -1,16 +1,14 @@
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'back-navbar',
   templateUrl: './back-navbar.component.html',
 })
 export class BackNavbarComponent {
-  constructor(public location: Location, private router: Router) {}
+  constructor(private location: Location) {}
 
-  getCurrentUrl(): string {
-    let url: string = this.router.url;
-    return url.charAt(1).toUpperCase() + url.slice(2);
+  public back(): void {
+    this.location.back();
   }
 }

@@ -1,7 +1,20 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand me-2 mb-1" routerLink="{{ getCurrentUrl() }}">
-      <i class="fas fa-arrow-left me-2"></i>&nbsp;
-    </a>
+    <div class="navbar-brand">
+      <button
+        class="mb-1"
+        style="
+          background-color: Transparent;
+          background-repeat: no-repeat;
+          border: none;
+          cursor: pointer;
+          overflow: hidden;
+          outline: none;
+        "
+        (click)="back()"
+      >
+        <i class="fas fa-arrow-left me-2"></i>
+      </button>
+    </div>
   </div>
 </nav>
