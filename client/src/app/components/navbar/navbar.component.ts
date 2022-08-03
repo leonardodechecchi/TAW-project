@@ -3,7 +3,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Notification } from 'src/app/models/Notification';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 
 @UntilDestroy()
