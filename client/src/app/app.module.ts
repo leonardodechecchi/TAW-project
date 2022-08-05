@@ -43,6 +43,7 @@ import { AdminDashboardComponent } from './components/admin-dashboard/admin-dash
 import { ProfileComponent } from './components/profile/profile.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
 import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-opponent.component';
+import { MatchComponent } from './components/match/match.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -86,6 +87,10 @@ const routes: Routes = [
     canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   { path: 'update-password', component: UpdatePasswordComponent },
+  {
+    path: 'match/:id',
+    component: MatchComponent,
+  },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 
@@ -107,6 +112,7 @@ const routes: Routes = [
     AdminDashboardComponent,
     ProfileComponent,
     WaitingOpponentComponent,
+    MatchComponent,
   ],
   imports: [
     BrowserModule,

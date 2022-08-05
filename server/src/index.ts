@@ -19,6 +19,7 @@ import { MatchRequestRejectedListener } from './socket/listeners/MatchRequestRej
 import { getUserById, UserDocument } from './models/User';
 import { Types } from 'mongoose';
 import { retrieveId } from './utils/param-checking';
+import { MatchRequestAcceptedListener } from './socket/listeners/MatchRequestAccepted';
 
 dotenv.config();
 colors.enable();
@@ -137,6 +138,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchRequestRejected = new MatchRequestRejectedListener(ioServer, client);
   matchRequestRejected.listen();
+
+  /**
+   * TODO test
+   */
+  const matchRequestAccepted = new MatchRequestAcceptedListener(ioServer, client);
+  matchRequestAccepted.listen();
 });
 
 // Finally start http server

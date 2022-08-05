@@ -46,7 +46,7 @@ router.put(
       await match.updatePlayerGrid(playerUsername, req.body.grid);
       await match.setPlayerReady(playerUsername);
 
-      return res.sendStatus(200);
+      return res.status(200).json(match);
     } catch (err) {
       next(err);
     }

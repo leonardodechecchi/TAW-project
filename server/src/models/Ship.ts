@@ -12,7 +12,7 @@ export enum ShipTypes {
 }
 
 /**
- * Interface that reoresents a ship within the databse.
+ * Interface that represents a ship within the databse.
  */
 export interface Ship {
   shipType: ShipTypes;

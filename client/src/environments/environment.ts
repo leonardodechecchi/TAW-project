@@ -2,14 +2,17 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+const port: number = 8000;
+
 export const environment = {
   production: false,
-  base_endpoint: 'ws://localhost:8000',
-  auth_endpoint: 'http://localhost:8000/auth',
-  user_endpoint: 'http://localhost:8000/users',
-  moderator_endpoint: 'http://localhost:8000/moderators',
-  chat_endpoint: 'http://localhost:8000/chats',
-  profile_picture: 'http://localhost:8000/images/default_profile_picture.jpg',
+  base_endpoint: `ws://localhost:${port}`,
+  auth_endpoint: `http://localhost:${port}/auth`,
+  user_endpoint: `http://localhost:${port}/users`,
+  moderator_endpoint: `http://localhost:${port}/moderators`,
+  chat_endpoint: `http://localhost:${port}/chats`,
+  match_endpoint: `http://localhost:${port}/matches`,
+  profile_picture: `http://localhost:${port}/images/default_profile_picture.jpg`,
 };
 
 /*

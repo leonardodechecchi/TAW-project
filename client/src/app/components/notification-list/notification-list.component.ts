@@ -73,10 +73,20 @@ export class NotificationListComponent implements OnInit {
   }
 
   // TODO
-  public acceptMatchRequest(senderId: string, type: NotificationType): void {
-    this.deleteNotification({ senderId, type });
+  public acceptMatchRequest(notification: Notification): void {
+    this.deleteNotification({
+      senderId: notification.senderId._id,
+      type: notification.type,
+    });
 
     // ...
+    this.socketService.emit<{ player1: string; player2: string }>(
+      'match-request-accepted',
+      {
+        player1: this.accountService.getUsername(),
+        player2: notification.senderId.username,
+      }
+    );
   }
 
   // TODO

@@ -8,18 +8,18 @@ import { Listener } from './Listener';
 export abstract class ListenerNotifier<T, E> extends Listener<T> {
   protected readonly ioServer: Server;
 
-  constructor(ioServer: Server, client: Socket, eventName: string) {
+  protected constructor(ioServer: Server, client: Socket, eventName: string) {
     super(client, eventName);
     this.ioServer = ioServer;
   }
 
-  public listenAndEmit(
-    emitterProvider: (eventData: T) => Emitter<E>[],
-    emitDataProvider?: (eventData?: T) => E
+  protected listenAndEmit(
+    emittersProvider: (eventData: T) => Promise<Emitter<E>[]>,
+    emitDataProvider: (eventData: T) => Promise<E>
   ): void {
-    super.listen((eventData: T) => {
-      const emitters: Emitter<E>[] = emitterProvider(eventData);
-      const emitData: E | undefined = emitDataProvider ? emitDataProvider() : undefined;
+    super.listen(async (eventData: T) => {
+      const emitters: Emitter<E>[] = await emittersProvider(eventData);
+      const emitData: E = await emitDataProvider(eventData);
 
       emitters.forEach((emitter) => {
         emitter.emit(emitData);
