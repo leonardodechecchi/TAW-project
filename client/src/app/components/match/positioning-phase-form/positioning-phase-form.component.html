@@ -1,0 +1,79 @@
+<div class="card card-body mt-3">
+  <div class="d-grid gap-3 me-2">
+    <h6>{{ shipType }} - {{ shipsLeft }} left</h6>
+
+    <!-- Coordinates fields -->
+    <div class="d-flex">
+      <mdb-form-control class="flex-fill">
+        <input
+          mdbInput
+          [formControl]="rowField"
+          type="text"
+          id="row-{{ shipType }}"
+          class="form-control"
+          required
+        />
+        <label mdbLabel class="form-label" for="row-{{ shipType }}">Row</label>
+      </mdb-form-control>
+      <mdb-form-control class="flex-fill ms-2">
+        <input
+          mdbInput
+          [formControl]="colField"
+          type="number"
+          id="col-{{ shipType }}"
+          class="form-control"
+          required
+        />
+        <label mdbLabel class="form-label" for="col-{{ shipType }}"
+          >Column</label
+        >
+      </mdb-form-control>
+    </div>
+    <!-- End coordinates fields -->
+
+    <!-- Radio buttons -->
+    <div class="d-flex">
+      <div class="btn-group flex-fill">
+        <input
+          mdbRadio
+          type="radio"
+          class="btn-check"
+          name="{{ shipType }}"
+          id="radiov-{{ shipType }}"
+          [formControl]="direction"
+          [checked]="true"
+          value="vertical"
+        />
+        <label class="btn btn-primary" for="radiov-{{ shipType }}"
+          >Vertical</label
+        >
+        <input
+          mdbRadio
+          type="radio"
+          class="btn-check"
+          name="{{ shipType }}"
+          id="radioh-{{ shipType }}"
+          [formControl]="direction"
+          value="horizontal"
+        />
+        <label class="btn btn-primary" for="radioh-{{ shipType }}"
+          >Horizontal</label
+        >
+      </div>
+      <button
+        class="btn btn-success ms-2"
+        (click)="
+          deployShip(
+            'Destroyer',
+            this.rowValue,
+            this.colValue,
+            this.directionValue
+          )
+        "
+      >
+        Deploy
+      </button>
+    </div>
+    <!-- End radio buttons -->
+  </div>
+</div>

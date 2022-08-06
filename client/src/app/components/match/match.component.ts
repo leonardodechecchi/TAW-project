@@ -1,5 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
@@ -12,32 +11,29 @@ import { MatchService } from 'src/app/services/match.service';
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.scss'],
 })
-export class MatchComponent implements OnInit, OnDestroy {
+export class MatchComponent implements OnInit {
   private matchId: string;
   public grid: Grid;
-  public rowField: FormControl;
-  public colField: FormControl;
-  public vertical: FormControl;
   public playerReady: boolean;
 
   public errorMessage: string;
 
-  private destroyerCount: number;
-  private cruiserCount: number;
-  private battleshipCount: number;
-  private carrierCount: number;
+  public destroyerCount: number;
+  public cruiserCount: number;
+  public battleshipCount: number;
+  public carrierCount: number;
 
   constructor(
     private accountService: AccountService,
     private matchService: MatchService,
     private route: ActivatedRoute
   ) {
-    this.rowField = new FormControl(null, [Validators.required]);
-    this.colField = new FormControl(null, [Validators.required]);
-    this.vertical = new FormControl(false);
-    this.playerReady = false;
+    this.grid = {
+      ships: [],
+      shotsReceived: [],
+    };
 
-    this.errorMessage = 'Invalid position: ';
+    this.playerReady = false;
 
     this.destroyerCount = 5;
     this.cruiserCount = 3;
@@ -52,8 +48,6 @@ export class MatchComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  ngOnDestroy(): void {}
 
   /**
    *
@@ -170,24 +164,31 @@ export class MatchComponent implements OnInit, OnDestroy {
 
   /**
    *
-   * @param shipType
-   * @param row
+   * @param type
+   * @param rowLetter
    * @param col
-   * @param vertical
+   * @param direction
    */
-  public deployShip(
-    shipType: ShipTypes,
-    row: number,
+  public deployShip = (
+    type: string,
+    rowLetter: string,
     col: number,
-    vertical: boolean
-  ): boolean {
+    direction: string
+  ): boolean => {
+    this.errorMessage = null;
+    let row = this.parseRow(rowLetter);
+
     if (!this.checkCoordinates(row, col)) return;
 
+    let shipType: ShipTypes = ShipTypes[type as keyof typeof ShipTypes];
     let shipLength: number = this.getShipLength(shipType);
     let coordinates: GridCoordinates[] = [];
 
     // add vertical ship
-    if (vertical && this.checkCoordinates(row + (shipLength - 1), col)) {
+    if (
+      direction === 'vertical' &&
+      this.checkCoordinates(row + (shipLength - 1), col)
+    ) {
       // check if the ship is not close to another ship
       for (let idx = 0; idx < shipLength; idx++) {
         if (!this.checkCoordinates(row + idx, col)) return false;
@@ -204,6 +205,7 @@ export class MatchComponent implements OnInit, OnDestroy {
 
       // delete the just added ship
       this.decreaseShipCount(shipType);
+      console.log(this.grid);
       return true;
     }
 
@@ -221,11 +223,15 @@ export class MatchComponent implements OnInit, OnDestroy {
       this.grid.ships.push(ship);
 
       this.decreaseShipCount(shipType);
+      console.log(this.grid);
       return true;
     }
-  }
+  };
 
-  public ready() {
+  /**
+   *
+   */
+  public ready(): void {
     this.matchService
       .updatePlayerGrid(
         this.matchId,

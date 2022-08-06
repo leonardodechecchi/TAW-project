@@ -44,6 +44,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
 import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-opponent.component';
 import { MatchComponent } from './components/match/match.component';
+import { PositioningPhaseFormComponent } from './components/match/positioning-phase-form/positioning-phase-form.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -113,6 +114,7 @@ const routes: Routes = [
     ProfileComponent,
     WaitingOpponentComponent,
     MatchComponent,
+    PositioningPhaseFormComponent,
   ],
   imports: [
     BrowserModule,

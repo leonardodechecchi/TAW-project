@@ -1,9 +1,9 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-xl-8">
       <!-- table1 -->
       <div class="card card-body mt-3">
-        <table class="table table-fixed align-middle table-bordered">
+        <table class="table align-middle table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -33,66 +33,42 @@
       </div>
     </div>
 
-    <div class="col-md-6">
-      <div class="card card-body mt-3">
-        <div class="d-grid gap-2">
-          <h6>Destroyer</h6>
-          <mdb-form-control>
-            <input
-              mdbInput
-              [formControl]="rowField"
-              type="number"
-              id="row"
-              class="form-control"
-              required
-            />
-            <label mdbLabel class="form-label" for="row">Row</label>
-          </mdb-form-control>
-          <mdb-form-control class="mt-2">
-            <input
-              mdbInput
-              [formControl]="colField"
-              type="number"
-              id="col"
-              class="form-control"
-              required
-            />
-            <label mdbLabel class="form-label" for="col">Column</label>
-          </mdb-form-control>
-        </div>
+    <div class="col-xl-4">
+      <!-- Error -->
+      <div
+        class="card card-body border border-danger text-danger mt-3"
+        *ngIf="errorMessage"
+      >
+        {{ errorMessage }}
       </div>
+
+      <!-- Destroyer form -->
+      <positioning-phase-form
+        [shipType]="'Destroyer'"
+        [shipsLeft]="destroyerCount"
+        [deployShip]="deployShip"
+      ></positioning-phase-form>
+
+      <!-- Cruiser form -->
+      <positioning-phase-form
+        [shipType]="'Cruiser'"
+        [shipsLeft]="cruiserCount"
+        [deployShip]="deployShip"
+      ></positioning-phase-form>
+
+      <!-- Battleship form -->
+      <positioning-phase-form
+        [shipType]="'Battleship'"
+        [shipsLeft]="battleshipCount"
+        [deployShip]="deployShip"
+      ></positioning-phase-form>
+
+      <!-- Carrier form -->
+      <positioning-phase-form
+        [shipType]="'Carrier'"
+        [shipsLeft]="carrierCount"
+        [deployShip]="deployShip"
+      ></positioning-phase-form>
     </div>
   </div>
 </div>
-
-<!-- Coordinates
-<footer class="card fixed-bottom">
-  <div class="card-body d-flex">
-    <mdb-form-control class="flex-fill me-2">
-      <input
-        mdbInput
-        [formControl]="rowField"
-        type="number"
-        id="row"
-        class="form-control"
-        required
-      />
-      <label mdbLabel class="form-label" for="row">Row</label>
-    </mdb-form-control>
-    <mdb-form-control class="flex-fill me-2">
-      <input
-        mdbInput
-        [formControl]="colField"
-        type="number"
-        id="col"
-        class="form-control"
-        required
-      />
-      <label mdbLabel class="form-label" for="col">Column</label>
-    </mdb-form-control>
-    <button mdbRipple class="btn btn-primary">
-      <i class="fas fa-plus"></i>
-    </button>
-  </div>
-</footer>
- -->
