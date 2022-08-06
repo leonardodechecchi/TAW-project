@@ -14,15 +14,6 @@ export class MatchService {
   /**
    *
    * @param matchId
-   * @returns
-   */
-  getMatch(matchId: string): Observable<Match> {
-    return this.http.get<Match>(environment.match_endpoint);
-  }
-
-  /**
-   *
-   * @param matchId
    * @param playerUsername
    * @param grid
    * @returns

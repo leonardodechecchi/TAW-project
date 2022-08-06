@@ -42,10 +42,6 @@ export class FriendListComponent implements OnInit {
         this.relationships = relationships;
       },
     });
-
-    this.socketService.on('match-rejected', () => {
-      this.matchLoading = false;
-    });
   }
 
   // OK

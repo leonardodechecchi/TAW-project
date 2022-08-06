@@ -49,8 +49,6 @@ export class MatchComponent implements OnInit, OnDestroy {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
-
-        this.matchService.getMatch(this.matchId).subscribe((match) => {});
       },
     });
   }

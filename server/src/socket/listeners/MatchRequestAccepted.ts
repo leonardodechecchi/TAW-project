@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { createMatch, MatchDocument } from '../../models/Match';
+import { getUserByUsername, UserDocument } from '../../models/User';
 import { MatchFoundEmitter } from '../emitters/MatchFound';
 import { ListenerNotifier } from './ListenerNotifier';
 
@@ -20,19 +21,24 @@ export class MatchRequestAcceptedListener extends ListenerNotifier<
     super(ioServer, client, 'match-request-accepted');
   }
 
-  public listen() {
-    const emitterProvider = async (eventData: MatchRequestAcceptedData) => {
-      const emitter1 = new MatchFoundEmitter(this.ioServer, eventData.player1);
-      const emitter2 = new MatchFoundEmitter(this.ioServer, eventData.player2);
+  public async listen(): Promise<void> {
+    const emitterProvider = async (
+      eventData: MatchRequestAcceptedData
+    ): Promise<MatchFoundEmitter[]> => {
+      const player1: UserDocument = await getUserByUsername(eventData.player1);
+      const player2: UserDocument = await getUserByUsername(eventData.player2);
+
+      const emitter1 = new MatchFoundEmitter(this.ioServer, player1._id.toString());
+      const emitter2 = new MatchFoundEmitter(this.ioServer, player2._id.toString());
       const emitters: MatchFoundEmitter[] = [emitter1, emitter2];
       return Promise.resolve(emitters);
     };
 
-    const emitDataProvider = async (eventData: MatchRequestAcceptedData) => {
+    const emitDataProvider = async (eventData: MatchRequestAcceptedData): Promise<MatchData> => {
       const match: MatchDocument = await createMatch(eventData.player1, eventData.player2);
       return Promise.resolve({ matchId: match._id.toString() });
     };
 
-    super.listenAndEmit(emitterProvider, emitDataProvider);
+    await super.listenAndEmit(emitterProvider, emitDataProvider);
   }
 }

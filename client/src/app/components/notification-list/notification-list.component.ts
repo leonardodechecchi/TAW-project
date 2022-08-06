@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Notification, NotificationType } from 'src/app/models/Notification';
 import { AccountService } from 'src/app/services/account.service';
@@ -16,9 +17,16 @@ export class NotificationListComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private userService: UserService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private router: Router
   ) {
     this.notifications = [];
+
+    this.socketService.matchFound().subscribe({
+      next: (matchId) => {
+        this.router.navigate(['/match', matchId]);
+      },
+    });
   }
 
   ngOnInit(): void {

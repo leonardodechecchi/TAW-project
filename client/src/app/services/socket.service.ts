@@ -6,6 +6,10 @@ import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
 import { AccountService } from './account.service';
 
+interface MatchData {
+  matchId: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -36,7 +40,7 @@ export class SocketService implements OnDestroy {
    * @param eventName the event name
    * @param listener the handler
    */
-  public on<T>(eventName: string, listener: (data?: T) => void): void {
+  private on<T>(eventName: string, listener: (data?: T) => void): void {
     this.socket.on(eventName, listener);
   }
 
@@ -68,6 +72,18 @@ export class SocketService implements OnDestroy {
       return () => {
         this.emit<string>('chat-left', chatId);
       };
+    });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  matchFound(): Observable<string> {
+    return new Observable<string>((subscriber: Subscriber<string>) => {
+      this.on<MatchData>('match-found', (matchData) => {
+        subscriber.next(matchData.matchId);
+      });
     });
   }
 }

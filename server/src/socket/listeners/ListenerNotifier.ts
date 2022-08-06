@@ -13,10 +13,10 @@ export abstract class ListenerNotifier<T, E> extends Listener<T> {
     this.ioServer = ioServer;
   }
 
-  protected listenAndEmit(
+  protected async listenAndEmit(
     emittersProvider: (eventData: T) => Promise<Emitter<E>[]>,
     emitDataProvider: (eventData: T) => Promise<E>
-  ): void {
+  ): Promise<void> {
     super.listen(async (eventData: T) => {
       const emitters: Emitter<E>[] = await emittersProvider(eventData);
       const emitData: E = await emitDataProvider(eventData);
