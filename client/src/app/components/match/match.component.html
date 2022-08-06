@@ -1,9 +1,8 @@
-<div class="container mt-3">
-  <div class="card card-body">
-    <div class="row">
-      <div class="col-md-8">
-        <!-- table1 -->
-
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- table1 -->
+      <div class="card card-body mt-3">
         <table class="table table-fixed align-middle table-bordered">
           <thead>
             <tr>
@@ -17,20 +16,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]">
+            <tr
+              *ngFor="
+                let row of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+              "
+            >
               <th scope="row">{{ row }}</th>
               <td
-                id="{{ row * 10 + col }}"
                 *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+                id="{{ parseRow(row) * 10 + col }}"
               ></td>
             </tr>
           </tbody>
         </table>
-
         <!-- end table1 -->
       </div>
+    </div>
 
-      <div class="col-md-4">
+    <div class="col-md-6">
+      <div class="card card-body mt-3">
         <div class="d-grid gap-2">
           <h6>Destroyer</h6>
           <mdb-form-control>
