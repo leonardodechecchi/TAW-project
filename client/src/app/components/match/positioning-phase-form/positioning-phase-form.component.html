@@ -1,5 +1,5 @@
 <div class="card card-body mt-3">
-  <div class="d-grid gap-3 me-2">
+  <div class="d-grid gap-3">
     <h6>{{ shipType }} - {{ shipsLeft }} left</h6>
 
     <!-- Coordinates fields -->
@@ -62,9 +62,10 @@
       </div>
       <button
         class="btn btn-success ms-2"
+        [disabled]="shipsLeft === 0"
         (click)="
           deployShip(
-            'Destroyer',
+            shipType,
             this.rowValue,
             this.colValue,
             this.directionValue

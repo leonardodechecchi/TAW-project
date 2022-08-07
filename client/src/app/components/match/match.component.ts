@@ -162,6 +162,11 @@ export class MatchComponent implements OnInit {
     }
   }
 
+  private changeCellColor(id: string): void {
+    let td: HTMLElement | null = document.getElementById(id);
+    if (td) td.style.background = 'gray';
+  }
+
   /**
    *
    * @param type
@@ -196,6 +201,7 @@ export class MatchComponent implements OnInit {
 
       // add coordinates
       for (let idx = 0; idx < shipLength; idx++) {
+        this.changeCellColor(String((row + idx) * 10 + col));
         coordinates.push({ row: row + idx, col });
       }
 
@@ -205,7 +211,6 @@ export class MatchComponent implements OnInit {
 
       // delete the just added ship
       this.decreaseShipCount(shipType);
-      console.log(this.grid);
       return true;
     }
 
@@ -216,6 +221,7 @@ export class MatchComponent implements OnInit {
       }
 
       for (let idx = 0; idx < shipLength; idx++) {
+        this.changeCellColor(String(row * 10 + (col + idx)));
         coordinates.push({ row, col: col + idx });
       }
 
@@ -223,7 +229,6 @@ export class MatchComponent implements OnInit {
       this.grid.ships.push(ship);
 
       this.decreaseShipCount(shipType);
-      console.log(this.grid);
       return true;
     }
   };

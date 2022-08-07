@@ -1,7 +1,12 @@
-th,
+table {
+  table-layout: fixed;
+  width: 100%;
+}
 td {
-  overflow: hidden;
-  white-space: nowrap;
+  width: 25%;
   padding: 0;
-  text-align: center;
+}
+th {
+  width: 25%;
+  padding: 10px;
 }

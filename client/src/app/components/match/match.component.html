@@ -2,9 +2,11 @@
   <div class="row">
     <div class="col-xl-8">
       <!-- table1 -->
-      <div class="card card-body mt-3">
-        <table class="table align-middle table-bordered">
-          <thead>
+      <div class="card card-body mt-3 w-100">
+        <table
+          class="table align-middle text-center table-bordered h-100 w-100"
+        >
+          <tbody>
             <tr>
               <th scope="col">#</th>
               <th
@@ -14,8 +16,6 @@
                 {{ col }}
               </th>
             </tr>
-          </thead>
-          <tbody>
             <tr
               *ngFor="
                 let row of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
@@ -64,11 +64,13 @@
       ></positioning-phase-form>
 
       <!-- Carrier form -->
-      <positioning-phase-form
-        [shipType]="'Carrier'"
-        [shipsLeft]="carrierCount"
-        [deployShip]="deployShip"
-      ></positioning-phase-form>
+      <div class="mb-3">
+        <positioning-phase-form
+          [shipType]="'Carrier'"
+          [shipsLeft]="carrierCount"
+          [deployShip]="deployShip"
+        ></positioning-phase-form>
+      </div>
     </div>
   </div>
 </div>
