@@ -7,15 +7,6 @@
           class="table align-middle text-center table-bordered h-100 w-100"
         >
           <tbody>
-            <tr>
-              <th scope="col">#</th>
-              <th
-                scope="col"
-                *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
-              >
-                {{ col }}
-              </th>
-            </tr>
             <tr
               *ngFor="
                 let row of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
@@ -26,6 +17,15 @@
                 *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
                 id="{{ parseRow(row) * 10 + col }}"
               ></td>
+            </tr>
+            <tr>
+              <th scope="col">#</th>
+              <th
+                scope="col"
+                *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+              >
+                {{ col }}
+              </th>
             </tr>
           </tbody>
         </table>

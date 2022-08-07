@@ -43,8 +43,10 @@ import { AdminDashboardComponent } from './components/admin-dashboard/admin-dash
 import { ProfileComponent } from './components/profile/profile.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
 import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-opponent.component';
-import { MatchComponent } from './components/match/match.component';
+
 import { PositioningPhaseFormComponent } from './components/match/positioning-phase-form/positioning-phase-form.component';
+import { PositioningPhaseComponent } from './components/match/positioning-phase/positioning-phase.component';
+import { GameComponent } from './components/match/game/game.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -90,7 +92,23 @@ const routes: Routes = [
   { path: 'update-password', component: UpdatePasswordComponent },
   {
     path: 'match/:id',
-    component: MatchComponent,
+    component: PositioningPhaseComponent,
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      ModeratorGuardService,
+    ],
+    children: [
+      { path: '', redirectTo: 'positioning-phase', pathMatch: 'full' },
+      {
+        path: 'positioning-phase',
+        component: PositioningPhaseComponent,
+      },
+      {
+        path: 'game',
+        component: GameComponent,
+      },
+    ],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
@@ -113,8 +131,9 @@ const routes: Routes = [
     AdminDashboardComponent,
     ProfileComponent,
     WaitingOpponentComponent,
-    MatchComponent,
+    PositioningPhaseComponent,
     PositioningPhaseFormComponent,
+    GameComponent,
   ],
   imports: [
     BrowserModule,

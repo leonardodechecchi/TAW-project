@@ -7,11 +7,11 @@ import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 
 @Component({
-  selector: 'match',
-  templateUrl: './match.component.html',
-  styleUrls: ['./match.component.scss'],
+  selector: 'positioning-phase',
+  templateUrl: './positioning-phase.component.html',
+  styleUrls: ['./positioning-phase.component.scss'],
 })
-export class MatchComponent implements OnInit {
+export class PositioningPhaseComponent implements OnInit {
   private matchId: string;
   public grid: Grid;
   public playerReady: boolean;
@@ -50,12 +50,12 @@ export class MatchComponent implements OnInit {
   }
 
   /**
-   *
+   * Returns the index of the row corresponding to the letter in input.
    * @param letter the letter to parse
    * @returns the corresponding number index
    */
   public parseRow(letter: string): number {
-    switch (letter) {
+    switch (letter.toUpperCase()) {
       case 'A':
         return 0;
       case 'B':
@@ -76,52 +76,11 @@ export class MatchComponent implements OnInit {
         return 8;
       case 'J':
         return 9;
-    }
-  }
-
-  /**
-   * Check if the given coordinates are correct.
-   * @param row the row index
-   * @param col the col index
-   */
-  private checkCoordinates(row: number, col: number): boolean {
-    // check if the coordinates are numbers
-    if (isNaN(row) || isNaN(col)) {
-      this.errorMessage = 'not a number';
-      return false;
-    }
-
-    // check if the coordinates are out of bounds
-    if (row < 0 || row > 9 || col < 0 || col > 9) {
-      this.errorMessage = 'index out of bounds';
-      return false;
-    }
-
-    for (let ship of this.grid.ships) {
-      for (let coordinate of ship.coordinates) {
-        // check overlapping
-        if (coordinate.row === row && coordinate.col === col) {
-          this.errorMessage = 'the ship overlaps another ship';
-          return false;
-        }
-
-        // check if the ship is too close
-        if (
-          (coordinate.row === row + 1 && coordinate.col === col + 1) ||
-          (coordinate.row === row - 1 && coordinate.col === col - 1) ||
-          (coordinate.row === row + 1 && coordinate.col === col - 1) ||
-          (coordinate.row === row - 1 && coordinate.col === col + 1) ||
-          (coordinate.row === row + 1 && coordinate.col === col) ||
-          (coordinate.row === row && coordinate.col === col + 1) ||
-          (coordinate.row === row - 1 && coordinate.col === col) ||
-          (coordinate.row === row && coordinate.col === col - 1)
-        ) {
-          this.errorMessage = 'the ship is too close to another ship';
-          return false;
-        }
+      default: {
+        this.errorMessage = 'Invalid row position';
+        return;
       }
     }
-    return true;
   }
 
   /**
@@ -143,8 +102,8 @@ export class MatchComponent implements OnInit {
   }
 
   /**
-   *
-   * @param shipType
+   * Decrease the number of the ship.
+   * @param shipType the ship type
    */
   private decreaseShipCount(shipType: ShipTypes): void {
     switch (shipType) {
@@ -162,17 +121,69 @@ export class MatchComponent implements OnInit {
     }
   }
 
+  /**
+   * Change the background color of the table cell.
+   * @param id the cell id
+   */
   private changeCellColor(id: string): void {
     let td: HTMLElement | null = document.getElementById(id);
     if (td) td.style.background = 'gray';
   }
 
   /**
-   *
-   * @param type
-   * @param rowLetter
-   * @param col
-   * @param direction
+   * Check if the given coordinates are correct.
+   * @param row the row index
+   * @param col the col index
+   */
+  private checkCoordinates(row: number, col: number): boolean {
+    // nullify error message
+    this.errorMessage = null;
+
+    // check if the coordinates are numbers
+    if (isNaN(row) || isNaN(col)) {
+      this.errorMessage = 'Error: not a number';
+      return false;
+    }
+
+    // check if the coordinates are out of bounds
+    if (row < 0 || row > 9 || col < 0 || col > 9) {
+      this.errorMessage = 'Error: index out of bounds';
+      return false;
+    }
+
+    for (let ship of this.grid.ships) {
+      for (let coordinate of ship.coordinates) {
+        // check overlapping
+        if (coordinate.row === row && coordinate.col === col) {
+          this.errorMessage = 'Error: the ship overlaps another ship';
+          return false;
+        }
+
+        // check if the ship is too close
+        if (
+          (coordinate.row === row + 1 && coordinate.col === col + 1) ||
+          (coordinate.row === row - 1 && coordinate.col === col - 1) ||
+          (coordinate.row === row + 1 && coordinate.col === col - 1) ||
+          (coordinate.row === row - 1 && coordinate.col === col + 1) ||
+          (coordinate.row === row + 1 && coordinate.col === col) ||
+          (coordinate.row === row && coordinate.col === col + 1) ||
+          (coordinate.row === row - 1 && coordinate.col === col) ||
+          (coordinate.row === row && coordinate.col === col - 1)
+        ) {
+          this.errorMessage = 'Error: the ship is too close to another ship';
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Insert a ship into the grid.
+   * @param type the ship type
+   * @param rowLetter the row letter, i.e. `A`, `B`, `C`, ...
+   * @param col the column index
+   * @param direction the ship direction, i.e. `Vertical` or `Horizontal`
    */
   public deployShip = (
     type: string,
@@ -180,8 +191,7 @@ export class MatchComponent implements OnInit {
     col: number,
     direction: string
   ): boolean => {
-    this.errorMessage = null;
-    let row = this.parseRow(rowLetter);
+    const row: number = this.parseRow(rowLetter);
 
     if (!this.checkCoordinates(row, col)) return;
 
