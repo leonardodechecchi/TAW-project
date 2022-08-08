@@ -93,11 +93,7 @@ const routes: Routes = [
   {
     path: 'match/:id',
     component: PositioningPhaseComponent,
-    canActivate: [
-      AuthGuardService,
-      FirstLoginGuardService,
-      ModeratorGuardService,
-    ],
+    canActivate: [AuthGuardService, FirstLoginGuardService],
     children: [
       { path: '', redirectTo: 'positioning-phase', pathMatch: 'full' },
       {
