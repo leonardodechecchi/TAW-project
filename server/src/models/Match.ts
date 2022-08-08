@@ -27,7 +27,7 @@ interface MatchProps {
    * ready to play.
    * @param playerUsername the player username
    */
-  setPlayerReady: (playerUsername: string) => Promise<MatchDocument>;
+  setPlayerReady: (playerUsername: string, isReady: boolean) => Promise<MatchDocument>;
 }
 
 export interface MatchDocument extends HydratedDocument<Match, MatchProps> {}
@@ -63,10 +63,14 @@ matchSchema.method(
 
 matchSchema.method(
   'setPlayerReady',
-  async function (this: MatchDocument, playerUsername: string): Promise<MatchDocument> {
+  async function (
+    this: MatchDocument,
+    playerUsername: string,
+    isReady: boolean
+  ): Promise<MatchDocument> {
     this.player1.playerUsername === playerUsername
-      ? (this.player1.ready = true)
-      : (this.player2.ready = true);
+      ? (this.player1.ready = isReady)
+      : (this.player2.ready = isReady);
     return this.save();
   }
 );

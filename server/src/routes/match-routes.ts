@@ -1,8 +1,10 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth } from '..';
+import { auth, ioServer } from '..';
 import { Grid } from '../models/Grid';
 import { createMatch, getMatchById, MatchDocument } from '../models/Match';
+import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged';
+import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -57,7 +59,35 @@ router.put(
 
       const match: MatchDocument = await getMatchById(matchId);
       await match.updatePlayerGrid(playerUsername, req.body.grid);
-      await match.setPlayerReady(playerUsername);
+
+      return res.status(200).json(match);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * PUT /matches/:matchId/players/:playerUsername/ready
+ */
+router.put(
+  '/matches/:matchId/players/:playerUsername/ready',
+  auth,
+  async (
+    req: Request<{ matchId: string; playerUsername: string }, {}, { isReady: boolean }>,
+    res,
+    next
+  ) => {
+    try {
+      const matchId: Types.ObjectId = retrieveId(req.params.matchId);
+      const playerUsername: string = req.params.playerUsername;
+
+      const match: MatchDocument = await getMatchById(matchId);
+      await match.setPlayerReady(playerUsername, req.body.isReady);
+
+      match.player1.ready && match.player2.ready
+        ? new PositioningCompletedEmitter(ioServer, match._id.toString()).emit()
+        : new PlayerStateChangedEmitter(ioServer, match._id.toString()).emit();
 
       return res.status(200).json(match);
     } catch (err) {

@@ -328,9 +328,10 @@ export class PositioningPhaseComponent implements OnInit {
       return;
     }
 
+    // update player status
     this.matchService.updateMatchLoading(true);
-    this.socketService.emit<{ playerUsername: string }>('player-ready', {
-      playerUsername: this.accountService.getUsername(),
-    });
+    this.matchService
+      .setPlayerReady(this.matchId, this.accountService.getUsername(), true)
+      .subscribe();
   }
 }

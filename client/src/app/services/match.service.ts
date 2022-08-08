@@ -52,4 +52,23 @@ export class MatchService {
       body
     );
   }
+
+  /**
+   *
+   * @param matchId
+   * @param playerUsername
+   * @param isReady
+   * @returns
+   */
+  public setPlayerReady(
+    matchId: string,
+    playerUsername: string,
+    isReady: boolean
+  ): Observable<Match> {
+    const body = { isReady };
+    return this.http.put<Match>(
+      `${environment.match_endpoint}/${matchId}/players/${playerUsername}/ready`,
+      body
+    );
+  }
 }

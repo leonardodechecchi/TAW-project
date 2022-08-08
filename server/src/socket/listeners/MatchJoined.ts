@@ -1,18 +1,22 @@
 import { Socket } from 'socket.io';
 import { Listener } from './Listener';
-import colors from 'colors';
 
-/**
- *
- */
-export class MatchJoinedListener extends Listener<string> {
+interface MatchJoinedData {
+  matchId: string;
+}
+
+export class MatchJoinedListener extends Listener<MatchJoinedData> {
+  /**
+   * @param client the client instance
+   */
   constructor(client: Socket) {
     super(client, 'match-joined');
   }
 
   public listen(): void {
-    super.listen((matchId): void => {
-      this.client.join(matchId);
+    super.listen((eventData): void => {
+      this.client.join(eventData.matchId);
+      console.log(`${this.client.userId} joined match ${eventData.matchId}`);
     });
   }
 }

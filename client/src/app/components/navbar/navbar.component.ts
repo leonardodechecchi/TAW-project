@@ -30,6 +30,9 @@ export class NavbarComponent implements OnInit {
     // subscribe to 'match found' socket event
     this.socketService.matchFound().subscribe({
       next: (matchId) => {
+        this.socketService.emit<{ matchId: string }>('match-joined', {
+          matchId,
+        });
         this.matchService.updateMatchLoading(false);
         this.router.navigate(['match', matchId, 'positioning-phase']);
       },
