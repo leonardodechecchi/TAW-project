@@ -3,9 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
+import { Player } from 'src/app/models/Player';
 import { Ship, ShipTypes } from 'src/app/models/Ship';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
+import { SocketService } from 'src/app/services/socket.service';
 
 @UntilDestroy()
 @Component({
@@ -28,13 +30,9 @@ export class PositioningPhaseComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private matchService: MatchService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private socketService: SocketService
   ) {
-    this.grid = {
-      ships: [],
-      shotsReceived: [],
-    };
-
     this.matchLoading = false;
 
     this.destroyerCount = 5;
@@ -47,6 +45,28 @@ export class PositioningPhaseComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
+
+        this.matchService.getMatch(this.matchId).subscribe({
+          next: (match) => {
+            const userUsername: string = this.accountService.getUsername();
+            const player: Player =
+              match.player1.playerUsername === userUsername
+                ? match.player1
+                : match.player2;
+
+            this.grid = player.grid;
+
+            for (let ship of this.grid.ships) {
+              this.decreaseShipCount(ship.shipType);
+
+              for (let coordinate of ship.coordinates) {
+                this.changeCellColor(
+                  String(coordinate.row * 10 + coordinate.col)
+                );
+              }
+            }
+          },
+        });
       },
     });
 
@@ -63,31 +83,34 @@ export class PositioningPhaseComponent implements OnInit {
    * @returns the corresponding number index
    */
   public parseRow(letter: string): number {
-    switch (letter.toUpperCase()) {
-      case 'A':
-        return 0;
-      case 'B':
-        return 1;
-      case 'C':
-        return 2;
-      case 'D':
-        return 3;
-      case 'E':
-        return 4;
-      case 'F':
-        return 5;
-      case 'G':
-        return 6;
-      case 'H':
-        return 7;
-      case 'I':
-        return 8;
-      case 'J':
-        return 9;
-      default: {
-        this.errorMessage = 'Invalid row position';
-        return;
+    try {
+      switch (letter.toUpperCase()) {
+        case 'A':
+          return 0;
+        case 'B':
+          return 1;
+        case 'C':
+          return 2;
+        case 'D':
+          return 3;
+        case 'E':
+          return 4;
+        case 'F':
+          return 5;
+        case 'G':
+          return 6;
+        case 'H':
+          return 7;
+        case 'I':
+          return 8;
+        case 'J':
+          return 9;
+        default: {
+          return -1;
+        }
       }
+    } catch (err) {
+      return -1;
     }
   }
 
@@ -207,7 +230,7 @@ export class PositioningPhaseComponent implements OnInit {
     let shipLength: number = this.getShipLength(shipType);
     let coordinates: GridCoordinates[] = [];
 
-    // add vertical ship
+    // add VERTICAL ship
     if (
       direction === 'vertical' &&
       this.checkCoordinates(row + (shipLength - 1), col)
@@ -229,10 +252,9 @@ export class PositioningPhaseComponent implements OnInit {
 
       // delete the just added ship
       this.decreaseShipCount(shipType);
-      return true;
     }
 
-    // add horizontal ship
+    // add HORIZONTAL ship
     else {
       for (let idx = 0; idx < shipLength; idx++) {
         if (!this.checkCoordinates(row, col + idx)) return false;
@@ -247,8 +269,17 @@ export class PositioningPhaseComponent implements OnInit {
       this.grid.ships.push(ship);
 
       this.decreaseShipCount(shipType);
-      return true;
     }
+
+    // update player grid
+    this.matchService
+      .updatePlayerGrid(
+        this.matchId,
+        this.accountService.getUsername(),
+        this.grid
+      )
+      .subscribe();
+    return true;
   };
 
   /**
@@ -266,6 +297,11 @@ export class PositioningPhaseComponent implements OnInit {
       ships: [],
       shotsReceived: [],
     };
+    this.matchService.updatePlayerGrid(
+      this.matchId,
+      this.accountService.getUsername(),
+      this.grid
+    );
 
     // reset the table cell colors
     for (let row = 0; row < 9; row++) {
@@ -292,16 +328,9 @@ export class PositioningPhaseComponent implements OnInit {
       return;
     }
 
-    this.matchService
-      .updatePlayerGrid(
-        this.matchId,
-        this.accountService.getUsername(),
-        this.grid
-      )
-      .subscribe({
-        next: () => {
-          this.matchService.updateMatchLoading(true);
-        },
-      });
+    this.matchService.updateMatchLoading(true);
+    this.socketService.emit<{ playerUsername: string }>('player-ready', {
+      playerUsername: this.accountService.getUsername(),
+    });
   }
 }

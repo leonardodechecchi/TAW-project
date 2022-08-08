@@ -7,8 +7,4 @@ import { SocketService } from 'src/app/services/socket.service';
 })
 export class WaitingOpponentComponent {
   constructor(private socketService: SocketService) {}
-
-  cancelMatch() {
-    this.socketService.emit('match-rejected');
-  }
 }

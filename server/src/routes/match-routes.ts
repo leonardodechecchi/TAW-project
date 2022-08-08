@@ -8,6 +8,19 @@ import { retrieveId } from '../utils/param-checking';
 const router = Router();
 
 /**
+ * GET /matches/:matchId
+ */
+router.get('/matches/:matchId', auth, async (req: Request<{ matchId: string }>, res, next) => {
+  try {
+    const matchId: Types.ObjectId = retrieveId(req.params.matchId);
+    const match: MatchDocument = await getMatchById(matchId);
+    return res.status(200).json(match);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * POST /matches
  */
 router.post(
