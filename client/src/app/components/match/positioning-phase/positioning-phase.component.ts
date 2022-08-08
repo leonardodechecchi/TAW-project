@@ -254,6 +254,33 @@ export class PositioningPhaseComponent implements OnInit {
   /**
    *
    */
+  public reset(): void {
+    // reset the number of ships
+    this.destroyerCount = 5;
+    this.cruiserCount = 3;
+    this.battleshipCount = 2;
+    this.carrierCount = 1;
+
+    // reset the grid
+    this.grid = {
+      ships: [],
+      shotsReceived: [],
+    };
+
+    // reset the table cell colors
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        let cell: HTMLElement | null = document.getElementById(
+          String(row * 10 + col)
+        );
+        if (cell) cell.style.background = 'white';
+      }
+    }
+  }
+
+  /**
+   *
+   */
   public ready(): void {
     if (
       this.destroyerCount !== 0 ||

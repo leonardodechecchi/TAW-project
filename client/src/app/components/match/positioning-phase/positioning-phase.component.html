@@ -35,9 +35,11 @@
       <div class="card mt-3">
         <div class="card-body">
           <div class="d-flex">
-            <button class="btn btn-danger flex-fill me-2">Reset</button>
+            <button class="btn btn-danger flex-fill me-2" (click)="reset()">
+              <i class="fas fa-broom me-2"></i>Reset
+            </button>
             <button class="btn btn-success flex-fill" (click)="ready()">
-              Ready
+              <i class="fas fa-play me-2"></i>Ready
             </button>
           </div>
         </div>
