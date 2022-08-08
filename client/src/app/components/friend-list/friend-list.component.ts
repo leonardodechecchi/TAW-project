@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbCollapseDirective } from 'mdb-angular-ui-kit/collapse';
 import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { User } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
-import { SocketService } from 'src/app/services/socket.service';
+import { MatchService } from 'src/app/services/match.service';
 import { UserService } from 'src/app/services/user.service';
 import { ModalComponent } from '../modal/modal.component';
 
+@UntilDestroy()
 @Component({
   selector: 'friend-list',
   templateUrl: './friend-list.component.html',
@@ -25,8 +27,8 @@ export class FriendListComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private userService: UserService,
-    private modalService: MdbModalService,
-    private socketService: SocketService
+    private matchService: MatchService,
+    private modalService: MdbModalService
   ) {
     this.relationships = [];
     this.searchField = new FormControl('');
@@ -37,9 +39,15 @@ export class FriendListComponent implements OnInit {
   ngOnInit(): void {
     this.populateFriendList();
 
-    this.userService.relationships.subscribe({
+    this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.relationships = relationships;
+      },
+    });
+
+    this.matchService.matchLoading.pipe(untilDestroyed(this)).subscribe({
+      next: (matchLoading) => {
+        this.matchLoading = matchLoading;
       },
     });
   }
@@ -60,14 +68,13 @@ export class FriendListComponent implements OnInit {
       data: { relationship },
       modalClass: 'modal-fullscreen-sm-down',
     });
-    this.modalRef.onClose.subscribe((matchLoading: boolean) => {
+    this.modalRef.onClose.subscribe(() => {
       this.populateFriendList();
-      if (matchLoading) this.matchLoading = matchLoading;
     });
   }
 
   // OK
-  searchUser(): void {
+  public searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
       next: (user) => {
         if (this.relationships.length !== 0) {
@@ -87,7 +94,7 @@ export class FriendListComponent implements OnInit {
   }
 
   // OK
-  addFriend() {
+  public addFriend() {
     const senderId: string = this.accountService.getId();
     const type: NotificationType = NotificationType.FriendRequest;
     this.userService

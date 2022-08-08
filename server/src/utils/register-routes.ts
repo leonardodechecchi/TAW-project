@@ -26,6 +26,7 @@ export function registerRoutes(app: Express) {
   app.use(require('../routes/relationship-routes'));
   app.use(require('../routes/notification-routes'));
   app.use(require('../routes/chat-routes'));
+  app.use(require('../routes/match-routes'));
   app.use(errorHandler);
   app.use(invalidEndpoint);
 }

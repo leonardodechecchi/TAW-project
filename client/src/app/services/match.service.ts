@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Grid } from '../models/Grid';
 import { Match } from '../models/Match';
@@ -9,7 +9,21 @@ import { Match } from '../models/Match';
   providedIn: 'root',
 })
 export class MatchService {
-  constructor(private http: HttpClient) {}
+  private matchLoadingSubject: BehaviorSubject<boolean>;
+  public matchLoading: Observable<boolean>;
+
+  constructor(private http: HttpClient) {
+    this.matchLoadingSubject = new BehaviorSubject<boolean>(false);
+    this.matchLoading = this.matchLoadingSubject.asObservable();
+  }
+
+  /**
+   *
+   * @param isLoading
+   */
+  public updateMatchLoading(isLoading: boolean): void {
+    this.matchLoadingSubject.next(isLoading);
+  }
 
   /**
    *
@@ -18,7 +32,7 @@ export class MatchService {
    * @param grid
    * @returns
    */
-  updatePlayerGrid(
+  public updatePlayerGrid(
     matchId: string,
     playerUsername: string,
     grid: Grid

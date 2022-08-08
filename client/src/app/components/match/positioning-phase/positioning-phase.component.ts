@@ -247,6 +247,16 @@ export class PositioningPhaseComponent implements OnInit {
    *
    */
   public ready(): void {
+    if (
+      this.destroyerCount !== 0 ||
+      this.cruiserCount !== 0 ||
+      this.battleshipCount !== 0 ||
+      this.carrierCount !== 0
+    ) {
+      this.errorMessage = 'Not all ships are deployed';
+      return;
+    }
+
     this.matchService
       .updatePlayerGrid(
         this.matchId,

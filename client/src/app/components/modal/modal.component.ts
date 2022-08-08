@@ -4,6 +4,7 @@ import { MdbModalRef } from 'mdb-angular-ui-kit/modal';
 import { NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
+import { MatchService } from 'src/app/services/match.service';
 import { RelationshipService } from 'src/app/services/relationship.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -13,18 +14,17 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ModalComponent {
   public relationship: Relationship;
-  public matchLoading: boolean;
 
   constructor(
     public modalRef: MdbModalRef<ModalComponent>,
     private accountService: AccountService,
     private userService: UserService,
+    private matchService: MatchService,
     private relationshipService: RelationshipService,
     private router: Router
-  ) {
-    this.matchLoading = false;
-  }
+  ) {}
 
+  // OK
   public match(): void {
     const userId: string = this.accountService.getId();
     const recipientId: string = this.relationship.friendId._id;
@@ -32,9 +32,14 @@ export class ModalComponent {
 
     this.userService
       .postNotification(recipientId, { senderId: userId, type })
-      .subscribe();
+      .subscribe({
+        error: () => {
+          this.matchService.updateMatchLoading(false);
+        },
+      });
 
-    this.modalRef.close((this.matchLoading = true));
+    this.modalRef.close();
+    this.matchService.updateMatchLoading(true);
   }
 
   // OK

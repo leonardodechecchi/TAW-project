@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Notification } from 'src/app/models/Notification';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -20,10 +21,20 @@ export class NavbarComponent implements OnInit {
     public authService: AuthService,
     public accountService: AccountService,
     public userService: UserService,
+    private matchService: MatchService,
     private socketService: SocketService,
     private router: Router
   ) {
     this.notifications = [];
+
+    // subscribe to 'match found' socket event
+    this.socketService.matchFound().subscribe({
+      next: (matchId) => {
+        console.log('match-found');
+        // this.matchService.updateMatchLoading(false);
+        this.router.navigate(['match', matchId, 'positioning-phase']);
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -33,13 +44,7 @@ export class NavbarComponent implements OnInit {
         this.notifications = notifications;
       },
     });
-
-    // subscribe to 'match found' socket event
-    this.socketService.matchFound().subscribe({
-      next: (matchId) => {
-        this.router.navigate(['match', matchId, 'positioning-phase']);
-      },
-    });
+    console.log('navbar!!!');
   }
 
   logout() {
