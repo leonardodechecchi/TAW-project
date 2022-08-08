@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
 import { Ship, ShipTypes } from 'src/app/models/Ship';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 
+@UntilDestroy()
 @Component({
   selector: 'positioning-phase',
   templateUrl: './positioning-phase.component.html',
@@ -14,7 +16,7 @@ import { MatchService } from 'src/app/services/match.service';
 export class PositioningPhaseComponent implements OnInit {
   private matchId: string;
   public grid: Grid;
-  public playerReady: boolean;
+  public matchLoading: boolean;
 
   public errorMessage: string;
 
@@ -33,7 +35,7 @@ export class PositioningPhaseComponent implements OnInit {
       shotsReceived: [],
     };
 
-    this.playerReady = false;
+    this.matchLoading = false;
 
     this.destroyerCount = 5;
     this.cruiserCount = 3;
@@ -45,6 +47,12 @@ export class PositioningPhaseComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
+      },
+    });
+
+    this.matchService.matchLoading.pipe(untilDestroyed(this)).subscribe({
+      next: (matchLoading) => {
+        this.matchLoading = matchLoading;
       },
     });
   }
@@ -265,7 +273,7 @@ export class PositioningPhaseComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.playerReady = true;
+          this.matchService.updateMatchLoading(true);
         },
       });
   }

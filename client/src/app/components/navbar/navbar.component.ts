@@ -30,8 +30,7 @@ export class NavbarComponent implements OnInit {
     // subscribe to 'match found' socket event
     this.socketService.matchFound().subscribe({
       next: (matchId) => {
-        console.log('match-found');
-        // this.matchService.updateMatchLoading(false);
+        this.matchService.updateMatchLoading(false);
         this.router.navigate(['match', matchId, 'positioning-phase']);
       },
     });
@@ -44,7 +43,6 @@ export class NavbarComponent implements OnInit {
         this.notifications = notifications;
       },
     });
-    console.log('navbar!!!');
   }
 
   logout() {

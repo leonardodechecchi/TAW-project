@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container" *ngIf="!matchLoading">
   <div class="row">
-    <div class="col-xl-8">
+    <div class="col-xl-7">
       <!-- table1 -->
       <div class="card card-body mt-3 w-100">
         <table
@@ -31,9 +31,20 @@
         </table>
         <!-- end table1 -->
       </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="d-flex">
+            <button class="btn btn-danger flex-fill me-2">Reset</button>
+            <button class="btn btn-success flex-fill" (click)="ready()">
+              Ready
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="col-xl-4">
+    <div class="col-xl-5">
       <!-- Error -->
       <div
         class="card card-body border border-danger text-danger mt-3"
@@ -71,17 +82,8 @@
           [deployShip]="deployShip"
         ></positioning-phase-form>
       </div>
-
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="d-flex">
-            <button class="btn btn-danger flex-fill me-2">Reset</button>
-            <button class="btn btn-success flex-fill" (click)="ready()">
-              Ready
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </div>
+
+<waiting-opponent *ngIf="matchLoading"></waiting-opponent>
