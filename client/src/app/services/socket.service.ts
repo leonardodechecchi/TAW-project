@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { GridCoordinates } from '../models/GridCoordinates';
 import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
 import { AccountService } from './account.service';
@@ -61,6 +62,7 @@ export class SocketService {
    */
   chatMessages(chatId: string): Observable<Message> {
     console.log('registering "chat-message" event...');
+
     return new Observable<Message>((subscriber: Subscriber<Message>) => {
       this.emit<string>('chat-joined', chatId);
       this.on<Message>('chat-message', (message) => {
@@ -68,6 +70,7 @@ export class SocketService {
       });
       return () => {
         console.log('removing "chat-message" listener');
+
         this.socket.removeListener('chat-message');
         this.emit<string>('chat-left', chatId);
       };
@@ -92,12 +95,14 @@ export class SocketService {
    */
   public positioningCompleted(): Observable<{}> {
     console.log('registering "positioning-completed" event...');
+
     return new Observable<{}>((subscriber: Subscriber<{}>) => {
       this.on('positioning-completed', () => {
         subscriber.next();
       });
       return () => {
         console.log('removing "positioning-completed" listener');
+
         this.socket.removeListener('positioning-completed');
       };
     });
@@ -109,14 +114,37 @@ export class SocketService {
    */
   public playerStateChanged(): Observable<{}> {
     console.log('registering "player-state-changed" event...');
+
     return new Observable<{}>((subscriber: Subscriber<{}>) => {
       this.on('player-state-changed', () => {
         subscriber.next();
       });
       return () => {
         console.log('removing "player-state-changed" listener');
+
         this.socket.removeListener('player-state-changed');
       };
     });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public shotFired(): Observable<GridCoordinates> {
+    console.log('registering "shot-fired" event...');
+
+    return new Observable<GridCoordinates>(
+      (subscriber: Subscriber<GridCoordinates>) => {
+        this.on<GridCoordinates>('shot-fired', (coordinates) => {
+          subscriber.next(coordinates);
+        });
+        return () => {
+          console.log('removing "shot-fired" listener');
+
+          this.socket.removeListener('shot-fired');
+        };
+      }
+    );
   }
 }

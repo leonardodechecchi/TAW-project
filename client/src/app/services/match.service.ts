@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Grid } from '../models/Grid';
+import { GridCoordinates } from '../models/GridCoordinates';
 import { Match } from '../models/Match';
 
 @Injectable({
@@ -68,6 +69,25 @@ export class MatchService {
     const body = { isReady };
     return this.http.put<Match>(
       `${environment.match_endpoint}/${matchId}/players/${playerUsername}/ready`,
+      body
+    );
+  }
+
+  /**
+   *
+   * @param matchId
+   * @param playerUsername
+   * @param coordinates
+   * @returns
+   */
+  public fireAShot(
+    matchId: string,
+    playerUsername: string,
+    coordinates: GridCoordinates
+  ) {
+    const body = { coordinates };
+    return this.http.put(
+      `${environment.match_endpoint}/${matchId}/players/${playerUsername}/shot`,
       body
     );
   }

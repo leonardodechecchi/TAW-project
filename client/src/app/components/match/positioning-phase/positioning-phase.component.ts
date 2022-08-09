@@ -205,7 +205,7 @@ export class PositioningPhaseComponent implements OnInit {
     this.errorMessage = null;
 
     // check if the coordinates are numbers
-    if (isNaN(row) || isNaN(col)) {
+    if (!isNaN(row) || !isNaN(col)) {
       this.errorMessage = 'Error: not a number';
       return false;
     }
