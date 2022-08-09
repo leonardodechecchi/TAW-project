@@ -13,17 +13,13 @@ interface MatchData {
 @Injectable({
   providedIn: 'root',
 })
-export class SocketService implements OnDestroy {
+export class SocketService {
   private socket: Socket;
 
   constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
     this.socket = io(environment.base_endpoint, { auth: { userId } });
     this.emit('server-joined');
-  }
-
-  ngOnDestroy(): void {
-    this.socket.disconnect();
   }
 
   /**
@@ -79,11 +75,45 @@ export class SocketService implements OnDestroy {
    *
    * @returns
    */
-  matchFound(): Observable<string> {
+  public matchFound(): Observable<string> {
     return new Observable<string>((subscriber: Subscriber<string>) => {
       this.on<MatchData>('match-found', (matchData) => {
         subscriber.next(matchData.matchId);
       });
+    });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public positioningCompleted(): Observable<{}> {
+    console.log('registering "positioning-completed" event...');
+    return new Observable<{}>((subscriber: Subscriber<{}>) => {
+      this.on('positioning-completed', () => {
+        subscriber.next();
+      });
+      return () => {
+        console.log('removing "positioning-completed" listener');
+        this.socket.removeListener('positioning-completed');
+      };
+    });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public playerStateChanged(): Observable<{}> {
+    console.log('registering "player-state-changed" event...');
+    return new Observable<{}>((subscriber: Subscriber<{}>) => {
+      this.on('player-state-changed', () => {
+        subscriber.next();
+      });
+      return () => {
+        console.log('removing "player-state-changed" listener');
+        this.socket.removeListener('player-state-changed');
+      };
     });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
@@ -21,6 +21,7 @@ export class PositioningPhaseComponent implements OnInit {
   public matchLoading: boolean;
 
   public errorMessage: string;
+  public infoMessage: string;
 
   public destroyerCount: number;
   public cruiserCount: number;
@@ -31,7 +32,8 @@ export class PositioningPhaseComponent implements OnInit {
     private accountService: AccountService,
     private matchService: MatchService,
     private route: ActivatedRoute,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private router: Router
   ) {
     this.matchLoading = false;
 
@@ -45,34 +47,66 @@ export class PositioningPhaseComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
-
-        this.matchService.getMatch(this.matchId).subscribe({
-          next: (match) => {
-            const userUsername: string = this.accountService.getUsername();
-            const player: Player =
-              match.player1.playerUsername === userUsername
-                ? match.player1
-                : match.player2;
-
-            this.grid = player.grid;
-
-            for (let ship of this.grid.ships) {
-              this.decreaseShipCount(ship.shipType);
-
-              for (let coordinate of ship.coordinates) {
-                this.changeCellColor(
-                  String(coordinate.row * 10 + coordinate.col)
-                );
-              }
-            }
-          },
-        });
+        this.initSocketEvents();
+        this.initMatch();
       },
     });
 
     this.matchService.matchLoading.pipe(untilDestroyed(this)).subscribe({
       next: (matchLoading) => {
         this.matchLoading = matchLoading;
+      },
+    });
+  }
+
+  /**
+   * Register socket events
+   */
+  private initSocketEvents(): void {
+    // when players are ready
+    this.socketService
+      .positioningCompleted()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          console.log('positioning-completed!');
+          this.matchService.updateMatchLoading(false);
+          this.router.navigate(['../game']);
+        },
+      });
+
+    // when the opponent is ready
+    this.socketService
+      .playerStateChanged()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          console.log('player-state-changed');
+          this.infoMessage = 'Your opponent is ready to play!';
+        },
+      });
+  }
+
+  /**
+   * Initialize the grid
+   */
+  private initMatch(): void {
+    this.matchService.getMatch(this.matchId).subscribe({
+      next: (match) => {
+        const userUsername: string = this.accountService.getUsername();
+        const player: Player =
+          match.player1.playerUsername === userUsername
+            ? match.player1
+            : match.player2;
+
+        this.grid = player.grid;
+
+        for (let ship of this.grid.ships) {
+          this.decreaseShipCount(ship.shipType);
+          for (let coordinate of ship.coordinates) {
+            this.changeCellColor(String(coordinate.row * 10 + coordinate.col));
+          }
+        }
       },
     });
   }

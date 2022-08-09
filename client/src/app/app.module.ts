@@ -91,20 +91,14 @@ const routes: Routes = [
   },
   { path: 'update-password', component: UpdatePasswordComponent },
   {
-    path: 'match/:id',
+    path: 'match/:id/positioning-phase',
     component: PositioningPhaseComponent,
     canActivate: [AuthGuardService, FirstLoginGuardService],
-    children: [
-      { path: '', redirectTo: 'positioning-phase', pathMatch: 'full' },
-      {
-        path: 'positioning-phase',
-        component: PositioningPhaseComponent,
-      },
-      {
-        path: 'game',
-        component: GameComponent,
-      },
-    ],
+  },
+  {
+    path: 'match/:id/game',
+    component: GameComponent,
+    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];

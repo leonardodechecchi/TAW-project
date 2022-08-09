@@ -118,7 +118,13 @@ ioServer.on('connection', (client: io.Socket) => {
   chatLeft.listen();
 
   /**
-   * TODO
+   * TODO test
+   */
+  const matchRequestAccepted = new MatchRequestAcceptedListener(ioServer, client);
+  matchRequestAccepted.listen();
+
+  /**
+   * TODO test
    */
   const matchJoined = new MatchJoinedListener(client);
   matchJoined.listen();
@@ -128,12 +134,6 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchLeft = new MatchLeftListener(client);
   matchLeft.listen();
-
-  /**
-   * TODO test
-   */
-  const matchRequestAccepted = new MatchRequestAcceptedListener(ioServer, client);
-  matchRequestAccepted.listen();
 });
 
 // Finally start http server

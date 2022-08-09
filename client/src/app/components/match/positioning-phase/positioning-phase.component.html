@@ -6,6 +6,12 @@
   >
     {{ errorMessage }}
   </div>
+  <div
+    class="card card-body border border-info text-info mt-3"
+    *ngIf="infoMessage"
+  >
+    {{ infoMessage }}
+  </div>
   <div class="row">
     <div class="col-xl-6">
       <!-- table1 -->
@@ -90,3 +96,4 @@
 </div>
 
 <waiting-opponent *ngIf="matchLoading"></waiting-opponent>
+<router-outlet></router-outlet>
