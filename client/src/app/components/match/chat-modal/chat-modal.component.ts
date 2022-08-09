@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MdbModalRef } from 'mdb-angular-ui-kit/modal';
 import { Message } from 'src/app/models/Message';
 import { AccountService } from 'src/app/services/account.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -9,51 +9,53 @@ import { SocketService } from 'src/app/services/socket.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'chat',
-  templateUrl: './chat.component.html',
+  selector: 'chat-modal',
+  templateUrl: './chat-modal.component.html',
 })
-export class ChatComponent implements OnInit {
-  public chatId: string;
+export class ChatModalComponent implements OnInit {
+  private chatId: string;
+  public opponentUsername: string;
   public messages: Message[];
-  public messageText: FormControl;
+  public messageField: FormControl;
 
   constructor(
-    private chatService: ChatService,
+    public modalRef: MdbModalRef<ChatModalComponent>,
     private accountService: AccountService,
-    private socketService: SocketService,
-    private route: ActivatedRoute
+    private chatService: ChatService,
+    private socketService: SocketService
   ) {
-    this.messages = [];
-    this.messageText = new FormControl('');
+    this.messageField = new FormControl('');
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe({
-      next: (params) => {
-        this.chatId = params['id'];
-        this.populateMessageList();
-        this.socketService
-          .chatMessages(this.chatId)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (message) => {
-              this.messages.push(message);
-            },
-          });
-      },
-    });
+    this.populateMessageList();
+
+    this.socketService
+      .chatMessages(this.chatId)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (message) => {
+          this.messages.push(message);
+        },
+      });
   }
 
-  // OK
   private populateMessageList(): void {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
+        this.opponentUsername = chat.users.find((username) => {
+          return username !== this.accountService.getUsername();
+        });
         this.messages = chat.messages;
       },
     });
   }
 
-  // OK
+  /**
+   *
+   * @param message
+   * @returns
+   */
   public cssClass(message: Message): string {
     const classes: string[] = [];
     if (message.author === this.accountService.getUsername()) {
@@ -62,16 +64,18 @@ export class ChatComponent implements OnInit {
     return classes.join(' ');
   }
 
-  // OK
+  /**
+   *
+   */
   public sendMessage(): void {
     const message: Message = {
       author: this.accountService.getUsername(),
-      content: this.messageText.value,
+      content: this.messageField.value,
       date: new Date(),
     };
     this.chatService.addMessage(this.chatId, message).subscribe({
       next: () => {
-        this.messageText.setValue('');
+        this.messageField.setValue('');
         this.populateMessageList();
       },
     });

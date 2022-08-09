@@ -47,6 +47,7 @@ import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-
 import { PositioningPhaseFormComponent } from './components/match/positioning-phase-form/positioning-phase-form.component';
 import { PositioningPhaseComponent } from './components/match/positioning-phase/positioning-phase.component';
 import { GameComponent } from './components/match/game/game.component';
+import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -124,6 +125,7 @@ const routes: Routes = [
     PositioningPhaseComponent,
     PositioningPhaseFormComponent,
     GameComponent,
+    ChatModalComponent,
   ],
   imports: [
     BrowserModule,

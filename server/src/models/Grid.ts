@@ -13,7 +13,6 @@ export interface Grid {
 interface GridProps {
   ships: Types.DocumentArray<Ship>;
   shotsReceived: Types.DocumentArray<GridCoordinates>;
-  // addShip: (ship: Ship) => Promise<GridDocument>;
   // addShot: (shot: Shot) => Promise<GridDocument>;
 }
 

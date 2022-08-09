@@ -1,0 +1,45 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="exampleModalLabel">
+    Chat - {{ opponentUsername }}
+  </h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modalRef.close()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div
+    class="card mt-3"
+    class="{{ cssClass(message) }}"
+    *ngFor="let message of messages"
+  >
+    <div class="card-body">
+      <h5 class="card-title">
+        {{ message.author }}
+      </h5>
+      <div class="card-text">{{ message.content }}</div>
+    </div>
+    <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="card-body">
+    <div class="d-flex">
+      <mdb-form-control class="flex-grow-1">
+        <textarea
+          mdbInput
+          [formControl]="messageField"
+          id="textArea"
+          class="form-control"
+          rows="1"
+        ></textarea>
+        <label mdbLabel class="form-label" for="textArea">Type a message</label>
+      </mdb-form-control>
+      <button mdbRipple class="btn btn-primary ms-2" (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

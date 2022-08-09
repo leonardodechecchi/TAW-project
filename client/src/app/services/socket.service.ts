@@ -60,12 +60,15 @@ export class SocketService {
    * @returns an Observable of `Message`
    */
   chatMessages(chatId: string): Observable<Message> {
+    console.log('registering "chat-message" event...');
     return new Observable<Message>((subscriber: Subscriber<Message>) => {
       this.emit<string>('chat-joined', chatId);
       this.on<Message>('chat-message', (message) => {
         subscriber.next(message);
       });
       return () => {
+        console.log('removing "chat-message" listener');
+        this.socket.removeListener('chat-message');
         this.emit<string>('chat-left', chatId);
       };
     });

@@ -48,7 +48,7 @@ export class PositioningPhaseComponent implements OnInit {
       next: (param) => {
         this.matchId = param['id'];
         this.initSocketEvents();
-        this.initMatch();
+        this.initGrid();
       },
     });
 
@@ -90,7 +90,7 @@ export class PositioningPhaseComponent implements OnInit {
   /**
    * Initialize the grid
    */
-  private initMatch(): void {
+  private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
         const userUsername: string = this.accountService.getUsername();
