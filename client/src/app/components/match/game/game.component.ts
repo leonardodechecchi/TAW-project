@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -44,12 +44,18 @@ export class GameComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
+        this.initSocketEvents();
         this.initGrid();
       },
     });
+  }
 
+  /**
+   * Register socket events
+   */
+  private initSocketEvents(): void {
     this.socketService
-      .shotFired()
+      .shotFired(this.matchId)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (coordinates) => {

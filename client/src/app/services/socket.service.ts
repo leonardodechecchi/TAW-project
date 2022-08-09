@@ -131,11 +131,12 @@ export class SocketService {
    *
    * @returns
    */
-  public shotFired(): Observable<GridCoordinates> {
+  public shotFired(matchId: string): Observable<GridCoordinates> {
     console.log('registering "shot-fired" event...');
 
     return new Observable<GridCoordinates>(
       (subscriber: Subscriber<GridCoordinates>) => {
+        this.emit('match-joined', { matchId });
         this.on<GridCoordinates>('shot-fired', (coordinates) => {
           subscriber.next(coordinates);
         });

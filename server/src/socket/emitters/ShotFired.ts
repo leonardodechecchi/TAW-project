@@ -4,9 +4,8 @@ import { RoomEmitter } from './RoomEmitter';
 
 export class ShotFiredEmitter extends RoomEmitter<GridCoordinates> {
   /**
-   *
-   * @param ioServer
-   * @param matchId
+   * @param ioServer the socket server istance
+   * @param matchId the match id
    */
   constructor(ioServer: Server, matchId: string) {
     super(ioServer, 'shot-fired', matchId);

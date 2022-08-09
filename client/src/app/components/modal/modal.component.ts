@@ -55,10 +55,10 @@ export class ModalComponent {
         .subscribe({
           next: (chat) => {
             this.router.navigate(['/chats', chat._id]);
-            this.modalRef.close();
           },
         });
     }
+    this.modalRef.close();
   }
 
   // OK
@@ -69,8 +69,8 @@ export class ModalComponent {
     this.userService.deleteRelationship(userId, friendId).subscribe({
       next: (relationships) => {
         this.userService.updateRelationships(relationships);
-        this.modalRef.close();
       },
     });
+    this.modalRef.close();
   }
 }

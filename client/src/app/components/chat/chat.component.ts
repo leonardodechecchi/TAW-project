@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit {
       next: (params) => {
         this.chatId = params['id'];
         this.populateMessageList();
+
         this.socketService
           .chatMessages(this.chatId)
           .pipe(untilDestroyed(this))
