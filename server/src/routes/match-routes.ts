@@ -8,6 +8,7 @@ import { createMatch, getMatchById, MatchDocument } from '../models/Match';
 import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged';
 import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
 import { retrieveId } from '../utils/param-checking';
+import { ShotFiredEmitter } from '../socket/emitters/ShotFired';
 
 const router = Router();
 
@@ -109,13 +110,15 @@ router.put(
     try {
       const matchId: Types.ObjectId = retrieveId(req.params.matchId);
       const playerUsername: string = req.params.playerUsername;
+      const coordinates: GridCoordinates = req.body.coordinates;
 
       const match: MatchDocument = await getMatchById(matchId);
       const shooterPlayer: Player =
         match.player1.playerUsername === playerUsername ? match.player2 : match.player1;
 
-      await match.addShot(shooterPlayer.playerUsername, req.body.coordinates);
-      // emitter
+      await match.addShot(shooterPlayer.playerUsername, coordinates);
+      const shotFiredEmitter = new ShotFiredEmitter(ioServer, match._id.toString());
+      shotFiredEmitter.emit(coordinates);
 
       return res.status(200).json();
     } catch (err) {
