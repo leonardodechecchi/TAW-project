@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Grid } from 'src/app/models/Grid';
@@ -18,6 +19,9 @@ export class GameComponent implements OnInit {
   private playersChatId: string;
   private chatModalRef: MdbModalRef<ChatModalComponent> | null;
 
+  public rowField: FormControl;
+  public colField: FormControl;
+
   constructor(
     private accountService: AccountService,
     private matchService: MatchService,
@@ -25,6 +29,8 @@ export class GameComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.chatModalRef = null;
+    this.rowField = new FormControl(null);
+    this.colField = new FormControl(null);
   }
 
   ngOnInit(): void {
@@ -47,8 +53,6 @@ export class GameComponent implements OnInit {
           match.player1.playerUsername === userUsername
             ? match.player1
             : match.player2;
-
-        console.log(match);
 
         this.grid = player.grid;
         this.playersChatId = match.playersChat;

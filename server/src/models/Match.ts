@@ -1,6 +1,7 @@
 import { HydratedDocument, Model, model, Schema, SchemaTypes, Types } from 'mongoose';
 import { ChatDocument, createChat } from './Chat';
 import { Grid } from './Grid';
+import { GridCoordinates } from './GridCoordinates';
 import { Player, playerSchema } from './Player';
 import { StatusError } from './StatusError';
 
@@ -28,6 +29,12 @@ interface MatchProps {
    * @param playerUsername the player username
    */
   setPlayerReady: (playerUsername: string, isReady: boolean) => Promise<MatchDocument>;
+
+  /**
+   * @param shooterUsername
+   * @param coordinates
+   */
+  addShot: (shooterUsername: string, coordinates: GridCoordinates) => Promise<MatchDocument>;
 }
 
 export interface MatchDocument extends HydratedDocument<Match, MatchProps> {}
@@ -71,6 +78,20 @@ matchSchema.method(
     this.player1.playerUsername === playerUsername
       ? (this.player1.ready = isReady)
       : (this.player2.ready = isReady);
+    return this.save();
+  }
+);
+
+matchSchema.method(
+  'addShot',
+  async function (
+    this: MatchDocument,
+    shooterUsername: string,
+    coordinates: GridCoordinates
+  ): Promise<MatchDocument> {
+    this.player1.playerUsername === shooterUsername
+      ? this.player2.grid.shotsReceived.push(coordinates)
+      : this.player1.grid.shotsReceived.push(coordinates);
     return this.save();
   }
 );

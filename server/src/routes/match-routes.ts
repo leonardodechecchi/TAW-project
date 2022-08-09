@@ -2,6 +2,8 @@ import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth, ioServer } from '..';
 import { Grid } from '../models/Grid';
+import { GridCoordinates } from '../models/GridCoordinates';
+import { Player } from '../models/Player';
 import { createMatch, getMatchById, MatchDocument } from '../models/Match';
 import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged';
 import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
@@ -90,6 +92,32 @@ router.put(
         : new PlayerStateChangedEmitter(ioServer, match._id.toString()).emit();
 
       return res.status(200).json(match);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.put(
+  '/matches/:matchId/players/:playerUsername/shot',
+  auth,
+  async (
+    req: Request<{ matchId: string; playerUsername: string }, {}, { coordinates: GridCoordinates }>,
+    res,
+    next
+  ) => {
+    try {
+      const matchId: Types.ObjectId = retrieveId(req.params.matchId);
+      const playerUsername: string = req.params.playerUsername;
+
+      const match: MatchDocument = await getMatchById(matchId);
+      const shooterPlayer: Player =
+        match.player1.playerUsername === playerUsername ? match.player2 : match.player1;
+
+      await match.addShot(shooterPlayer.playerUsername, req.body.coordinates);
+      // emitter
+
+      return res.status(200).json();
     } catch (err) {
       next(err);
     }
