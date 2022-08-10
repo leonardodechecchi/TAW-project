@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Socket } from 'socket.io-client';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
 import { Player } from 'src/app/models/Player';
@@ -8,6 +9,7 @@ import { Ship, ShipTypes } from 'src/app/models/Ship';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
+import { PlayerStateChangedListener } from 'src/app/socket/listeners/PlayerStateChanged';
 
 @UntilDestroy()
 @Component({
@@ -63,6 +65,8 @@ export class PositioningPhaseComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
+    const socket: Socket = this.socketService.getSocketInstance();
+
     // when players are ready
     this.socketService
       .positioningCompleted()
@@ -75,15 +79,12 @@ export class PositioningPhaseComponent implements OnInit {
       });
 
     // when the opponent is ready
-    this.socketService
-      .playerStateChanged()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          console.log('player-state-changed');
-          this.infoMessage = 'Your opponent is ready to play!';
-        },
-      });
+    const playerStateChanged = new PlayerStateChangedListener(socket);
+    playerStateChanged.connect().subscribe({
+      next: (eventData) => {
+        console.log(eventData.message);
+      },
+    });
   }
 
   /**

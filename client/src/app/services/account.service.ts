@@ -71,11 +71,6 @@ export class AccountService {
     return this.token.email;
   }
 
-  getImagePath(): string | undefined {
-    if (!this.token) return;
-    return this.token.imagePath;
-  }
-
   /**
    * Tell if the user has the admin role.
    * @returns true if the user is an admin, false otherwise

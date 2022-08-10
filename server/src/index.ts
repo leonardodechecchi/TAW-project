@@ -10,7 +10,6 @@ import multer from 'multer';
 import path from 'path';
 import { registerRoutes } from './utils/register-routes';
 import { ChatJoinedListener } from './socket/listeners/ChatJoined';
-import { ServerJoined } from './socket/listeners/ServerJoined';
 import { ChatLeftListener } from './socket/listeners/ChatLeft';
 import { ServerLeft } from './socket/listeners/ServerLeft';
 import { MatchJoinedListener } from './socket/listeners/MatchJoined';
@@ -88,6 +87,10 @@ export const ioServer: io.Server = new io.Server(httpServer, {
 ioServer.use((client, next) => {
   const userId = client.handshake.auth.userId;
   client.userId = userId;
+
+  client.join(userId);
+  console.log(`${client.userId} connected!`);
+
   next();
 });
 
@@ -95,12 +98,6 @@ ioServer.use((client, next) => {
 ioServer.on('connection', (client: io.Socket) => {
   /**
    * OK
-   */
-  const serverJoined = new ServerJoined(client);
-  serverJoined.listen();
-
-  /**
-   * OK (works only when a user close a tab)
    */
   const serverLeft = new ServerLeft(client);
   serverLeft.listen();

@@ -21,7 +21,18 @@ export class SocketService {
   constructor(private accountService: AccountService) {
     const userId = this.accountService.getId();
     this.socket = io(environment.base_endpoint, { auth: { userId } });
-    this.emit('server-joined');
+  }
+
+  /**
+   * Return the socket instance.
+   * @returns the socket instance
+   */
+  public getSocketInstance(): Socket {
+    if (!this.socket) {
+      const userId = this.accountService.getId();
+      this.socket = io(environment.base_endpoint, { auth: { userId } });
+    }
+    return this.socket;
   }
 
   /**

@@ -90,7 +90,9 @@ router.put(
 
       match.player1.ready && match.player2.ready
         ? new PositioningCompletedEmitter(ioServer, match._id.toString()).emit()
-        : new PlayerStateChangedEmitter(ioServer, match._id.toString()).emit();
+        : new PlayerStateChangedEmitter(ioServer, match._id.toString()).emit({
+            message: 'The opponent is ready to play!',
+          });
 
       return res.status(200).json(match);
     } catch (err) {

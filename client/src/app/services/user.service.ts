@@ -7,6 +7,8 @@ import { Relationship } from '../models/Relationship';
 import { Notification, NotificationType } from '../models/Notification';
 import { AccountService } from './account.service';
 import { SocketService } from './socket.service';
+import { NotificationListener } from '../socket/listeners/Notification';
+import { Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +45,10 @@ export class UserService {
       },
     });
 
-    this.socketService.notifications().subscribe({
+    const socket: Socket = this.socketService.getSocketInstance();
+
+    const notificationListener = new NotificationListener(socket);
+    notificationListener.connect().subscribe({
       next: (notification) => {
         this.notificationsSubject.value.push(notification);
         this.updateNotifications(this.notificationsSubject.value);

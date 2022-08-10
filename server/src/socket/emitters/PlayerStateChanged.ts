@@ -1,7 +1,11 @@
 import { Server } from 'socket.io';
 import { RoomEmitter } from './RoomEmitter';
 
-export class PlayerStateChangedEmitter extends RoomEmitter<{}> {
+interface PlayerStateChangedData {
+  message: string;
+}
+
+export class PlayerStateChangedEmitter extends RoomEmitter<PlayerStateChangedData> {
   /**
    * @param ioServer the socket server instance
    * @param matchId the id of the match
