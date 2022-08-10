@@ -22,8 +22,7 @@ export class NotificationListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.populateNotificationList();
-
+    // subscribe to notification socket service
     this.userService.notifications.pipe(untilDestroyed(this)).subscribe({
       next: (notifications) => {
         this.notifications = notifications;
@@ -31,17 +30,11 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
-  // OK
-  private populateNotificationList(): void {
-    const userId: string = this.accountService.getId();
-    this.userService.getNotifications(userId).subscribe({
-      next: (notifications) => {
-        this.notifications = notifications;
-      },
-    });
-  }
-
-  // OK
+  /**
+   * Delete the given notification.
+   * @param notification the notification to delete
+   * @param error if an error occurs
+   */
   private deleteNotification(
     notification: { senderId: string; type: string },
     error?: (err: any) => void
@@ -55,11 +48,14 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
-  // OK
+  /**
+   * Accept the friend request and create a relationship.
+   * @param senderId the sender id
+   * @param type the notification type
+   */
   public acceptFriendRequest(senderId: string, type: NotificationType): void {
-    this.deleteNotification({ senderId, type });
-
     const userId: string = this.accountService.getId();
+    this.deleteNotification({ senderId, type });
     this.userService.createRelationship(userId, senderId).subscribe({
       next: (relationships) => {
         this.userService.updateRelationships(relationships);
@@ -67,12 +63,16 @@ export class NotificationListComponent implements OnInit {
     });
   }
 
-  // OK
+  /**
+   * Rejecting the friend request is the same as dismissing the notification.
+   * @param senderId the sender id
+   * @param type the notification type
+   */
   public rejectFriendRequest(senderId: string, type: NotificationType): void {
     this.deleteNotification({ senderId, type });
   }
 
-  // TODO
+  // TO FINISH
   public acceptMatchRequest(notification: Notification): void {
     this.deleteNotification({
       senderId: notification.senderId._id,
@@ -89,7 +89,7 @@ export class NotificationListComponent implements OnInit {
     );
   }
 
-  // TODO
+  // TO FINISH
   public rejectMatchRequest(senderId: string, type: NotificationType) {
     this.deleteNotification({ senderId, type });
 

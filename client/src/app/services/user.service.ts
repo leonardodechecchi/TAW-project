@@ -7,7 +7,6 @@ import { Relationship } from '../models/Relationship';
 import { Notification, NotificationType } from '../models/Notification';
 import { AccountService } from './account.service';
 import { SocketService } from './socket.service';
-import { NotificationListener } from '../socket/listeners/Notification';
 import { Socket } from 'socket.io-client';
 
 @Injectable({
@@ -33,22 +32,22 @@ export class UserService {
     this.notificationsSubject = new BehaviorSubject<Notification[]>([]);
     this.notifications = this.notificationsSubject.asObservable();
 
+    // get user relationships
     this.getRelationships(userId).subscribe({
       next: (relationships) => {
         this.relationshipsSubject.next(relationships);
       },
     });
 
+    // get user notifications
     this.getNotifications(userId).subscribe({
       next: (notifications) => {
         this.notificationsSubject.next(notifications);
       },
     });
 
-    const socket: Socket = this.socketService.getSocketInstance();
-
-    const notificationListener = new NotificationListener(socket);
-    notificationListener.connect().subscribe({
+    // connect to notification socket service
+    this.socketService.notificationListener().subscribe({
       next: (notification) => {
         this.notificationsSubject.value.push(notification);
         this.updateNotifications(this.notificationsSubject.value);
@@ -57,18 +56,18 @@ export class UserService {
   }
 
   /**
-   * Update the notification list and send it to all subscribers.
+   * Update the notifications list and send it to all subscribers.
    * @param notifications the new notifications
    */
-  updateNotifications(notifications: Notification[]): void {
+  public updateNotifications(notifications: Notification[]): void {
     this.notificationsSubject.next(notifications);
   }
 
   /**
-   *
-   * @param relationships
+   * Update the relationships list and send it to all subscribers.
+   * @param relationships the new relationships
    */
-  updateRelationships(relationships: Relationship[]): void {
+  public updateRelationships(relationships: Relationship[]): void {
     this.relationshipsSubject.next(relationships);
   }
 
@@ -77,7 +76,7 @@ export class UserService {
    * @param userId the user id
    * @returns an Observable of `User`, i.e. the user found
    */
-  getUser(userId: string): Observable<User> {
+  public getUser(userId: string): Observable<User> {
     return this.http.get<User>(`${environment.user_endpoint}/${userId}`);
   }
 
@@ -86,7 +85,7 @@ export class UserService {
    * @param username the user username
    * @returns an Observable of `User`, i.e. the user found
    */
-  getUserByUsername(username: string): Observable<User> {
+  public getUserByUsername(username: string): Observable<User> {
     const params = new HttpParams().set('username', username);
     return this.http.get<User>(environment.user_endpoint, { params });
   }
@@ -97,7 +96,7 @@ export class UserService {
    * @param username the username to set
    * @returns an Observable of `User`, i.e. the user record updated
    */
-  updateUsername(userId: string, username: string): Observable<User> {
+  public updateUsername(userId: string, username: string): Observable<User> {
     const body = { username };
     return this.http.put<User>(
       `${environment.user_endpoint}/${userId}/username`,
@@ -111,7 +110,7 @@ export class UserService {
    * @param password the new password
    * @returns an empty Observable
    */
-  updatePassword(
+  public updatePassword(
     userId: string,
     currentPassword: string,
     password: string
@@ -128,13 +127,13 @@ export class UserService {
    * @param userId the user id
    * @param formData
    * @returns an empty Observable
-   */
-  uploadPicture(userId: string, formData: FormData): Observable<void> {
-    return this.http.put<void>(
-      `${environment.user_endpoint}/${userId}/picture`,
-      formData
-    );
-  }
+   uploadPicture(userId: string, formData: FormData): Observable<void> {
+     return this.http.put<void>(
+       `${environment.user_endpoint}/${userId}/picture`,
+       formData
+       );
+      }
+      */
 
   /**
    * Update the user stats.
@@ -142,7 +141,7 @@ export class UserService {
    * @param stats the new stats
    * @returns an Observable of `User`, i.e. the user record updated
    */
-  updateStats(userId: string, stats: UserStats): Observable<User> {
+  public updateStats(userId: string, stats: UserStats): Observable<User> {
     const body = { stats };
     return this.http.put<User>(
       `${environment.user_endpoint}/${userId}/stats`,
@@ -155,7 +154,7 @@ export class UserService {
    * @param userId the user id
    * @returns an `Observable` of `Relationship[]`, i.e. the user relationships
    */
-  getRelationships(userId: string): Observable<Relationship[]> {
+  public getRelationships(userId: string): Observable<Relationship[]> {
     return this.http.get<Relationship[]>(
       `${environment.user_endpoint}/${userId}/relationships`
     );
@@ -167,7 +166,7 @@ export class UserService {
    * @param friendId the friend id
    * @returns an empty `Observable`
    */
-  createRelationship(
+  public createRelationship(
     userId: string,
     friendId: string
   ): Observable<Relationship[]> {
@@ -184,7 +183,7 @@ export class UserService {
    * @param friendId the friend id
    * @returns an empty `Observable`
    */
-  deleteRelationship(
+  public deleteRelationship(
     userId: string,
     friendId: string
   ): Observable<Relationship[]> {
@@ -198,7 +197,7 @@ export class UserService {
    * @param userId the user id
    * @returns an `Observable` of `Notification[]`, i.e. the user notifications
    */
-  getNotifications(userId: string): Observable<Notification[]> {
+  public getNotifications(userId: string): Observable<Notification[]> {
     return this.http.get<Notification[]>(
       `${environment.user_endpoint}/${userId}/notifications`
     );
@@ -210,7 +209,7 @@ export class UserService {
    * @param notification the notification to send
    * @returns an empty Observable
    */
-  postNotification(
+  public postNotification(
     recipientId: string,
     notification: { senderId: string; type: NotificationType }
   ): Observable<void> {
@@ -227,13 +226,14 @@ export class UserService {
    * @returns an Observable of `Notification[]`, i.e. the user notifications
    * updated
    */
-  deleteNotification(
+  public deleteNotification(
     userId: string,
     notification: { senderId: string; type: string }
   ): Observable<Notification[]> {
     const params = new HttpParams()
       .set('senderId', notification.senderId)
       .set('type', notification.type);
+
     return this.http.delete<Notification[]>(
       `${environment.user_endpoint}/${userId}/notifications`,
       { params }

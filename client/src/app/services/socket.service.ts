@@ -2,7 +2,6 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
-import { GridCoordinates } from '../models/GridCoordinates';
 import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
 import { Shot } from '../models/Shot';
@@ -12,6 +11,20 @@ interface MatchData {
   matchId: string;
 }
 
+interface PlayerStateChangedData {
+  message: string;
+}
+
+interface PositioningCompletedData {
+  message: string;
+}
+
+type SocketEvent =
+  | 'chat-message'
+  | 'notification'
+  | 'player-state-changed'
+  | 'positioning-completed';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,15 +32,14 @@ export class SocketService {
   private socket: Socket;
 
   constructor(private accountService: AccountService) {
-    const userId = this.accountService.getId();
-    this.socket = io(environment.base_endpoint, { auth: { userId } });
+    this.socket = this.getSocketInstance();
   }
 
   /**
    * Return the socket instance.
    * @returns the socket instance
    */
-  public getSocketInstance(): Socket {
+  private getSocketInstance(): Socket {
     if (!this.socket) {
       const userId = this.accountService.getId();
       this.socket = io(environment.base_endpoint, { auth: { userId } });
@@ -57,12 +69,20 @@ export class SocketService {
    * Connect to user notification socket service.
    * @returns an Observable of `Message`
    */
-  notifications(): Observable<Notification> {
+  public notificationListener(): Observable<Notification> {
+    const event: SocketEvent = 'notification';
+    console.log(`Listening on '${event}' event`);
+
     return new Observable<Notification>(
       (subscriber: Subscriber<Notification>) => {
-        this.on<Notification>('notification', (notification) => {
+        this.on<Notification>(event, (notification) => {
           subscriber.next(notification);
         });
+
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
       }
     );
   }
@@ -93,7 +113,7 @@ export class SocketService {
    *
    * @returns
    */
-  public matchFound(): Observable<string> {
+  matchFound(): Observable<string> {
     return new Observable<string>((subscriber: Subscriber<string>) => {
       this.on<MatchData>('match-found', (matchData) => {
         subscriber.next(matchData.matchId);
@@ -103,47 +123,51 @@ export class SocketService {
 
   /**
    *
-   * @returns
+   * @returns an Observable of `PositioningCompletedData`
    */
-  public positioningCompleted(): Observable<{}> {
-    console.log('registering "positioning-completed" event...');
+  public positioningCompletedListener(): Observable<PositioningCompletedData> {
+    const event: SocketEvent = 'positioning-completed';
+    console.log(`Listening on '${event}' event`);
 
-    return new Observable<{}>((subscriber: Subscriber<{}>) => {
-      this.on('positioning-completed', () => {
-        subscriber.next();
-      });
-      return () => {
-        console.log('removing "positioning-completed" listener');
+    return new Observable<PositioningCompletedData>(
+      (subscriber: Subscriber<PositioningCompletedData>) => {
+        this.on<PositioningCompletedData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
+        return () => {
+          console.log(`Unlistening ${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
+  }
 
-        this.socket.removeListener('positioning-completed');
-      };
-    });
+  /**
+   *
+   * @returns an Observable of `PlayerStateChangedData`
+   */
+  public playerStateChangedListener(): Observable<PlayerStateChangedData> {
+    const event: SocketEvent = 'player-state-changed';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<PlayerStateChangedData>(
+      (subscriber: Subscriber<PlayerStateChangedData>) => {
+        this.on<PlayerStateChangedData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
   }
 
   /**
    *
    * @returns
    */
-  public playerStateChanged(): Observable<{}> {
-    console.log('registering "player-state-changed" event...');
-
-    return new Observable<{}>((subscriber: Subscriber<{}>) => {
-      this.on('player-state-changed', () => {
-        subscriber.next();
-      });
-      return () => {
-        console.log('removing "player-state-changed" listener');
-
-        this.socket.removeListener('player-state-changed');
-      };
-    });
-  }
-
-  /**
-   *
-   * @returns
-   */
-  public shotFired(matchId: string): Observable<Shot> {
+  shotFired(matchId: string): Observable<Shot> {
     console.log('registering "shot-fired" event...');
 
     return new Observable<Shot>((subscriber: Subscriber<Shot>) => {

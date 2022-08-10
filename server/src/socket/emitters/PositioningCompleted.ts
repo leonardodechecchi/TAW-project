@@ -1,13 +1,16 @@
 import { Server } from 'socket.io';
 import { RoomEmitter } from './RoomEmitter';
 
-export class PositioningCompletedEmitter extends RoomEmitter<{}> {
+interface PositioningCompletedData {
+  message: string;
+}
+
+export class PositioningCompletedEmitter extends RoomEmitter<PositioningCompletedData> {
   /**
    * @param ioServer the socket server instance
    * @param matchId the id of the match
    */
   constructor(ioServer: Server, matchId: string) {
-    console.log('positioning-completed');
     super(ioServer, 'positioning-completed', matchId);
   }
 }

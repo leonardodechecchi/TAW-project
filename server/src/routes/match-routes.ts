@@ -89,7 +89,9 @@ router.put(
       await match.setPlayerReady(playerUsername, req.body.isReady);
 
       match.player1.ready && match.player2.ready
-        ? new PositioningCompletedEmitter(ioServer, match._id.toString()).emit()
+        ? new PositioningCompletedEmitter(ioServer, match._id.toString()).emit({
+            message: 'Positioning phase completed!',
+          })
         : new PlayerStateChangedEmitter(ioServer, match._id.toString()).emit({
             message: 'The opponent is ready to play!',
           });

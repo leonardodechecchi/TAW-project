@@ -9,7 +9,6 @@ import { Ship, ShipTypes } from 'src/app/models/Ship';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
-import { PlayerStateChangedListener } from 'src/app/socket/listeners/PlayerStateChanged';
 
 @UntilDestroy()
 @Component({
@@ -65,11 +64,9 @@ export class PositioningPhaseComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
-    const socket: Socket = this.socketService.getSocketInstance();
-
     // when players are ready
     this.socketService
-      .positioningCompleted()
+      .positioningCompletedListener()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -79,12 +76,14 @@ export class PositioningPhaseComponent implements OnInit {
       });
 
     // when the opponent is ready
-    const playerStateChanged = new PlayerStateChangedListener(socket);
-    playerStateChanged.connect().subscribe({
-      next: (eventData) => {
-        console.log(eventData.message);
-      },
-    });
+    this.socketService
+      .playerStateChangedListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.infoMessage = eventData.message;
+        },
+      });
   }
 
   /**

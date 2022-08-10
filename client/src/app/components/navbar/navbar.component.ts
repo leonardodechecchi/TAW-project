@@ -40,7 +40,6 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // subscribe to notification socket service
     this.userService.notifications.pipe(untilDestroyed(this)).subscribe({
       next: (notifications) => {
         this.notifications = notifications;
