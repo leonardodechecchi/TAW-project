@@ -26,7 +26,7 @@ export class AccountService {
    * Reuturn the token saved in the local storage.
    * @returns the token
    */
-  getToken(): string {
+  public getToken(): string {
     return this.localStorageService.get('token');
   }
 
@@ -35,11 +35,10 @@ export class AccountService {
    * If the given token is invalid, the user must log in again.
    * @param token the token to set
    */
-  setToken(token: string): void {
+  public setToken(token: string): void {
     try {
       this.token = jwt_decode<Token>(token);
     } catch (err) {
-      console.error(err);
       this.authService.logout();
     }
   }
@@ -48,7 +47,7 @@ export class AccountService {
    * Get the user id.
    * @returns the user id or undefined if no token found
    */
-  getId(): string | undefined {
+  public getId(): string | undefined {
     if (!this.token) return;
     return this.token.userId;
   }
@@ -57,7 +56,7 @@ export class AccountService {
    * Get the user username.
    * @returns the user username or undefined if no token found
    */
-  getUsername(): string | undefined {
+  public getUsername(): string | undefined {
     if (!this.token) return;
     return this.token.username;
   }
@@ -66,7 +65,7 @@ export class AccountService {
    * Get the user email.
    * @returns the user email
    */
-  getEmail(): string | undefined {
+  public getEmail(): string | undefined {
     if (!this.token) return;
     return this.token.email;
   }
@@ -75,7 +74,7 @@ export class AccountService {
    * Tell if the user has the admin role.
    * @returns true if the user is an admin, false otherwise
    */
-  isAdmin(): boolean | undefined {
+  public isAdmin(): boolean | undefined {
     if (!this.token) return;
     for (let idx in this.token.roles) {
       if (this.token.roles[idx] === UserRoles.Admin) return true;
@@ -87,7 +86,7 @@ export class AccountService {
    * Tell if the user has the moderator role.
    * @returns true if the user is a moderator, false otherwise
    */
-  isModerator(): boolean | undefined {
+  public isModerator(): boolean | undefined {
     if (!this.token) return;
     for (let idx in this.token.roles) {
       if (this.token.roles[idx] === UserRoles.Moderator) return true;
@@ -99,7 +98,7 @@ export class AccountService {
    * Tell if the user has an active account.
    * @returns true if the the user account is active, false otherwise
    */
-  isActive(): boolean | undefined {
+  public isActive(): boolean | undefined {
     if (!this.token) return;
     return this.token.status === UserStatus.Active ? true : false;
   }
@@ -109,7 +108,7 @@ export class AccountService {
    * @returns true if the token is valid or false if it does not exists
    * or if it has expired
    */
-  isTokenValid(): boolean {
+  public isTokenValid(): boolean {
     if (!this.token) return false;
     return Date.now() < this.token.exp * 1000 ? true : false;
   }
