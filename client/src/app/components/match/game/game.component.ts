@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -75,14 +75,22 @@ export class GameComponent implements OnInit {
           match.player1.playerUsername === userUsername
             ? match.player1
             : match.player2;
+        console.log(player);
 
         this.grid = player.grid;
         this.playersChatId = match.playersChat;
 
         for (let ship of this.grid.ships) {
           for (let coordinate of ship.coordinates) {
-            this.changeCellColor(String(coordinate.row * 10 + coordinate.col));
+            this.changeCellColor(
+              'table1',
+              String(coordinate.row * 10 + coordinate.col)
+            );
           }
+        }
+
+        for (let shot of this.grid.shotsReceived) {
+          this.setFireShot('table1', shot.row, shot.col);
         }
       },
     });
@@ -100,9 +108,16 @@ export class GameComponent implements OnInit {
    * Change the background color of the table cell.
    * @param id the cell id
    */
-  private changeCellColor(id: string): void {
-    let td: HTMLElement | null = document.getElementById(id);
+  private changeCellColor(tableName: string, id: string): void {
+    let td: HTMLElement | null = document.getElementById(tableName + id);
     if (td) td.style.background = 'gray';
+  }
+
+  private setFireShot(tableName: string, row: number, col: number) {
+    let td: HTMLElement | null = document.getElementById(
+      tableName + (row * 10 + col)
+    );
+    if (td) td.innerHTML = '<strong>X</strong>';
   }
 
   /**
@@ -110,7 +125,7 @@ export class GameComponent implements OnInit {
    * @param letter the letter to parse
    * @returns the corresponding number index
    */
-  public parseRow(letter: string): number {
+  public parseRow = (letter: string): number => {
     try {
       switch (letter.toUpperCase()) {
         case 'A':
@@ -140,7 +155,7 @@ export class GameComponent implements OnInit {
     } catch (err) {
       return -1;
     }
-  }
+  };
 
   /**
    *

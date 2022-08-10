@@ -100,23 +100,27 @@ router.put(
 );
 
 router.put(
-  '/matches/:matchId/players/:playerUsername/shot',
+  '/matches/:matchId/players/:shooterUsername/shot',
   auth,
   async (
-    req: Request<{ matchId: string; playerUsername: string }, {}, { coordinates: GridCoordinates }>,
+    req: Request<
+      { matchId: string; shooterUsername: string },
+      {},
+      { coordinates: GridCoordinates }
+    >,
     res,
     next
   ) => {
     try {
       const matchId: Types.ObjectId = retrieveId(req.params.matchId);
-      const playerUsername: string = req.params.playerUsername;
+      const shooterUsername: string = req.params.shooterUsername;
       const coordinates: GridCoordinates = req.body.coordinates;
 
       const match: MatchDocument = await getMatchById(matchId);
-      const shooterPlayer: Player =
-        match.player1.playerUsername === playerUsername ? match.player2 : match.player1;
+      const opponentPlayer: Player =
+        match.player1.playerUsername === shooterUsername ? match.player1 : match.player2;
 
-      await match.addShot(shooterPlayer.playerUsername, coordinates);
+      await match.addShot(opponentPlayer.playerUsername, coordinates);
       const shotFiredEmitter = new ShotFiredEmitter(ioServer, match._id.toString());
       shotFiredEmitter.emit(coordinates);
 

@@ -116,7 +116,7 @@ export class PositioningPhaseComponent implements OnInit {
    * @param letter the letter to parse
    * @returns the corresponding number index
    */
-  public parseRow(letter: string): number {
+  public parseRow = (letter: string): number => {
     try {
       switch (letter.toUpperCase()) {
         case 'A':
@@ -146,7 +146,7 @@ export class PositioningPhaseComponent implements OnInit {
     } catch (err) {
       return -1;
     }
-  }
+  };
 
   /**
    * Return the length of the ship.

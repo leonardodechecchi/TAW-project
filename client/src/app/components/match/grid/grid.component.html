@@ -1,0 +1,17 @@
+<table class="table align-middle text-center table-bordered h-100 w-100">
+  <tbody>
+    <tr *ngFor="let row of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']">
+      <th scope="row">{{ row }}</th>
+      <td
+        *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        id="{{ tableName }}{{ parseRow(row) * 10 + col }}"
+      ></td>
+    </tr>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col" *ngFor="let col of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]">
+        {{ col }}
+      </th>
+    </tr>
+  </tbody>
+</table>

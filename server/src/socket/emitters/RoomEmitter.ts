@@ -14,7 +14,6 @@ export abstract class RoomEmitter<T> extends Emitter<T> {
   }
 
   public emit(data?: T) {
-    console.log(data, this.roomName);
     this.ioServer.to(this.roomName).emit(this.eventName, data);
   }
 }
