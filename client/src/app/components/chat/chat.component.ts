@@ -33,8 +33,9 @@ export class ChatComponent implements OnInit {
         this.chatId = params['id'];
         this.populateMessageList();
 
+        // subscribe to chat message socket service
         this.socketService
-          .chatMessages(this.chatId)
+          .chatMessageListener(this.chatId)
           .pipe(untilDestroyed(this))
           .subscribe({
             next: (message) => {
@@ -45,7 +46,9 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  // OK
+  /**
+   * Populate the chat list.
+   */
   private populateMessageList(): void {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
@@ -54,7 +57,11 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  // OK
+  /**
+   * Set a css class.
+   * @param message the message
+   * @returns the css class
+   */
   public cssClass(message: Message): string {
     const classes: string[] = [];
     if (message.author === this.accountService.getUsername()) {
@@ -63,7 +70,9 @@ export class ChatComponent implements OnInit {
     return classes.join(' ');
   }
 
-  // OK
+  /**
+   * Send the message.
+   */
   public sendMessage(): void {
     const message: Message = {
       author: this.accountService.getUsername(),
@@ -73,7 +82,6 @@ export class ChatComponent implements OnInit {
     this.chatService.addMessage(this.chatId, message).subscribe({
       next: () => {
         this.messageText.setValue('');
-        this.populateMessageList();
       },
     });
   }
