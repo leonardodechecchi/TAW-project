@@ -30,8 +30,9 @@ export class ChatModalComponent implements OnInit {
   ngOnInit(): void {
     this.populateMessageList();
 
+    // subscribe to chat message socket service
     this.socketService
-      .chatMessages(this.chatId)
+      .chatMessageListener(this.chatId)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (message) => {
@@ -40,6 +41,9 @@ export class ChatModalComponent implements OnInit {
       });
   }
 
+  /**
+   * Populate the chat list.
+   */
   private populateMessageList(): void {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
@@ -52,9 +56,9 @@ export class ChatModalComponent implements OnInit {
   }
 
   /**
-   *
-   * @param message
-   * @returns
+   * Set a css class.
+   * @param message the message
+   * @returns the css class
    */
   public cssClass(message: Message): string {
     const classes: string[] = [];
@@ -65,7 +69,7 @@ export class ChatModalComponent implements OnInit {
   }
 
   /**
-   *
+   * Send the message.
    */
   public sendMessage(): void {
     const message: Message = {
@@ -76,7 +80,6 @@ export class ChatModalComponent implements OnInit {
     this.chatService.addMessage(this.chatId, message).subscribe({
       next: () => {
         this.messageField.setValue('');
-        this.populateMessageList();
       },
     });
   }

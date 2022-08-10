@@ -92,18 +92,18 @@ export class SocketService {
    * @param chatId the chat id
    * @returns an Observable of `Message`
    */
-  chatMessages(chatId: string): Observable<Message> {
-    console.log('registering "chat-message" event...');
+  public chatMessageListener(chatId: string): Observable<Message> {
+    const event: SocketEvent = 'chat-message';
+    console.log(`Listening on '${event}' event`);
 
     return new Observable<Message>((subscriber: Subscriber<Message>) => {
       this.emit<string>('chat-joined', chatId);
-      this.on<Message>('chat-message', (message) => {
+      this.on<Message>(event, (message) => {
         subscriber.next(message);
       });
       return () => {
-        console.log('removing "chat-message" listener');
-
-        this.socket.removeListener('chat-message');
+        console.log(`Unlistening '${event}' event`);
+        this.socket.removeListener(event);
         this.emit<string>('chat-left', chatId);
       };
     });

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
 
+@UntilDestroy()
 @Component({
   selector: 'chat-list',
   templateUrl: './chat-list.component.html',
@@ -10,21 +12,12 @@ import { UserService } from 'src/app/services/user.service';
 export class ChatListComponent implements OnInit {
   public relationships: Relationship[];
 
-  constructor(
-    private accountService: AccountService,
-    private userService: UserService
-  ) {
+  constructor(private userService: UserService) {
     this.relationships = [];
   }
 
   ngOnInit(): void {
-    this.populateChatList();
-  }
-
-  // OK
-  private populateChatList(): void {
-    const userId: string = this.accountService.getId();
-    this.userService.getRelationships(userId).subscribe({
+    this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.relationships = relationships.filter((relationship) => {
           return !!relationship.chatId;
