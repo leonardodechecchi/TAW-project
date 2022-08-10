@@ -11,6 +11,7 @@ import { StatusError } from './StatusError';
 export interface Match {
   player1: Player;
   player2: Player;
+  startingPlayer: string;
   playersChat: Types.ObjectId;
   observersChat: Types.ObjectId;
 }
@@ -31,8 +32,9 @@ interface MatchProps {
   setPlayerReady: (playerUsername: string, isReady: boolean) => Promise<MatchDocument>;
 
   /**
-   * @param shooterUsername
-   * @param coordinates
+   * Add a shot into the player grid.
+   * @param shooterUsername the shooter username
+   * @param coordinates the shot coordinates
    */
   addShot: (shooterUsername: string, coordinates: GridCoordinates) => Promise<MatchDocument>;
 }
@@ -46,6 +48,10 @@ export const matchSchema = new Schema<Match, Model<Match, {}, MatchProps>>({
   },
   player2: {
     type: playerSchema,
+    required: true,
+  },
+  startingPlayer: {
+    type: SchemaTypes.String,
     required: true,
   },
   playersChat: {
@@ -114,6 +120,11 @@ export async function createMatch(username1: string, username2: string): Promise
     playersChat: playersChat._id,
     observersChat: observersChat._id,
   });
+
+  const startingPlayer: string =
+    Math.random() < 0.5 ? match.player1.playerUsername : match.player2.playerUsername;
+  match.startingPlayer = startingPlayer;
+
   return match.save();
 }
 

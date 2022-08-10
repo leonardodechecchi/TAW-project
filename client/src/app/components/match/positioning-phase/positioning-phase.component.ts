@@ -69,7 +69,6 @@ export class PositioningPhaseComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          console.log('positioning-completed!');
           this.matchService.updateMatchLoading(false);
           this.router.navigate(['../game']);
         },
@@ -205,7 +204,7 @@ export class PositioningPhaseComponent implements OnInit {
     this.errorMessage = null;
 
     // check if the coordinates are numbers
-    if (!isNaN(row) || !isNaN(col)) {
+    if (isNaN(row) || isNaN(col)) {
       this.errorMessage = 'Error: not a number';
       return false;
     }
@@ -320,6 +319,8 @@ export class PositioningPhaseComponent implements OnInit {
    *
    */
   public reset(): void {
+    this.errorMessage = null;
+
     // reset the number of ships
     this.destroyerCount = 5;
     this.cruiserCount = 3;

@@ -7,6 +7,7 @@ export class PlayerStateChangedEmitter extends RoomEmitter<{}> {
    * @param matchId the id of the match
    */
   constructor(ioServer: Server, matchId: string) {
+    console.log('player-state-changed');
     super(ioServer, 'player-state-changed', matchId);
   }
 }

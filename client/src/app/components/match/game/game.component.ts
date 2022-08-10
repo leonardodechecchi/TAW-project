@@ -20,6 +20,7 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 export class GameComponent implements OnInit {
   private matchId: string;
   private grid: Grid;
+  private opponentGrid: Grid;
   public opponentUsername: string;
   private playersChatId: string;
   private chatModalRef: MdbModalRef<ChatModalComponent> | null;
@@ -28,6 +29,8 @@ export class GameComponent implements OnInit {
   public colField: FormControl;
 
   public errorMessage: string;
+
+  public startingPlayer: string;
 
   constructor(
     private accountService: AccountService,
@@ -60,8 +63,22 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
-          console.log(shot);
           if (shot.shooterUsername === this.opponentUsername) {
+            let shipHit: boolean = false;
+            for (let ship of this.grid.ships) {
+              for (let coordinate of ship.coordinates) {
+                if (
+                  shot.coordinates.row === coordinate.row &&
+                  shot.coordinates.col === coordinate.col
+                ) {
+                  shipHit = true;
+                  break;
+                }
+              }
+              if (shipHit) break;
+            }
+            console.log(shipHit ? 'HIT' : 'MISSED');
+
             this.setFireShot(
               'table1',
               shot.coordinates.row,
@@ -78,11 +95,12 @@ export class GameComponent implements OnInit {
   private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
-        const userUsername: string = this.accountService.getUsername();
         let player: Player;
         let opponentPlayer: Player;
 
-        if (match.player1.playerUsername === userUsername) {
+        if (
+          match.player1.playerUsername === this.accountService.getUsername()
+        ) {
           player = match.player1;
           opponentPlayer = match.player2;
         } else {
@@ -94,17 +112,44 @@ export class GameComponent implements OnInit {
         this.playersChatId = match.playersChat;
         this.opponentUsername = opponentPlayer.playerUsername;
 
+        // set ships on primary grid
         for (let ship of this.grid.ships) {
           for (let coordinate of ship.coordinates) {
             this.changeCellColor(
               'table1',
-              String(coordinate.row * 10 + coordinate.col)
+              String(coordinate.row * 10 + coordinate.col),
+              'gray'
             );
           }
         }
 
+        // set shots received
         for (let shot of this.grid.shotsReceived) {
           this.setFireShot('table1', shot.row, shot.col);
+        }
+
+        //
+        for (let shot of opponentPlayer.grid.shotsReceived) {
+          let found: boolean = false;
+          for (let ship of opponentPlayer.grid.ships) {
+            for (let coordinate of ship.coordinates) {
+              if (shot.row === coordinate.row && shot.col === coordinate.col) {
+                found = true;
+                this.changeCellColor(
+                  'table2',
+                  String(coordinate.row * 10 + coordinate.col),
+                  '#A80000'
+                );
+              }
+            }
+          }
+          if (!found) {
+            this.changeCellColor(
+              'table2',
+              String(shot.row * 10 + shot.col),
+              '#006994'
+            );
+          }
         }
       },
     });
@@ -122,11 +167,17 @@ export class GameComponent implements OnInit {
    * Change the background color of the table cell.
    * @param id the cell id
    */
-  private changeCellColor(tableName: string, id: string): void {
+  private changeCellColor(tableName: string, id: string, color: string): void {
     let td: HTMLElement | null = document.getElementById(tableName + id);
-    if (td) td.style.background = 'gray';
+    if (td) td.style.background = color;
   }
 
+  /**
+   *
+   * @param tableName the table name
+   * @param row the row index
+   * @param col the col index
+   */
   private setFireShot(tableName: string, row: number, col: number) {
     let td: HTMLElement | null = document.getElementById(
       tableName + (row * 10 + col)
@@ -172,10 +223,12 @@ export class GameComponent implements OnInit {
   };
 
   /**
-   *
-   * @param row
-   * @param col
-   * @returns
+   * Checks if the given coordinates are correct.
+   * To be precise, checks if the coordinates are numbers and
+   * if are within the limits.
+   * @param row the row index
+   * @param col the col index
+   * @returns `true` if the coordinates are correct, `false` otherwise
    */
   private checkCoordinates(row: number, col: number): boolean {
     if (isNaN(row) || isNaN(col)) return false;
@@ -184,7 +237,7 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Open the game chat.
    */
   public openChat(): void {
     this.chatModalRef = this.modalService.open(ChatModalComponent, {
@@ -194,7 +247,7 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Fire a shot.
    */
   public shoot(): void {
     this.errorMessage = null;
