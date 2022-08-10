@@ -20,23 +20,9 @@ export class NavbarComponent implements OnInit {
   constructor(
     public authService: AuthService,
     public accountService: AccountService,
-    public userService: UserService,
-    private matchService: MatchService,
-    private socketService: SocketService,
-    private router: Router
+    public userService: UserService
   ) {
     this.notifications = [];
-
-    // subscribe to 'match found' socket event
-    this.socketService.matchFound().subscribe({
-      next: (matchId) => {
-        this.socketService.emit<{ matchId: string }>('match-joined', {
-          matchId,
-        });
-        this.matchService.updateMatchLoading(false);
-        this.router.navigate(['match', matchId, 'positioning-phase']);
-      },
-    });
   }
 
   ngOnInit(): void {

@@ -7,8 +7,11 @@ import { Relationship } from '../models/Relationship';
 import { Notification, NotificationType } from '../models/Notification';
 import { AccountService } from './account.service';
 import { SocketService } from './socket.service';
-import { Socket } from 'socket.io-client';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MatchService } from './match.service';
+import { Router } from '@angular/router';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -22,7 +25,9 @@ export class UserService {
   constructor(
     private http: HttpClient,
     private accountService: AccountService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private matchService: MatchService,
+    private router: Router
   ) {
     const userId: string = this.accountService.getId();
 
@@ -47,12 +52,33 @@ export class UserService {
     });
 
     // connect to notification socket service
-    this.socketService.notificationListener().subscribe({
-      next: (notification) => {
-        this.notificationsSubject.value.push(notification);
-        this.updateNotifications(this.notificationsSubject.value);
-      },
-    });
+    this.socketService
+      .notificationListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (notification) => {
+          this.notificationsSubject.value.push(notification);
+          this.updateNotifications(this.notificationsSubject.value);
+        },
+      });
+
+    // subscribe to match found socket event
+    this.socketService
+      .matchFoundListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.socketService.emit<{ matchId: string }>('match-joined', {
+            matchId: eventData.matchId,
+          });
+          this.matchService.updateMatchLoading(false);
+          this.router.navigate([
+            'match',
+            eventData.matchId,
+            'positioning-phase',
+          ]);
+        },
+      });
   }
 
   /**
@@ -121,19 +147,6 @@ export class UserService {
       body
     );
   }
-
-  /**
-   * Update a new profile picture.
-   * @param userId the user id
-   * @param formData
-   * @returns an empty Observable
-   uploadPicture(userId: string, formData: FormData): Observable<void> {
-     return this.http.put<void>(
-       `${environment.user_endpoint}/${userId}/picture`,
-       formData
-       );
-      }
-      */
 
   /**
    * Update the user stats.

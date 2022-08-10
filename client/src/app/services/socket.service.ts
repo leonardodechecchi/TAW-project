@@ -23,7 +23,8 @@ type SocketEvent =
   | 'chat-message'
   | 'notification'
   | 'player-state-changed'
-  | 'positioning-completed';
+  | 'positioning-completed'
+  | 'match-found';
 
 @Injectable({
   providedIn: 'root',
@@ -113,11 +114,19 @@ export class SocketService {
    *
    * @returns
    */
-  matchFound(): Observable<string> {
-    return new Observable<string>((subscriber: Subscriber<string>) => {
-      this.on<MatchData>('match-found', (matchData) => {
-        subscriber.next(matchData.matchId);
+  public matchFoundListener(): Observable<MatchData> {
+    const event: SocketEvent = 'match-found';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<MatchData>((subscriber: Subscriber<MatchData>) => {
+      this.on<MatchData>(event, (eventData) => {
+        subscriber.next(eventData);
       });
+
+      return () => {
+        console.log(`Unlistening '${event}' event`);
+        this.socket.removeListener(event);
+      };
     });
   }
 
