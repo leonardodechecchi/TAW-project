@@ -86,12 +86,12 @@ matchSchema.method(
   'addShot',
   async function (
     this: MatchDocument,
-    shooterUsername: string,
+    playerUsername: string,
     coordinates: GridCoordinates
   ): Promise<MatchDocument> {
-    this.player1.playerUsername === shooterUsername
-      ? this.player2.grid.shotsReceived.push(coordinates)
-      : this.player1.grid.shotsReceived.push(coordinates);
+    this.player1.playerUsername === playerUsername
+      ? this.player1.grid.shotsReceived.push(coordinates)
+      : this.player2.grid.shotsReceived.push(coordinates);
     return this.save();
   }
 );

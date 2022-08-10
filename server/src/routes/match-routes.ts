@@ -99,6 +99,9 @@ router.put(
   }
 );
 
+/**
+ * PUT /matches/:matchId/players/:shooterUsername/shot
+ */
 router.put(
   '/matches/:matchId/players/:shooterUsername/shot',
   auth,
@@ -118,11 +121,11 @@ router.put(
 
       const match: MatchDocument = await getMatchById(matchId);
       const opponentPlayer: Player =
-        match.player1.playerUsername === shooterUsername ? match.player1 : match.player2;
+        match.player1.playerUsername === shooterUsername ? match.player2 : match.player1;
 
       await match.addShot(opponentPlayer.playerUsername, coordinates);
       const shotFiredEmitter = new ShotFiredEmitter(ioServer, match._id.toString());
-      shotFiredEmitter.emit(coordinates);
+      shotFiredEmitter.emit({ coordinates, shooterUsername });
 
       return res.status(200).json();
     } catch (err) {

@@ -20,6 +20,7 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 export class GameComponent implements OnInit {
   private matchId: string;
   private grid: Grid;
+  public opponentUsername: string;
   private playersChatId: string;
   private chatModalRef: MdbModalRef<ChatModalComponent> | null;
 
@@ -58,8 +59,15 @@ export class GameComponent implements OnInit {
       .shotFired(this.matchId)
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (coordinates) => {
-          console.log(coordinates);
+        next: (shot) => {
+          console.log(shot);
+          if (shot.shooterUsername === this.opponentUsername) {
+            this.setFireShot(
+              'table1',
+              shot.coordinates.row,
+              shot.coordinates.col
+            );
+          }
         },
       });
   }
@@ -71,14 +79,20 @@ export class GameComponent implements OnInit {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
         const userUsername: string = this.accountService.getUsername();
-        const player: Player =
-          match.player1.playerUsername === userUsername
-            ? match.player1
-            : match.player2;
-        console.log(player);
+        let player: Player;
+        let opponentPlayer: Player;
+
+        if (match.player1.playerUsername === userUsername) {
+          player = match.player1;
+          opponentPlayer = match.player2;
+        } else {
+          player = match.player2;
+          opponentPlayer = match.player1;
+        }
 
         this.grid = player.grid;
         this.playersChatId = match.playersChat;
+        this.opponentUsername = opponentPlayer.playerUsername;
 
         for (let ship of this.grid.ships) {
           for (let coordinate of ship.coordinates) {

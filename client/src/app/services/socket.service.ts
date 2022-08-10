@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { GridCoordinates } from '../models/GridCoordinates';
 import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
+import { Shot } from '../models/Shot';
 import { AccountService } from './account.service';
 
 interface MatchData {
@@ -131,21 +132,19 @@ export class SocketService {
    *
    * @returns
    */
-  public shotFired(matchId: string): Observable<GridCoordinates> {
+  public shotFired(matchId: string): Observable<Shot> {
     console.log('registering "shot-fired" event...');
 
-    return new Observable<GridCoordinates>(
-      (subscriber: Subscriber<GridCoordinates>) => {
-        this.emit('match-joined', { matchId });
-        this.on<GridCoordinates>('shot-fired', (coordinates) => {
-          subscriber.next(coordinates);
-        });
-        return () => {
-          console.log('removing "shot-fired" listener');
+    return new Observable<Shot>((subscriber: Subscriber<Shot>) => {
+      this.emit<{ matchId: string }>('match-joined', { matchId });
+      this.on<Shot>('shot-fired', (shot) => {
+        subscriber.next(shot);
+      });
+      return () => {
+        console.log('removing "shot-fired" listener');
 
-          this.socket.removeListener('shot-fired');
-        };
-      }
-    );
+        this.socket.removeListener('shot-fired');
+      };
+    });
   }
 }

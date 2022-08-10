@@ -2,7 +2,12 @@ import { Server } from 'socket.io';
 import { GridCoordinates } from '../../models/GridCoordinates';
 import { RoomEmitter } from './RoomEmitter';
 
-export class ShotFiredEmitter extends RoomEmitter<GridCoordinates> {
+interface ShotFiredData {
+  coordinates: GridCoordinates;
+  shooterUsername: string;
+}
+
+export class ShotFiredEmitter extends RoomEmitter<ShotFiredData> {
   /**
    * @param ioServer the socket server istance
    * @param matchId the match id
