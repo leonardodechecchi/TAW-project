@@ -64,6 +64,10 @@ export class PositioningPhaseComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
+    this.socketService.emit<{ matchId: string }>('match-joined', {
+      matchId: this.matchId,
+    });
+
     // when players are ready
     this.socketService
       .positioningCompletedListener()
@@ -184,6 +188,16 @@ export class PositioningPhaseComponent implements OnInit {
       default:
         this.carrierCount--;
     }
+  }
+
+  /**
+   * Calculate the index to access table cell.
+   * @param row the row
+   * @param col the col
+   * @returns the result
+   */
+  private getCellId(row: number, col: number): string {
+    return String(row * 10 + col);
   }
 
   /**
@@ -341,7 +355,7 @@ export class PositioningPhaseComponent implements OnInit {
 
       // add coordinates
       for (let idx = 0; idx < shipLength; idx++) {
-        this.changeCellColor(String((row + idx) * 10 + col));
+        this.changeCellColor(this.getCellId(row + idx, col));
         coordinates.push({ row: row + idx, col });
       }
 
@@ -360,7 +374,7 @@ export class PositioningPhaseComponent implements OnInit {
       }
 
       for (let idx = 0; idx < shipLength; idx++) {
-        this.changeCellColor(String(row * 10 + (col + idx)));
+        this.changeCellColor(this.getCellId(row, col + idx));
         coordinates.push({ row, col: col + idx });
       }
 
@@ -370,14 +384,6 @@ export class PositioningPhaseComponent implements OnInit {
       this.decreaseShipCount(shipType);
     }
 
-    // update player grid
-    this.matchService
-      .updatePlayerGrid(
-        this.matchId,
-        this.accountService.getUsername(),
-        this.grid
-      )
-      .subscribe();
     return true;
   };
 
@@ -398,19 +404,21 @@ export class PositioningPhaseComponent implements OnInit {
       ships: [],
       shotsReceived: [],
     };
-    this.matchService.updatePlayerGrid(
-      this.matchId,
-      this.accountService.getUsername(),
-      this.grid
-    );
+    this.matchService
+      .updatePlayerGrid(
+        this.matchId,
+        this.accountService.getUsername(),
+        this.grid
+      )
+      .subscribe();
 
     // reset the table cell colors
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 10; col++) {
         let cell: HTMLElement | null = document.getElementById(
-          String(row * 10 + col)
+          this.getCellId(row, col)
         );
-        if (cell) cell.style.background = 'white';
+        cell.style.background = 'white';
       }
     }
   }
@@ -428,6 +436,15 @@ export class PositioningPhaseComponent implements OnInit {
       this.errorMessage = 'Not all ships are deployed';
       return;
     }
+
+    // update player grid
+    this.matchService
+      .updatePlayerGrid(
+        this.matchId,
+        this.accountService.getUsername(),
+        this.grid
+      )
+      .subscribe();
 
     // update player status
     this.matchService.updateMatchLoading(true);

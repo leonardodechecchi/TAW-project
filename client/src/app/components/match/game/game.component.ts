@@ -19,11 +19,11 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 })
 export class GameComponent implements OnInit {
   private matchId: string;
-  private grid: Grid;
-  private opponentGrid: Grid;
-  public opponentUsername: string;
+
+  private player: Player;
+  private opponentPlayer: Player;
+
   private playersChatId: string;
-  private chatModalRef: MdbModalRef<ChatModalComponent> | null;
 
   public rowField: FormControl;
   public colField: FormControl;
@@ -39,7 +39,6 @@ export class GameComponent implements OnInit {
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {
-    this.chatModalRef = null;
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
   }
@@ -63,10 +62,12 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
+          console.log(shot);
+
           // if the shot was fired by the client
           if (shot.shooterUsername === this.accountService.getUsername()) {
             let shipHit: boolean = false;
-            for (let ship of this.grid.ships) {
+            for (let ship of this.opponentPlayer.grid.ships) {
               for (let coordinate of ship.coordinates) {
                 if (
                   shot.coordinates.row === coordinate.row &&
@@ -75,30 +76,32 @@ export class GameComponent implements OnInit {
                   shipHit = true;
                   this.changeCellColor(
                     'table2',
-                    String(coordinate.row * 10 + coordinate.col),
-                    '#A80000'
+                    this.getCellId(coordinate.row, coordinate.col),
+                    'red'
                   );
+                  break;
                 }
               }
+              if (shipHit) break;
+            }
+
+            // shot missed
+            if (!shipHit) {
+              this.changeCellColor(
+                'table2',
+                this.getCellId(shot.coordinates.row, shot.coordinates.col),
+                'blue'
+              );
             }
           }
 
-          // if the shot was fired by the opponent
-          if (shot.shooterUsername === this.opponentUsername) {
-            for (let ship of this.grid.ships) {
-              for (let coordinate of ship.coordinates) {
-                if (
-                  shot.coordinates.row === coordinate.row &&
-                  shot.coordinates.col === coordinate.col
-                ) {
-                  this.setFireShot(
-                    'table1',
-                    shot.coordinates.row,
-                    shot.coordinates.col
-                  );
-                }
-              }
-            }
+          // the shot was fired by the opponent
+          else {
+            this.setFireShot(
+              'table1',
+              shot.coordinates.row,
+              shot.coordinates.col
+            );
           }
         },
       });
@@ -110,50 +113,45 @@ export class GameComponent implements OnInit {
   private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
-        let player: Player;
-        let opponentPlayer: Player;
-
         if (
           match.player1.playerUsername === this.accountService.getUsername()
         ) {
-          player = match.player1;
-          opponentPlayer = match.player2;
+          this.player = match.player1;
+          this.opponentPlayer = match.player2;
         } else {
-          player = match.player2;
-          opponentPlayer = match.player1;
+          this.player = match.player2;
+          this.opponentPlayer = match.player1;
         }
 
-        this.grid = player.grid;
         this.playersChatId = match.playersChat;
-        this.opponentUsername = opponentPlayer.playerUsername;
 
         // set ships on primary grid
-        for (let ship of this.grid.ships) {
+        for (let ship of this.player.grid.ships) {
           for (let coordinate of ship.coordinates) {
             this.changeCellColor(
               'table1',
-              String(coordinate.row * 10 + coordinate.col),
+              this.getCellId(coordinate.row, coordinate.col),
               'gray'
             );
           }
         }
 
         // set shots received
-        for (let shot of this.grid.shotsReceived) {
+        for (let shot of this.player.grid.shotsReceived) {
           this.setFireShot('table1', shot.row, shot.col);
         }
 
-        //
-        for (let shot of opponentPlayer.grid.shotsReceived) {
+        // set fired shots on secondary grid
+        for (let shot of this.opponentPlayer.grid.shotsReceived) {
           let found: boolean = false;
-          for (let ship of opponentPlayer.grid.ships) {
+          for (let ship of this.opponentPlayer.grid.ships) {
             for (let coordinate of ship.coordinates) {
               if (shot.row === coordinate.row && shot.col === coordinate.col) {
                 found = true;
                 this.changeCellColor(
                   'table2',
-                  String(coordinate.row * 10 + coordinate.col),
-                  '#A80000'
+                  this.getCellId(coordinate.row, coordinate.col),
+                  'red'
                 );
               }
             }
@@ -161,8 +159,8 @@ export class GameComponent implements OnInit {
           if (!found) {
             this.changeCellColor(
               'table2',
-              String(shot.row * 10 + shot.col),
-              '#006994'
+              this.getCellId(shot.row, shot.col),
+              'blue'
             );
           }
         }
@@ -170,12 +168,14 @@ export class GameComponent implements OnInit {
     });
   }
 
-  public get rowValue() {
-    return this.rowField.value;
-  }
-
-  public get colValue() {
-    return this.colField.value;
+  /**
+   * Calculate the index to access table cell.
+   * @param row the row
+   * @param col the col
+   * @returns the result
+   */
+  private getCellId(row: number, col: number): string {
+    return String(row * 10 + col);
   }
 
   /**
@@ -255,7 +255,7 @@ export class GameComponent implements OnInit {
    * Open the game chat.
    */
   public openChat(): void {
-    this.chatModalRef = this.modalService.open(ChatModalComponent, {
+    this.modalService.open(ChatModalComponent, {
       data: { chatId: this.playersChatId },
       modalClass: 'modal-fullscreen modal-dialog-scrollable',
     });
@@ -267,19 +267,22 @@ export class GameComponent implements OnInit {
   public shoot(): void {
     this.errorMessage = null;
 
-    const row: number = this.parseRow(this.rowValue);
-    const col: number | any = this.colValue;
+    const row: number = this.parseRow(this.rowField.value);
+    const col: number | any = this.colField.value;
 
     if (!this.checkCoordinates(row, col)) {
       this.errorMessage = 'Invalid coordinates!';
       return;
     }
 
-    const coordinates: GridCoordinates = { row, col };
-
     // fire the shot
     this.matchService
-      .fireAShot(this.matchId, this.accountService.getUsername(), coordinates)
-      .subscribe();
+      .fireAShot(this.matchId, this.accountService.getUsername(), { row, col })
+      .subscribe({
+        error: (err) => {
+          console.log(err);
+          this.errorMessage = err.error;
+        },
+      });
   }
 }

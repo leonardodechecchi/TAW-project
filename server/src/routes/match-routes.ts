@@ -131,7 +131,7 @@ router.put(
       const shotFiredEmitter = new ShotFiredEmitter(ioServer, match._id.toString());
       shotFiredEmitter.emit({ coordinates, shooterUsername });
 
-      return res.status(200).json();
+      return res.status(200).json(match);
     } catch (err) {
       next(err);
     }
