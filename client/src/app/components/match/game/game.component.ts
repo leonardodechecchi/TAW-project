@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
-import { Grid } from 'src/app/models/Grid';
-import { GridCoordinates } from 'src/app/models/GridCoordinates';
+import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Player } from 'src/app/models/Player';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -28,6 +26,9 @@ export class GameComponent implements OnInit {
   public colField: FormControl;
 
   public errorMessage: string;
+
+  private missedShotColor: string = '#1c63cc';
+  private hitShotColor: string = '#ec0930';
 
   constructor(
     private accountService: AccountService,
@@ -59,11 +60,13 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
-          console.log(shot);
+          // check if there is a winner
+          this.winner();
 
           // if the shot was fired by the client
           if (shot.shooterUsername === this.accountService.getUsername()) {
             let shipHit: boolean = false;
+
             for (let ship of this.opponentPlayer.grid.ships) {
               for (let coordinate of ship.coordinates) {
                 if (
@@ -74,11 +77,12 @@ export class GameComponent implements OnInit {
                   this.changeCellColor(
                     'table2',
                     this.getCellId(coordinate.row, coordinate.col),
-                    'red'
+                    this.hitShotColor
                   );
                   break;
                 }
               }
+
               if (shipHit) break;
             }
 
@@ -87,7 +91,7 @@ export class GameComponent implements OnInit {
               this.changeCellColor(
                 'table2',
                 this.getCellId(shot.coordinates.row, shot.coordinates.col),
-                'blue'
+                this.missedShotColor
               );
             }
           }
@@ -149,7 +153,7 @@ export class GameComponent implements OnInit {
                 this.changeCellColor(
                   'table2',
                   this.getCellId(coordinate.row, coordinate.col),
-                  'red'
+                  '#ec0930'
                 );
               }
             }
@@ -158,12 +162,10 @@ export class GameComponent implements OnInit {
             this.changeCellColor(
               'table2',
               this.getCellId(shot.row, shot.col),
-              'blue'
+              '#1c63cc'
             );
           }
         }
-
-        this.winner();
       },
     });
   }
@@ -185,6 +187,13 @@ export class GameComponent implements OnInit {
   private changeCellColor(tableName: string, id: string, color: string): void {
     let td: HTMLElement | null = document.getElementById(tableName + id);
     td.style.background = color;
+
+    if (color === this.missedShotColor)
+      td.innerHTML = '<i class="fas fa-water text-white"></i>';
+
+    if (color === this.hitShotColor) {
+      td.innerHTML = '<i class="fas fa-fire-alt text-white"></i>';
+    }
   }
 
   /**
@@ -251,8 +260,13 @@ export class GameComponent implements OnInit {
    *
    */
   private winner() {
-    this.isWinningPlayer(this.player);
-    this.isWinningPlayer(this.opponentPlayer);
+    if (this.isWinningPlayer(this.player)) {
+      console.log(this.player.playerUsername + ' won!');
+    }
+
+    if (this.isWinningPlayer(this.opponentPlayer)) {
+      console.log(this.opponentPlayer.playerUsername + ' won!');
+    }
   }
 
   /**
