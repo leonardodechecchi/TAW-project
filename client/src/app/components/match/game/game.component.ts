@@ -19,18 +19,15 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 })
 export class GameComponent implements OnInit {
   private matchId: string;
-
   private player: Player;
   private opponentPlayer: Player;
-
+  public startingPlayer: string;
   private playersChatId: string;
 
   public rowField: FormControl;
   public colField: FormControl;
 
   public errorMessage: string;
-
-  public startingPlayer: string;
 
   constructor(
     private accountService: AccountService,
@@ -124,6 +121,7 @@ export class GameComponent implements OnInit {
         }
 
         this.playersChatId = match.playersChat;
+        this.startingPlayer = match.startingPlayer;
 
         // set ships on primary grid
         for (let ship of this.player.grid.ships) {
@@ -164,6 +162,8 @@ export class GameComponent implements OnInit {
             );
           }
         }
+
+        this.winner();
       },
     });
   }
@@ -184,7 +184,7 @@ export class GameComponent implements OnInit {
    */
   private changeCellColor(tableName: string, id: string, color: string): void {
     let td: HTMLElement | null = document.getElementById(tableName + id);
-    if (td) td.style.background = color;
+    td.style.background = color;
   }
 
   /**
@@ -197,7 +197,62 @@ export class GameComponent implements OnInit {
     let td: HTMLElement | null = document.getElementById(
       tableName + (row * 10 + col)
     );
-    if (td) td.innerHTML = '<strong>X</strong>';
+    td.innerHTML = '<strong>X</strong>';
+  }
+
+  /**
+   * Checks if the given coordinates are correct.
+   * To be precise, checks if the coordinates are numbers and
+   * if are within the limits.
+   * @param row the row index
+   * @param col the col index
+   * @returns `true` if the coordinates are correct, `false` otherwise
+   */
+  private checkCoordinates(row: number, col: number): boolean {
+    if (isNaN(row) || isNaN(col)) return false;
+    if (row < 0 || row > 9 || col < 0 || col > 9) return false;
+    return true;
+  }
+
+  /**
+   * Check if the given player is the winner.
+   * @param player the player record
+   * @returns true if the player has won, false otherwise
+   */
+  private isWinningPlayer(player: Player): boolean {
+    let totalShips = 11;
+
+    for (let ship of player.grid.ships) {
+      let shipDestroyed: boolean = true;
+
+      for (let coord of ship.coordinates) {
+        let coordFound: boolean = false;
+
+        for (let shot of player.grid.shotsReceived) {
+          if (coord.row === shot.row && coord.col === shot.col) {
+            coordFound = true;
+            break;
+          }
+        }
+
+        if (!coordFound) {
+          shipDestroyed = false;
+          break;
+        }
+      }
+
+      if (shipDestroyed) totalShips--;
+    }
+
+    return totalShips === 0 ? true : false;
+  }
+
+  /**
+   *
+   */
+  private winner() {
+    this.isWinningPlayer(this.player);
+    this.isWinningPlayer(this.opponentPlayer);
   }
 
   /**
@@ -236,20 +291,6 @@ export class GameComponent implements OnInit {
       return -1;
     }
   };
-
-  /**
-   * Checks if the given coordinates are correct.
-   * To be precise, checks if the coordinates are numbers and
-   * if are within the limits.
-   * @param row the row index
-   * @param col the col index
-   * @returns `true` if the coordinates are correct, `false` otherwise
-   */
-  private checkCoordinates(row: number, col: number): boolean {
-    if (isNaN(row) || isNaN(col)) return false;
-    if (row < 0 || row > 9 || col < 0 || col > 9) return false;
-    return true;
-  }
 
   /**
    * Open the game chat.
