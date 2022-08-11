@@ -49,6 +49,7 @@ import { PositioningPhaseComponent } from './components/match/positioning-phase/
 import { GameComponent } from './components/match/game/game.component';
 import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
 import { GridComponent } from './components/match/grid/grid.component';
+import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -128,6 +129,7 @@ const routes: Routes = [
     GameComponent,
     ChatModalComponent,
     GridComponent,
+    GameNavbarComponent,
   ],
   imports: [
     BrowserModule,

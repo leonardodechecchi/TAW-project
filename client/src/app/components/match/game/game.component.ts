@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Player } from 'src/app/models/Player';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -18,9 +18,10 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 export class GameComponent implements OnInit {
   private matchId: string;
   private player: Player;
-  private opponentPlayer: Player;
+  public opponentPlayer: Player;
   public startingPlayer: string;
   private playersChatId: string;
+  private modalRef: MdbModalRef<ChatModalComponent>;
 
   public rowField: FormControl;
   public colField: FormControl;
@@ -45,8 +46,8 @@ export class GameComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
-        this.initSocketEvents();
         this.initGrid();
+        this.initSocketEvents();
       },
     });
   }
@@ -262,10 +263,10 @@ export class GameComponent implements OnInit {
   private winner() {
     if (this.isWinningPlayer(this.player)) {
       console.log(this.player.playerUsername + ' won!');
-    }
-
-    if (this.isWinningPlayer(this.opponentPlayer)) {
-      console.log(this.opponentPlayer.playerUsername + ' won!');
+    } else {
+      if (this.isWinningPlayer(this.opponentPlayer)) {
+        console.log(this.opponentPlayer.playerUsername + ' won!');
+      }
     }
   }
 
@@ -309,12 +310,14 @@ export class GameComponent implements OnInit {
   /**
    * Open the game chat.
    */
-  public openChat(): void {
-    this.modalService.open(ChatModalComponent, {
+  public openChat = (): void => {
+    this.modalRef = this.modalService.open(ChatModalComponent, {
       data: { chatId: this.playersChatId },
       modalClass: 'modal-fullscreen modal-dialog-scrollable',
     });
-  }
+  };
+
+  public leaveMatch = (): void => {};
 
   /**
    * Fire a shot.

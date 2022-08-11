@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Grid } from '../models/Grid';
 import { GridCoordinates } from '../models/GridCoordinates';
 import { Match } from '../models/Match';
+import { Message } from '../models/Message';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +14,15 @@ export class MatchService {
   private matchLoadingSubject: BehaviorSubject<boolean>;
   public matchLoading: Observable<boolean>;
 
+  private chatMessagesSubject: BehaviorSubject<Message[]>;
+  public chatMessages: Observable<Message[]>;
+
   constructor(private http: HttpClient) {
     this.matchLoadingSubject = new BehaviorSubject<boolean>(false);
     this.matchLoading = this.matchLoadingSubject.asObservable();
+
+    this.chatMessagesSubject = new BehaviorSubject<Message[]>([]);
+    this.chatMessages = this.chatMessagesSubject.asObservable();
   }
 
   /**
@@ -24,6 +31,15 @@ export class MatchService {
    */
   public updateMatchLoading(isLoading: boolean): void {
     this.matchLoadingSubject.next(isLoading);
+  }
+
+  /**
+   *
+   * @param message
+   */
+  public updateChatMessages(message: Message): void {
+    this.chatMessagesSubject.value.push(message);
+    this.chatMessagesSubject.next(this.chatMessagesSubject.value);
   }
 
   /**

@@ -12,7 +12,12 @@ export class AppComponent {
 
   constructor(private router: Router) {}
 
-  hasRoute(routes: string[]): boolean {
+  /**
+   *
+   * @param routes
+   * @returns
+   */
+  public hasRoute(routes: string[]): boolean {
     const currentRoute: string[] = this.router.url.split('/');
     for (let route of routes) {
       if (currentRoute.includes(route)) return true;

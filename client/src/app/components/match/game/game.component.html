@@ -1,3 +1,19 @@
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid d-flex">
+    <div class="navbar-brand mb-1" *ngIf="opponentPlayer">
+      Playing with {{ opponentPlayer.playerUsername }}
+    </div>
+    <div class="ms-auto">
+      <button class="btn btn-primary ms-2" (click)="openChat()">
+        <i class="fas fa-comments me-2"></i>Chat
+      </button>
+      <button class="btn btn-danger ms-2">
+        <i class="fas fa-sign-out-alt me-2"></i>Leave match
+      </button>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
   <div
     class="card card-body border border-danger text-danger mt-3"
@@ -56,9 +72,6 @@
             </mdb-form-control>
             <button class="btn btn-primary ms-2" (click)="shoot()">
               <i class="fas fa-fire me-2"></i>Shoot
-            </button>
-            <button class="btn btn-primary ms-2" (click)="openChat()">
-              <i class="fas fa-comment me-2"></i>Chat
             </button>
             <!--
               <button class="btn btn-primary ms-2" (click)="openChat()">
