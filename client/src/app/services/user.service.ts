@@ -68,6 +68,7 @@ export class UserService {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
+          console.log('match-founfd"');
           this.socketService.emit<{ matchId: string }>('match-joined', {
             matchId: eventData.matchId,
           });

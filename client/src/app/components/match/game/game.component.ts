@@ -59,11 +59,12 @@ export class GameComponent implements OnInit {
    */
   private initSocketEvents(): void {
     this.socketService
-      .shotFired(this.matchId)
+      .shotFiredListener(this.matchId)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
-          if (shot.shooterUsername === this.opponentUsername) {
+          // if the shot was fired by the client
+          if (shot.shooterUsername === this.accountService.getUsername()) {
             let shipHit: boolean = false;
             for (let ship of this.grid.ships) {
               for (let coordinate of ship.coordinates) {
@@ -72,18 +73,32 @@ export class GameComponent implements OnInit {
                   shot.coordinates.col === coordinate.col
                 ) {
                   shipHit = true;
-                  break;
+                  this.changeCellColor(
+                    'table2',
+                    String(coordinate.row * 10 + coordinate.col),
+                    '#A80000'
+                  );
                 }
               }
-              if (shipHit) break;
             }
-            console.log(shipHit ? 'HIT' : 'MISSED');
+          }
 
-            this.setFireShot(
-              'table1',
-              shot.coordinates.row,
-              shot.coordinates.col
-            );
+          // if the shot was fired by the opponent
+          if (shot.shooterUsername === this.opponentUsername) {
+            for (let ship of this.grid.ships) {
+              for (let coordinate of ship.coordinates) {
+                if (
+                  shot.coordinates.row === coordinate.row &&
+                  shot.coordinates.col === coordinate.col
+                ) {
+                  this.setFireShot(
+                    'table1',
+                    shot.coordinates.row,
+                    shot.coordinates.col
+                  );
+                }
+              }
+            }
           }
         },
       });

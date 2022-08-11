@@ -9,9 +9,9 @@
     (click)="modalRef.close()"
   ></button>
 </div>
-<div class="modal-body">
+<div class="modal-body" style="margin-bottom: 100px">
   <div
-    class="card mt-3 shadow-5"
+    class="card mt-3"
     class="{{ cssClass(message) }}"
     *ngFor="let message of messages"
   >
@@ -24,7 +24,7 @@
     <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
   </div>
 </div>
-<div class="modal-footer">
+<div class="fixed-bottom">
   <div class="card-body">
     <div class="d-flex">
       <mdb-form-control class="flex-grow-1">

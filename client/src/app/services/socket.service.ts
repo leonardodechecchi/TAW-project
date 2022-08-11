@@ -24,7 +24,8 @@ type SocketEvent =
   | 'notification'
   | 'player-state-changed'
   | 'positioning-completed'
-  | 'match-found';
+  | 'match-found'
+  | 'shot-fired';
 
 @Injectable({
   providedIn: 'root',
@@ -174,20 +175,20 @@ export class SocketService {
 
   /**
    *
-   * @returns
+   * @returns an Observable of `Shot`
    */
-  shotFired(matchId: string): Observable<Shot> {
-    console.log('registering "shot-fired" event...');
+  public shotFiredListener(matchId: string): Observable<Shot> {
+    const event: SocketEvent = 'shot-fired';
+    console.log(`Listening on '${event}' event`);
 
     return new Observable<Shot>((subscriber: Subscriber<Shot>) => {
       this.emit<{ matchId: string }>('match-joined', { matchId });
-      this.on<Shot>('shot-fired', (shot) => {
+      this.on<Shot>(event, (shot) => {
         subscriber.next(shot);
       });
       return () => {
-        console.log('removing "shot-fired" listener');
-
-        this.socket.removeListener('shot-fired');
+        console.log(`Unlistening '${event}' event`);
+        this.socket.removeListener(event);
       };
     });
   }

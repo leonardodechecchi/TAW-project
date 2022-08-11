@@ -69,9 +69,10 @@ export class PositioningPhaseComponent implements OnInit {
       .positioningCompletedListener()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        next: (eventData) => {
+          console.log(eventData.message);
           this.matchService.updateMatchLoading(false);
-          this.router.navigate(['../game']);
+          this.router.navigate(['match', this.matchId, 'game']);
         },
       });
 
@@ -240,6 +241,71 @@ export class PositioningPhaseComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  private static randomInteger(): number {
+    let min = 0;
+    let max = 9;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  private static randomBool(): string {
+    // This is a 1/2 prob. for horizontal and 1/2 prob for vertical
+    return Math.random() < 0.5 ? 'vertical' : 'horizontal';
+  }
+
+  public randomDeploy() {
+    this.reset();
+
+    let letters: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    while (
+      !this.deployShip(
+        'Carrier',
+        letters[PositioningPhaseComponent.randomInteger()],
+        PositioningPhaseComponent.randomInteger(),
+        PositioningPhaseComponent.randomBool()
+      )
+    ) {}
+
+    for (let i = 0; i < 2; i++) {
+      while (
+        !this.deployShip(
+          'Battleship',
+          letters[PositioningPhaseComponent.randomInteger()],
+          PositioningPhaseComponent.randomInteger(),
+          PositioningPhaseComponent.randomBool()
+        )
+      ) {}
+    }
+
+    for (let i = 0; i < 3; i++) {
+      while (
+        !this.deployShip(
+          'Cruiser',
+          letters[PositioningPhaseComponent.randomInteger()],
+          PositioningPhaseComponent.randomInteger(),
+          PositioningPhaseComponent.randomBool()
+        )
+      ) {}
+    }
+
+    for (let i = 0; i < 5; i++) {
+      for (let r = 0; r < 11; r++) {
+        let deployed = false;
+        for (let c = 0; c < 11; c++) {
+          if (this.deployShip('Destroyer', letters[r % 10], c, 'vertical')) {
+            deployed = true;
+            break;
+          } else if (
+            this.deployShip('Destroyer', letters[r % 10], c, 'horizontal')
+          ) {
+            deployed = true;
+            break;
+          }
+        }
+        if (deployed) break;
+      }
+    }
   }
 
   /**
