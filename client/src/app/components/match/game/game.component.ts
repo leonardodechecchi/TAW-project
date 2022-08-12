@@ -26,10 +26,8 @@ export class GameComponent implements OnInit {
   private matchId: string;
   private matchChatId: string;
 
-  private match: Match;
-
   private player: Player;
-  public opponentPlayer: Player;
+  private opponentPlayer: Player;
   public turnOf: string;
 
   public isMyTurn: boolean = false;
@@ -44,6 +42,7 @@ export class GameComponent implements OnInit {
   private missedShotContent: string;
   private hitShotColor: string;
   private hitShotContent: string;
+  private shipDestroyedContent: string;
 
   constructor(
     private accountService: AccountService,
@@ -52,16 +51,15 @@ export class GameComponent implements OnInit {
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {
-    this.match = null;
-
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
 
     this.shipColor = 'gray';
-    this.missedShotColor = '#1c63cc';
+    this.missedShotColor = '#1266f1';
     this.missedShotContent = '<i class="fas fa-water text-white"></i>';
-    this.hitShotColor = '#ec0930';
+    this.hitShotColor = '#f93154';
     this.hitShotContent = '<i class="fas fa-fire-alt text-white"></i>';
+    this.shipDestroyedContent = '<i class="fas fa-times"></i>';
   }
 
   ngOnInit(): void {
@@ -80,20 +78,10 @@ export class GameComponent implements OnInit {
   private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
-        this.match = match;
-
-        if (
-          this.match.player1.playerUsername ===
-          this.accountService.getUsername()
-        ) {
-          this.player = this.match.player1;
-          this.opponentPlayer = this.match.player2;
-        } else {
-          this.player = this.match.player2;
-          this.opponentPlayer = this.match.player1;
-        }
-
         this.matchChatId = match.playersChat;
+
+        this.setPlayers(match);
+        this.setTurnOf(match);
 
         // set ships on primary grid
         for (let ship of this.player.grid.ships) {
@@ -157,8 +145,6 @@ export class GameComponent implements OnInit {
 
           // if the shot was fired by the client
           if (shot.shooterUsername === this.accountService.getUsername()) {
-            this.setTurnOf();
-
             let shipHit: boolean = false;
 
             for (let ship of this.opponentPlayer.grid.ships) {
@@ -208,11 +194,23 @@ export class GameComponent implements OnInit {
   }
 
   /**
+   *
+   */
+  private setPlayers(match: Match): void {
+    if (match.player1.playerUsername === this.accountService.getUsername()) {
+      this.player = match.player1;
+      this.opponentPlayer = match.player2;
+    } else {
+      this.player = match.player2;
+      this.opponentPlayer = match.player1;
+    }
+  }
+
+  /**
    * Set the current turn.
    */
-  private setTurnOf(): void {
-    this.isMyTurn =
-      this.match.turnOf === this.player.playerUsername ? true : false;
+  private setTurnOf(match: Match): void {
+    this.isMyTurn = match.turnOf === this.player.playerUsername ? true : false;
   }
 
   /**
@@ -417,7 +415,8 @@ export class GameComponent implements OnInit {
       .fireAShot(this.matchId, this.player.playerUsername, { row, col })
       .subscribe({
         next: (match) => {
-          this.match = match;
+          this.setPlayers(match);
+          this.setTurnOf(match);
         },
         error: (err) => {
           console.log(err);
