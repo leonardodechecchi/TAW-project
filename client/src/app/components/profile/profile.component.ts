@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { CustomValidators } from 'src/app/helpers/CustomValidators';
 import { AccountService } from 'src/app/services/account.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -20,7 +21,8 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     public accountService: AccountService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -56,51 +58,23 @@ export class ProfileComponent implements OnInit {
     return this.passwordForm.get('repeatPassword');
   }
 
-  /*
-  updateProfile() {
-    if (this.profileForm.valid) {
-      if (this.image.value) {
-        const imageData = new FormData();
-        imageData.append('image', this.image.value);
-        this.userService
-          .uploadPicture(this.accountService.getId(), imageData)
-          .subscribe();
-      }
-    }
-  }
-
-  
-
-  onFileSelect(event: Event) {
-    const file = (event.target as HTMLInputElement).files[0];
-    this.profileForm.patchValue({ image: file });
-    const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-
-    if (file && allowedMimeTypes.includes(file.type)) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageData = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      console.error('Wrong file');
-    }
-  }
-
-  selectPicture() {
-    document.getElementById('updateProfilePicture').click();
-  }
-
-  onSubmit() {
-    this.profileForm.reset();
-  }
-  */
-
-  updateUsername(): void {
+  /**
+   * Update the user username. The user must login again after
+   * the update completed.
+   */
+  public updateUsername(): void {
     if (this.profileForm.invalid) return;
+
     const userId: string = this.accountService.getId();
-    this.userService.updateUsername(userId, this.username.value).subscribe();
+    this.userService.updateUsername(userId, this.username.value).subscribe({
+      next: (user) => {
+        this.authService.logout();
+      },
+    });
   }
 
-  updatePassword() {}
+  /**
+   *
+   */
+  public updatePassword() {}
 }

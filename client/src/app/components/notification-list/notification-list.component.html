@@ -1,63 +1,73 @@
-<div
-  class="card col-md-6 offset-md-3 text-center mt-3"
-  *ngIf="notifications.length === 0"
->
-  <div class="card-body">
-    <p class="card-text">All notifications read</p>
+<div class="container">
+  <div
+    class="card col-md-6 offset-md-3 text-center mt-3"
+    *ngIf="notifications.length === 0"
+  >
+    <div class="card-body">
+      <p class="card-text">All notifications read</p>
+    </div>
   </div>
-</div>
-<div *ngFor="let notification of notifications">
-  <div class="card col-md-6 offset-md-3 mt-3">
-    <!-- Friend Request -->
-    <div *ngIf="notification.type === 'FriendRequest'">
-      <div class="card-body">
-        <h5 class="card-title">Friend request</h5>
-        <p class="card-text">
-          <i>{{ notification.senderId.username }}</i> sent you a friend request!
-        </p>
-        <div class="d-flex">
-          <button
-            class="btn btn-success me-2 flex-fill"
-            (click)="
-              acceptFriendRequest(notification.senderId._id, notification.type)
-            "
-          >
-            Accept
-          </button>
-          <button
-            class="btn btn-danger flex-fill"
-            (click)="
-              rejectFriendRequest(notification.senderId._id, notification.type)
-            "
-          >
-            Reject
-          </button>
+  <div *ngFor="let notification of notifications">
+    <div class="card col-md-6 offset-md-3 mt-3">
+      <!-- Friend Request -->
+      <div *ngIf="notification.type === 'FriendRequest'">
+        <div class="card-body">
+          <h5 class="card-title">Friend request</h5>
+          <p class="card-text">
+            <i>{{ notification.senderId.username }}</i> sent you a friend
+            request!
+          </p>
+          <div class="d-flex">
+            <button
+              class="btn btn-success me-2 flex-fill"
+              (click)="
+                acceptFriendRequest(
+                  notification.senderId._id,
+                  notification.type
+                )
+              "
+            >
+              Accept
+            </button>
+            <button
+              class="btn btn-danger flex-fill"
+              (click)="
+                rejectFriendRequest(
+                  notification.senderId._id,
+                  notification.type
+                )
+              "
+            >
+              Reject
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Match Request -->
-    <div *ngIf="notification.type === 'MatchRequest'">
-      <div class="card-body">
-        <h5 class="card-title">Match request</h5>
-        <p class="card-text">
-          <i>{{ notification.senderId.username }}</i> sent you a match request!
-        </p>
-        <div class="d-flex">
-          <button
-            class="btn btn-success me-2 flex-fill"
-            (click)="acceptMatchRequest(notification)"
-          >
-            Accept
-          </button>
-          <button
-            class="btn btn-danger flex-fill"
-            (click)="
-              rejectMatchRequest(notification.senderId._id, notification.type)
-            "
-          >
-            Reject
-          </button>
+      <!-- Match Request -->
+      <div *ngIf="notification.type === 'MatchRequest'">
+        <div class="card-body">
+          <h5 class="card-title">Match request</h5>
+          <p class="card-text">
+            <i>{{ notification.senderId.username }}</i> sent you a match
+            request!
+          </p>
+          <div class="d-flex">
+            <button
+              class="btn btn-success me-2 flex-fill"
+              (click)="acceptMatchRequest(notification)"
+            >
+              Accept
+            </button>
+            <button
+              class="btn btn-danger flex-fill"
+              (click)="
+                rejectMatchRequest(notification.senderId._id, notification.type)
+              "
+            >
+              Reject
+            </button>
+          </div>
         </div>
       </div>
     </div>
