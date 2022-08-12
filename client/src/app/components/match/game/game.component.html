@@ -31,39 +31,41 @@
     <div class="row mt-3 mb-3">
       <div class="col">
         <div class="card">
+          <h6 class="card-header"><strong>Enter coordinates</strong></h6>
           <div class="card-body">
-            <div class="d-flex">
-              <mdb-form-control class="flex-fill">
-                <input
-                  mdbInput
-                  [formControl]="rowField"
-                  type="text"
-                  id="row"
-                  class="form-control"
-                  required
-                />
-                <label mdbLabel class="form-label" for="row">Row</label>
-              </mdb-form-control>
-              <mdb-form-control class="flex-fill ms-2">
-                <input
-                  mdbInput
-                  [formControl]="colField"
-                  type="number"
-                  id="col"
-                  class="form-control"
-                  required
-                />
-                <label mdbLabel class="form-label" for="col">Column</label>
-              </mdb-form-control>
-              <button class="btn btn-primary ms-2" (click)="shoot()">
-                <i class="fas fa-fire me-2"></i>Shoot
-              </button>
-              <!--
-                <button class="btn btn-primary ms-2" (click)="openChat()">
-                  Chat
+            <div class="row">
+              <div class="col-xl-11 p-2">
+                <div class="d-flex w-100">
+                  <mdb-form-control class="flex-fill">
+                    <input
+                      mdbInput
+                      [formControl]="rowField"
+                      type="text"
+                      id="row"
+                      class="form-control"
+                      required
+                    />
+                    <label mdbLabel class="form-label" for="row">Row</label>
+                  </mdb-form-control>
+                  <mdb-form-control class="flex-fill ms-3">
+                    <input
+                      mdbInput
+                      [formControl]="colField"
+                      type="number"
+                      id="col"
+                      class="form-control"
+                      required
+                    />
+                    <label mdbLabel class="form-label" for="col">Column</label>
+                  </mdb-form-control>
+                </div>
+              </div>
+
+              <div class="col-xl-1 p-2">
+                <button class="btn btn-primary w-100" (click)="shoot()">
+                  Shoot
                 </button>
-  
-              -->
+              </div>
             </div>
           </div>
         </div>

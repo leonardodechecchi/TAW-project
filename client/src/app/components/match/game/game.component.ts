@@ -131,6 +131,7 @@ export class GameComponent implements OnInit {
           }
         }
 
+        // set ships destroyed
         for (let ship of this.opponentPlayer.grid.ships) {
           let shipDestroyed: boolean = true;
 
@@ -174,55 +175,11 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
+          // update grid
+          this.initGrid();
+
           // check if there is a winner
           this.winner();
-
-          // if the shot was fired by the client
-          if (shot.shooterUsername === this.accountService.getUsername()) {
-            let shipHit: boolean = false;
-
-            for (let ship of this.opponentPlayer.grid.ships) {
-              for (let coordinate of ship.coordinates) {
-                if (
-                  shot.coordinates.row === coordinate.row &&
-                  shot.coordinates.col === coordinate.col
-                ) {
-                  shipHit = true;
-                  this.setCellType(
-                    'table2',
-                    coordinate.row,
-                    coordinate.col,
-                    ShotType.Hit
-                  );
-                  break;
-                }
-              }
-
-              if (shipHit) break;
-            }
-
-            // shot missed
-            if (!shipHit) {
-              this.setCellType(
-                'table2',
-                shot.coordinates.row,
-                shot.coordinates.col,
-                ShotType.Missed
-              );
-            }
-          }
-
-          // the shot was fired by the opponent
-          else {
-            this.isMyTurn = true;
-
-            this.setCellContent(
-              'table1',
-              shot.coordinates.row,
-              shot.coordinates.col,
-              this.fireShotContent
-            );
-          }
         },
       });
   }
