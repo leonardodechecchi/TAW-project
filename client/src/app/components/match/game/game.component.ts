@@ -201,7 +201,13 @@ export class GameComponent implements OnInit {
    * Set the current turn.
    */
   private setTurnOf(match: Match): void {
-    this.isMyTurn = match.turnOf === this.player.playerUsername ? true : false;
+    if (match.turnOf === this.player.playerUsername) {
+      this.isMyTurn = true;
+      this.infoMessage = null;
+      return;
+    }
+    this.isMyTurn = false;
+    this.infoMessage = `${this.opponentPlayer.playerUsername}'s turn...`;
   }
 
   /**

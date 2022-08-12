@@ -6,7 +6,6 @@
     {{ errorMessage }}
   </div>
   <div class="row">
-    <div class=""></div>
     <div class="col-xl-6">
       <div class="card mt-3 w-100" style="height: 650px">
         <div class="card-body">
@@ -70,6 +69,11 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div *ngIf="!isMyTurn">
+    <div class="card card-body border border-info text-info mt-3">
+      {{ infoMessage }}
     </div>
   </div>
 </div>
