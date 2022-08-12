@@ -10,18 +10,20 @@
   ></button>
 </div>
 <div class="modal-body" style="margin-bottom: 100px">
-  <div
-    class="card mt-3"
-    class="{{ cssClass(message) }}"
-    *ngFor="let message of messages"
-  >
-    <div class="card-body">
-      <h5 class="card-title">
-        {{ message.author }}
-      </h5>
-      <div class="card-text">{{ message.content }}</div>
+  <div class="container-fluid">
+    <div
+      class="card mt-3"
+      class="{{ cssClass(message) }}"
+      *ngFor="let message of messages"
+    >
+      <div class="card-body">
+        <h5 class="card-title">
+          {{ message.author }}
+        </h5>
+        <div class="card-text">{{ message.content }}</div>
+      </div>
+      <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
     </div>
-    <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
   </div>
 </div>
 <div class="fixed-bottom">

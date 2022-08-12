@@ -11,7 +11,7 @@ import { StatusError } from './StatusError';
 export interface Match {
   player1: Player;
   player2: Player;
-  startingPlayer: string;
+  turnOf: string;
   playersChat: Types.ObjectId;
   observersChat: Types.ObjectId;
 }
@@ -37,6 +37,12 @@ interface MatchProps {
    * @param coordinates the shot coordinates
    */
   addShot: (shooterUsername: string, coordinates: GridCoordinates) => Promise<MatchDocument>;
+
+  /**
+   * Set the username of the user who has to play.
+   * @param turnOf the username of the player
+   */
+  setTurnOf: (turnOf: string) => Promise<MatchDocument>;
 }
 
 export interface MatchDocument extends HydratedDocument<Match, MatchProps> {}
@@ -50,7 +56,7 @@ export const matchSchema = new Schema<Match, Model<Match, {}, MatchProps>>({
     type: playerSchema,
     required: true,
   },
-  startingPlayer: {
+  turnOf: {
     type: SchemaTypes.String,
     required: true,
   },
@@ -102,6 +108,14 @@ matchSchema.method(
   }
 );
 
+matchSchema.method(
+  'setTurnOf',
+  async function (this: MatchDocument, turnOf: string): Promise<MatchDocument> {
+    this.turnOf = turnOf;
+    return this.save();
+  }
+);
+
 export const MatchModel = model<Match, Model<Match, {}, MatchProps>>('Match', matchSchema);
 
 /**
@@ -121,9 +135,9 @@ export async function createMatch(username1: string, username2: string): Promise
     observersChat: observersChat._id,
   });
 
-  const startingPlayer: string =
+  const turnOf: string =
     Math.random() < 0.5 ? match.player1.playerUsername : match.player2.playerUsername;
-  match.startingPlayer = startingPlayer;
+  match.turnOf = turnOf;
 
   return match.save();
 }

@@ -2,12 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { Match } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
+import { UserStats } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { ChatModalComponent } from '../chat-modal/chat-modal.component';
+
+enum ShotType {
+  Hit = 'Hit',
+  Missed = 'Missed',
+}
 
 @UntilDestroy()
 @Component({
@@ -17,19 +24,26 @@ import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 })
 export class GameComponent implements OnInit {
   private matchId: string;
+  private matchChatId: string;
+
+  private match: Match;
+
   private player: Player;
   public opponentPlayer: Player;
-  public startingPlayer: string;
-  private playersChatId: string;
-  private modalRef: MdbModalRef<ChatModalComponent>;
+  public turnOf: string;
+
+  public isMyTurn: boolean = false;
 
   public rowField: FormControl;
   public colField: FormControl;
 
   public errorMessage: string;
 
-  private missedShotColor: string = '#1c63cc';
-  private hitShotColor: string = '#ec0930';
+  private shipColor: string;
+  private missedShotColor: string;
+  private missedShotContent: string;
+  private hitShotColor: string;
+  private hitShotContent: string;
 
   constructor(
     private accountService: AccountService,
@@ -38,8 +52,16 @@ export class GameComponent implements OnInit {
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {
+    this.match = null;
+
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
+
+    this.shipColor = 'gray';
+    this.missedShotColor = '#1c63cc';
+    this.missedShotContent = '<i class="fas fa-water text-white"></i>';
+    this.hitShotColor = '#ec0930';
+    this.hitShotContent = '<i class="fas fa-fire-alt text-white"></i>';
   }
 
   ngOnInit(): void {
@@ -48,6 +70,75 @@ export class GameComponent implements OnInit {
         this.matchId = param['id'];
         this.initGrid();
         this.initSocketEvents();
+      },
+    });
+  }
+
+  /**
+   * Initialize the grid
+   */
+  private initGrid(): void {
+    this.matchService.getMatch(this.matchId).subscribe({
+      next: (match) => {
+        this.match = match;
+
+        if (
+          this.match.player1.playerUsername ===
+          this.accountService.getUsername()
+        ) {
+          this.player = this.match.player1;
+          this.opponentPlayer = this.match.player2;
+        } else {
+          this.player = this.match.player2;
+          this.opponentPlayer = this.match.player1;
+        }
+
+        this.matchChatId = match.playersChat;
+
+        // set ships on primary grid
+        for (let ship of this.player.grid.ships) {
+          for (let coordinate of ship.coordinates) {
+            this.setCellColor(
+              'table1',
+              coordinate.row,
+              coordinate.col,
+              this.shipColor
+            );
+          }
+        }
+
+        // set shots received
+        for (let shot of this.player.grid.shotsReceived) {
+          this.setCellContent(
+            'table1',
+            shot.row,
+            shot.col,
+            '<strong>X</strong>'
+          );
+        }
+
+        // set fired shots on secondary grid
+        for (let shot of this.opponentPlayer.grid.shotsReceived) {
+          let found: boolean = false;
+
+          for (let ship of this.opponentPlayer.grid.ships) {
+            for (let coordinate of ship.coordinates) {
+              if (shot.row === coordinate.row && shot.col === coordinate.col) {
+                found = true;
+                this.setCellType(
+                  'table2',
+                  coordinate.row,
+                  coordinate.col,
+                  ShotType.Hit
+                );
+              }
+            }
+          }
+
+          if (!found) {
+            this.setCellType('table2', shot.row, shot.col, ShotType.Missed);
+          }
+        }
       },
     });
   }
@@ -66,6 +157,8 @@ export class GameComponent implements OnInit {
 
           // if the shot was fired by the client
           if (shot.shooterUsername === this.accountService.getUsername()) {
+            this.setTurnOf();
+
             let shipHit: boolean = false;
 
             for (let ship of this.opponentPlayer.grid.ships) {
@@ -75,10 +168,11 @@ export class GameComponent implements OnInit {
                   shot.coordinates.col === coordinate.col
                 ) {
                   shipHit = true;
-                  this.changeCellColor(
+                  this.setCellType(
                     'table2',
-                    this.getCellId(coordinate.row, coordinate.col),
-                    this.hitShotColor
+                    coordinate.row,
+                    coordinate.col,
+                    ShotType.Hit
                   );
                   break;
                 }
@@ -89,20 +183,24 @@ export class GameComponent implements OnInit {
 
             // shot missed
             if (!shipHit) {
-              this.changeCellColor(
+              this.setCellType(
                 'table2',
-                this.getCellId(shot.coordinates.row, shot.coordinates.col),
-                this.missedShotColor
+                shot.coordinates.row,
+                shot.coordinates.col,
+                ShotType.Missed
               );
             }
           }
 
           // the shot was fired by the opponent
           else {
-            this.setFireShot(
+            this.isMyTurn = true;
+
+            this.setCellContent(
               'table1',
               shot.coordinates.row,
-              shot.coordinates.col
+              shot.coordinates.col,
+              '<strong>X</strong>'
             );
           }
         },
@@ -110,65 +208,11 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   * Initialize the grid
+   * Set the current turn.
    */
-  private initGrid(): void {
-    this.matchService.getMatch(this.matchId).subscribe({
-      next: (match) => {
-        if (
-          match.player1.playerUsername === this.accountService.getUsername()
-        ) {
-          this.player = match.player1;
-          this.opponentPlayer = match.player2;
-        } else {
-          this.player = match.player2;
-          this.opponentPlayer = match.player1;
-        }
-
-        this.playersChatId = match.playersChat;
-        this.startingPlayer = match.startingPlayer;
-
-        // set ships on primary grid
-        for (let ship of this.player.grid.ships) {
-          for (let coordinate of ship.coordinates) {
-            this.changeCellColor(
-              'table1',
-              this.getCellId(coordinate.row, coordinate.col),
-              'gray'
-            );
-          }
-        }
-
-        // set shots received
-        for (let shot of this.player.grid.shotsReceived) {
-          this.setFireShot('table1', shot.row, shot.col);
-        }
-
-        // set fired shots on secondary grid
-        for (let shot of this.opponentPlayer.grid.shotsReceived) {
-          let found: boolean = false;
-          for (let ship of this.opponentPlayer.grid.ships) {
-            for (let coordinate of ship.coordinates) {
-              if (shot.row === coordinate.row && shot.col === coordinate.col) {
-                found = true;
-                this.changeCellColor(
-                  'table2',
-                  this.getCellId(coordinate.row, coordinate.col),
-                  '#ec0930'
-                );
-              }
-            }
-          }
-          if (!found) {
-            this.changeCellColor(
-              'table2',
-              this.getCellId(shot.row, shot.col),
-              '#1c63cc'
-            );
-          }
-        }
-      },
-    });
+  private setTurnOf(): void {
+    this.isMyTurn =
+      this.match.turnOf === this.player.playerUsername ? true : false;
   }
 
   /**
@@ -182,19 +226,22 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   * Change the background color of the table cell.
-   * @param id the cell id
+   * Set the cell color.
+   * @param tableName the table name
+   * @param row the row index
+   * @param col the col index
+   * @param color the color to set
    */
-  private changeCellColor(tableName: string, id: string, color: string): void {
-    let td: HTMLElement | null = document.getElementById(tableName + id);
+  private setCellColor(
+    tableName: string,
+    row: number,
+    col: number,
+    color: string
+  ): void {
+    let td: HTMLElement | null = document.getElementById(
+      tableName + this.getCellId(row, col)
+    );
     td.style.background = color;
-
-    if (color === this.missedShotColor)
-      td.innerHTML = '<i class="fas fa-water text-white"></i>';
-
-    if (color === this.hitShotColor) {
-      td.innerHTML = '<i class="fas fa-fire-alt text-white"></i>';
-    }
   }
 
   /**
@@ -203,11 +250,38 @@ export class GameComponent implements OnInit {
    * @param row the row index
    * @param col the col index
    */
-  private setFireShot(tableName: string, row: number, col: number) {
+  private setCellContent(
+    tableName: string,
+    row: number,
+    col: number,
+    content: string
+  ): void {
     let td: HTMLElement | null = document.getElementById(
-      tableName + (row * 10 + col)
+      tableName + this.getCellId(row, col)
     );
-    td.innerHTML = '<strong>X</strong>';
+    td.innerHTML = content;
+  }
+
+  /**
+   * Change the background color of the table cell.
+   * @param tableName
+   * @param row
+   * @param col
+   * @param type
+   */
+  private setCellType(
+    tableName: string,
+    row: number,
+    col: number,
+    type: ShotType
+  ): void {
+    if (type === ShotType.Hit) {
+      this.setCellColor(tableName, row, col, this.hitShotColor);
+      this.setCellContent(tableName, row, col, this.hitShotContent);
+    } else {
+      this.setCellColor(tableName, row, col, this.missedShotColor);
+      this.setCellContent(tableName, row, col, this.missedShotContent);
+    }
   }
 
   /**
@@ -251,7 +325,10 @@ export class GameComponent implements OnInit {
         }
       }
 
-      if (shipDestroyed) totalShips--;
+      if (shipDestroyed) {
+        console.log('Ship destroyed', ship.shipType);
+        totalShips--;
+      }
     }
 
     return totalShips === 0 ? true : false;
@@ -311,13 +388,16 @@ export class GameComponent implements OnInit {
    * Open the game chat.
    */
   public openChat = (): void => {
-    this.modalRef = this.modalService.open(ChatModalComponent, {
-      data: { chatId: this.playersChatId },
+    this.modalService.open(ChatModalComponent, {
+      data: { chatId: this.matchChatId },
       modalClass: 'modal-fullscreen modal-dialog-scrollable',
     });
   };
 
-  public leaveMatch = (): void => {};
+  /**
+   *
+   */
+  public leaveMatch(): void {}
 
   /**
    * Fire a shot.
@@ -333,10 +413,12 @@ export class GameComponent implements OnInit {
       return;
     }
 
-    // fire the shot
     this.matchService
-      .fireAShot(this.matchId, this.accountService.getUsername(), { row, col })
+      .fireAShot(this.matchId, this.player.playerUsername, { row, col })
       .subscribe({
+        next: (match) => {
+          this.match = match;
+        },
         error: (err) => {
           console.log(err);
           this.errorMessage = err.error;

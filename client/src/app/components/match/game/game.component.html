@@ -1,19 +1,3 @@
-<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid d-flex">
-    <div class="navbar-brand mb-1" *ngIf="opponentPlayer">
-      Playing with {{ opponentPlayer.playerUsername }}
-    </div>
-    <div class="ms-auto">
-      <button class="btn btn-primary ms-2" (click)="openChat()">
-        <i class="fas fa-comments me-2"></i>Chat
-      </button>
-      <button class="btn btn-danger ms-2">
-        <i class="fas fa-sign-out-alt me-2"></i>Leave match
-      </button>
-    </div>
-  </div>
-</nav>
-
 <div class="container">
   <div
     class="card card-body border border-danger text-danger mt-3"
@@ -43,42 +27,44 @@
   </div>
 
   <!-- Shot field -->
-  <div class="row mt-3 mb-3">
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex">
-            <mdb-form-control class="flex-fill">
-              <input
-                mdbInput
-                [formControl]="rowField"
-                type="text"
-                id="row"
-                class="form-control"
-                required
-              />
-              <label mdbLabel class="form-label" for="row">Row</label>
-            </mdb-form-control>
-            <mdb-form-control class="flex-fill ms-2">
-              <input
-                mdbInput
-                [formControl]="colField"
-                type="number"
-                id="col"
-                class="form-control"
-                required
-              />
-              <label mdbLabel class="form-label" for="col">Column</label>
-            </mdb-form-control>
-            <button class="btn btn-primary ms-2" (click)="shoot()">
-              <i class="fas fa-fire me-2"></i>Shoot
-            </button>
-            <!--
-              <button class="btn btn-primary ms-2" (click)="openChat()">
-                Chat
+  <div *ngIf="isMyTurn">
+    <div class="row mt-3 mb-3">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex">
+              <mdb-form-control class="flex-fill">
+                <input
+                  mdbInput
+                  [formControl]="rowField"
+                  type="text"
+                  id="row"
+                  class="form-control"
+                  required
+                />
+                <label mdbLabel class="form-label" for="row">Row</label>
+              </mdb-form-control>
+              <mdb-form-control class="flex-fill ms-2">
+                <input
+                  mdbInput
+                  [formControl]="colField"
+                  type="number"
+                  id="col"
+                  class="form-control"
+                  required
+                />
+                <label mdbLabel class="form-label" for="col">Column</label>
+              </mdb-form-control>
+              <button class="btn btn-primary ms-2" (click)="shoot()">
+                <i class="fas fa-fire me-2"></i>Shoot
               </button>
-
-            -->
+              <!--
+                <button class="btn btn-primary ms-2" (click)="openChat()">
+                  Chat
+                </button>
+  
+              -->
+            </div>
           </div>
         </div>
       </div>

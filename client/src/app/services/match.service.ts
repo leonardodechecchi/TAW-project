@@ -100,9 +100,9 @@ export class MatchService {
     matchId: string,
     playerUsername: string,
     coordinates: GridCoordinates
-  ) {
+  ): Observable<Match> {
     const body = { coordinates };
-    return this.http.put(
+    return this.http.put<Match>(
       `${environment.match_endpoint}/${matchId}/players/${playerUsername}/shot`,
       body
     );

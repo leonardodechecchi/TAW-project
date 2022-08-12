@@ -9,6 +9,7 @@ import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged
 import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
 import { retrieveId } from '../utils/param-checking';
 import { ShotFiredEmitter } from '../socket/emitters/ShotFired';
+import { deleteChatById } from '../models/Chat';
 
 const router = Router();
 
@@ -20,6 +21,23 @@ router.get('/matches/:matchId', auth, async (req: Request<{ matchId: string }>, 
     const matchId: Types.ObjectId = retrieveId(req.params.matchId);
     const match: MatchDocument = await getMatchById(matchId);
     return res.status(200).json(match);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * DELETE /mathes/:matchId
+ */
+router.delete('/mathes/:matchId', auth, async (req: Request<{ matchId: string }>, res, next) => {
+  try {
+    const matchId: Types.ObjectId = retrieveId(req.params.matchId);
+    const match: MatchDocument = await getMatchById(matchId);
+
+    await deleteChatById(match.playersChat);
+    await deleteChatById(match.observersChat);
+
+    return res.status(200).json({});
   } catch (err) {
     next(err);
   }
@@ -130,6 +148,8 @@ router.put(
       await match.addShot(opponentPlayer.playerUsername, coordinates);
       const shotFiredEmitter = new ShotFiredEmitter(ioServer, match._id.toString());
       shotFiredEmitter.emit({ coordinates, shooterUsername });
+
+      await match.setTurnOf(opponentPlayer.playerUsername);
 
       return res.status(200).json(match);
     } catch (err) {

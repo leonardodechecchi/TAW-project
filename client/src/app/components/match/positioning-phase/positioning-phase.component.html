@@ -24,13 +24,25 @@
       <div class="card mt-3">
         <div class="card-body">
           <div class="d-flex">
-            <button class="btn btn-warning me-2" (click)="randomDeploy()">
+            <button
+              class="btn btn-warning me-2"
+              (click)="randomDeploy()"
+              mdbTooltip="Randomly arrange ships"
+            >
               <i class="fas fa-random"></i>
             </button>
-            <button class="btn btn-danger flex-fill me-2" (click)="reset()">
+            <button
+              class="btn btn-danger flex-fill me-2"
+              (click)="reset()"
+              mdbTooltip="Reset the board"
+            >
               <i class="fas fa-broom me-2"></i>Reset
             </button>
-            <button class="btn btn-success flex-fill" (click)="ready()">
+            <button
+              class="btn btn-success flex-fill"
+              (click)="ready()"
+              mdbTooltip="Ready to play"
+            >
               <i class="fas fa-play me-2"></i>Ready
             </button>
           </div>
