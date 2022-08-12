@@ -36,8 +36,10 @@ export class GameComponent implements OnInit {
   public colField: FormControl;
 
   public errorMessage: string;
+  public infoMessage: string;
 
   private shipColor: string;
+  private fireShotContent: string;
   private missedShotColor: string;
   private missedShotContent: string;
   private hitShotColor: string;
@@ -55,11 +57,12 @@ export class GameComponent implements OnInit {
     this.colField = new FormControl(null);
 
     this.shipColor = 'gray';
+    this.fireShotContent = '<i class="fas fa-times"></i>';
     this.missedShotColor = '#1266f1';
     this.missedShotContent = '<i class="fas fa-water text-white"></i>';
     this.hitShotColor = '#f93154';
-    this.hitShotContent = '<i class="fas fa-fire-alt text-white"></i>';
-    this.shipDestroyedContent = '<i class="fas fa-times"></i>';
+    this.hitShotContent = '<i class="fas fa-fire text-white"></i>';
+    this.shipDestroyedContent = '<i class="fas fa-times text-white"></i>';
   }
 
   ngOnInit(): void {
@@ -101,7 +104,7 @@ export class GameComponent implements OnInit {
             'table1',
             shot.row,
             shot.col,
-            '<strong>X</strong>'
+            this.fireShotContent
           );
         }
 
@@ -125,6 +128,37 @@ export class GameComponent implements OnInit {
 
           if (!found) {
             this.setCellType('table2', shot.row, shot.col, ShotType.Missed);
+          }
+        }
+
+        for (let ship of this.opponentPlayer.grid.ships) {
+          let shipDestroyed: boolean = true;
+
+          for (let coord of ship.coordinates) {
+            let coordFound: boolean = false;
+
+            for (let shot of this.opponentPlayer.grid.shotsReceived) {
+              if (coord.row === shot.row && coord.col === shot.col) {
+                coordFound = true;
+                break;
+              }
+            }
+
+            if (!coordFound) {
+              shipDestroyed = false;
+              break;
+            }
+          }
+
+          if (shipDestroyed) {
+            for (let coordinate of ship.coordinates) {
+              this.setCellContent(
+                'table2',
+                coordinate.row,
+                coordinate.col,
+                this.shipDestroyedContent
+              );
+            }
           }
         }
       },
@@ -186,7 +220,7 @@ export class GameComponent implements OnInit {
               'table1',
               shot.coordinates.row,
               shot.coordinates.col,
-              '<strong>X</strong>'
+              this.fireShotContent
             );
           }
         },
@@ -194,7 +228,7 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Set the match players.
    */
   private setPlayers(match: Match): void {
     if (match.player1.playerUsername === this.accountService.getUsername()) {
@@ -324,7 +358,6 @@ export class GameComponent implements OnInit {
       }
 
       if (shipDestroyed) {
-        console.log('Ship destroyed', ship.shipType);
         totalShips--;
       }
     }
@@ -335,7 +368,7 @@ export class GameComponent implements OnInit {
   /**
    *
    */
-  private winner() {
+  private winner(): void {
     if (this.isWinningPlayer(this.player)) {
       console.log(this.player.playerUsername + ' won!');
     } else {

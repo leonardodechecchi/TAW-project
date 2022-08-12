@@ -50,6 +50,7 @@ import { GameComponent } from './components/match/game/game.component';
 import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
 import { GridComponent } from './components/match/grid/grid.component';
 import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.component';
+import { ObserverComponent } from './components/match/observer/observer.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -130,6 +131,7 @@ const routes: Routes = [
     ChatModalComponent,
     GridComponent,
     GameNavbarComponent,
+    ObserverComponent,
   ],
   imports: [
     BrowserModule,
