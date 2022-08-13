@@ -341,11 +341,17 @@ export class GameComponent implements OnInit {
    */
   private winner(): string | null {
     if (this.isLoser(this.player)) {
+      this.rowField.disable();
+      this.colField.disable();
       this.infoMessage = `${this.opponentPlayer.playerUsername} won!`;
+
       return this.opponentPlayer.playerUsername;
     } else {
       if (this.isLoser(this.opponentPlayer)) {
+        this.rowField.disable();
+        this.colField.disable();
         this.infoMessage = `${this.player.playerUsername} won!`;
+
         return this.player.playerUsername;
       }
     }
