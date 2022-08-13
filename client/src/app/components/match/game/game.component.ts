@@ -29,6 +29,7 @@ export class GameComponent implements OnInit {
   private player: Player;
   private opponentPlayer: Player;
   public turnOf: string;
+  public winnerPlayer: string;
 
   public isMyTurn: boolean = false;
 
@@ -53,6 +54,8 @@ export class GameComponent implements OnInit {
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {
+    this.winnerPlayer = null;
+
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
 
@@ -69,7 +72,11 @@ export class GameComponent implements OnInit {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
+
+        // initialize grid
         this.initGrid();
+
+        // initialize socket events
         this.initSocketEvents();
       },
     });
@@ -162,6 +169,9 @@ export class GameComponent implements OnInit {
             }
           }
         }
+
+        // check if there is already a winner
+        this.winnerPlayer = this.winner();
       },
     });
   }
@@ -175,11 +185,8 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shot) => {
-          // update grid
+          // update the grid
           this.initGrid();
-
-          // check if there is a winner
-          this.winner();
         },
       });
   }
@@ -298,7 +305,7 @@ export class GameComponent implements OnInit {
    * @param player the player record
    * @returns true if the player has won, false otherwise
    */
-  private isWinningPlayer(player: Player): boolean {
+  private isLoser(player: Player): boolean {
     let totalShips = 11;
 
     for (let ship of player.grid.ships) {
@@ -329,16 +336,20 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Check if there is a winner.
+   * @returns the winner of the match if exists, `null` otherwise
    */
-  private winner(): void {
-    if (this.isWinningPlayer(this.player)) {
-      console.log(this.player.playerUsername + ' won!');
+  private winner(): string | null {
+    if (this.isLoser(this.player)) {
+      this.infoMessage = `${this.opponentPlayer.playerUsername} won!`;
+      return this.opponentPlayer.playerUsername;
     } else {
-      if (this.isWinningPlayer(this.opponentPlayer)) {
-        console.log(this.opponentPlayer.playerUsername + ' won!');
+      if (this.isLoser(this.opponentPlayer)) {
+        this.infoMessage = `${this.player.playerUsername} won!`;
+        return this.player.playerUsername;
       }
     }
+    return null;
   }
 
   /**
@@ -381,12 +392,12 @@ export class GameComponent implements OnInit {
   /**
    * Open the game chat.
    */
-  public openChat = (): void => {
+  public openChat(): void {
     this.modalService.open(ChatModalComponent, {
       data: { chatId: this.matchChatId },
       modalClass: 'modal-fullscreen modal-dialog-scrollable',
     });
-  };
+  }
 
   /**
    *
