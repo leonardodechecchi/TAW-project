@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Match } from 'src/app/models/Match';
 import { MatchService } from 'src/app/services/match.service';
@@ -16,7 +16,8 @@ export class MatchListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private socketService: SocketService,
-    private matchService: MatchService
+    private matchService: MatchService,
+    private router: Router
   ) {
     this.matches = [];
   }
@@ -36,5 +37,13 @@ export class MatchListComponent implements OnInit {
       .subscribe({
         next: (eventData) => {},
       });
+  }
+
+  /**
+   *
+   * @param match
+   */
+  public watchGame(match: Match) {
+    this.router.navigate(['match', match._id, 'observer']);
   }
 }

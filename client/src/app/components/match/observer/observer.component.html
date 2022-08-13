@@ -1,0 +1,29 @@
+<back-navbar></back-navbar>
+<div class="container">
+  <div
+    class="card col-md-6 offset-md-3 mt-3 card-body mt-3 text-center"
+    *ngIf="positioniongPhase"
+  >
+    <p class="card-text">The players are placing their ships... Please wait</p>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6">
+      <div class="card mt-3 w-100" style="height: 650px">
+        <div class="card-body">
+          <!-- table1 -->
+          <grid [tableName]="'table2'"></grid>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-6">
+      <div class="card mt-3 w-100" style="height: 650px">
+        <div class="card-body">
+          <!-- table2 -->
+          <grid [tableName]="'table2'"></grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

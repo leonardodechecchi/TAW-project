@@ -74,7 +74,6 @@ export class PositioningPhaseComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
-          console.log(eventData.message);
           this.matchService.updateMatchLoading(false);
           this.router.navigate(['match', this.matchId, 'game']);
         },
