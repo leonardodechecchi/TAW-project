@@ -75,17 +75,26 @@ export class FriendListComponent implements OnInit {
   public searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
       next: (user) => {
-        if (this.relationships.length !== 0) {
+        this.userFound = null;
+
+        if (this.relationships.length > 0) {
+          let found: boolean = false;
+
           for (let relationship of this.relationships) {
-            user.username !== relationship.friendId.username &&
-            user.username !== this.accountService.getUsername()
-              ? (this.userFound = user)
-              : (this.userFound = null);
+            if (
+              user.username === relationship.friendId.username ||
+              user.username === this.accountService.getUsername()
+            ) {
+              found = true;
+            }
           }
+
+          if (!found) this.userFound = user;
         } else this.userFound = user;
+
         this.searchField.setValue('');
       },
-      error: () => {
+      error: (err) => {
         this.userFound = null;
       },
     });

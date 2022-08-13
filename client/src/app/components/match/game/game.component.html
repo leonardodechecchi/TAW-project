@@ -61,7 +61,11 @@
               </div>
 
               <div class="col-xl-1 p-2">
-                <button class="btn btn-primary w-100" (click)="shoot()">
+                <button
+                  class="btn btn-primary w-100"
+                  (click)="shoot()"
+                  [disabled]="winnerPlayer"
+                >
                   Shoot
                 </button>
               </div>
