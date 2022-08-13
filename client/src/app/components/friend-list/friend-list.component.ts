@@ -37,8 +37,6 @@ export class FriendListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.populateFriendList();
-
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.relationships = relationships;
@@ -51,17 +49,6 @@ export class FriendListComponent implements OnInit {
       },
     });
   }
-
-  /** 
-  private populateFriendList(): void {
-    const userId: string = this.accountService.getId();
-    this.userService.getRelationships(userId).subscribe({
-      next: (relationships) => {
-        this.relationships = relationships;
-      },
-    });
-  }
-  */
 
   // OK
   public openModal(relationship: Relationship): void {

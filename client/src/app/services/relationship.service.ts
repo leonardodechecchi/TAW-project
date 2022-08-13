@@ -36,7 +36,7 @@ export class RelationshipService implements OnInit {
    *
    * @param relationships
    */
-  updateRelationships(relationships: Relationship[]) {
+  public updateRelationships(relationships: Relationship[]) {
     this.relationshipsSubject.next(relationships);
   }
 
@@ -46,7 +46,7 @@ export class RelationshipService implements OnInit {
    * @param userId the user id
    * @returns an `Observable` of `Relationship[]`, i.e. the user relationships
    */
-  getRelationships(userId: string): Observable<Relationship[]> {
+  public getRelationships(userId: string): Observable<Relationship[]> {
     return this.http.get<Relationship[]>(
       `${environment.user_endpoint}/${userId}/relationships`
     );
@@ -58,9 +58,12 @@ export class RelationshipService implements OnInit {
    * @param friendId
    * @returns
    */
-  createRelationshipChat(userId: string, friendId: string): Observable<Chat> {
+  public createRelationshipChat(
+    userId: string,
+    friendId: string
+  ): Observable<Relationship[]> {
     const body = { friendId };
-    return this.http.post<Chat>(
+    return this.http.post<Relationship[]>(
       `${environment.user_endpoint}/${userId}/relationships/chat`,
       body
     );
@@ -69,7 +72,7 @@ export class RelationshipService implements OnInit {
   /**
    * TODO
    */
-  deleteRelationshipChat() {
+  public deleteRelationshipChat() {
     throw new Error('Method not implemented');
   }
 }

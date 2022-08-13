@@ -53,6 +53,14 @@ export class MatchService {
 
   /**
    *
+   * @returns
+   */
+  public getActiveMatches(): Observable<Match[]> {
+    return this.http.get<Match[]>(environment.match_endpoint);
+  }
+
+  /**
+   *
    * @param matchId
    * @param playerUsername
    * @param grid

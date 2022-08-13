@@ -88,8 +88,10 @@ router.post(
       const user: UserDocument = await getUserById(userId);
       const friend: UserDocument = await getUserById(friendId);
 
-      const chat: ChatDocument = await createRelationshipChat(user, friend);
-      return res.status(200).json(chat);
+      await createRelationshipChat(user, friend);
+
+      const relationships: UserRelationships = await getUserRelationships(userId);
+      return res.status(200).json(relationships);
     } catch (err) {
       next(err);
     }

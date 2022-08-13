@@ -53,8 +53,14 @@ export class ModalComponent {
       this.relationshipService
         .createRelationshipChat(userId, friendId)
         .subscribe({
-          next: (chat) => {
-            this.router.navigate(['/chats', chat._id]);
+          next: (relationships) => {
+            this.userService.updateRelationships(relationships);
+
+            for (let relationship of relationships) {
+              if (relationship.friendId._id === friendId) {
+                this.router.navigate(['/chats', relationship.chatId]);
+              }
+            }
           },
         });
     }

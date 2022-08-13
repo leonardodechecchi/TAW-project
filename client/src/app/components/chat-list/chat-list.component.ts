@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Relationship } from 'src/app/models/Relationship';
 import { AccountService } from 'src/app/services/account.service';
@@ -12,7 +13,7 @@ import { UserService } from 'src/app/services/user.service';
 export class ChatListComponent implements OnInit {
   public relationships: Relationship[];
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private router: Router) {
     this.relationships = [];
   }
 
@@ -24,5 +25,13 @@ export class ChatListComponent implements OnInit {
         });
       },
     });
+  }
+
+  /**
+   * Redirect the user to the given chat.
+   * @param chatId the chat id
+   */
+  public openChat(chatId: string) {
+    this.router.navigate(['chats', chatId]);
   }
 }

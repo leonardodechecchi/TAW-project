@@ -79,14 +79,6 @@ export class UserService {
           ]);
         },
       });
-
-    // subscribe to match available socket event
-    this.socketService
-      .matchAvailableListener()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (eventData) => {},
-      });
   }
 
   /**

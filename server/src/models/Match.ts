@@ -161,3 +161,15 @@ export async function getMatchById(matchId: Types.ObjectId): Promise<MatchDocume
   }
   return Promise.resolve(match);
 }
+
+/**
+ *
+ * @returns
+ */
+export async function getActiveMatches(): Promise<MatchDocument[]> {
+  const matches = await MatchModel.find({ 'stats.endTime': null }).exec();
+  if (!matches) {
+    return Promise.reject(new StatusError(404, 'No matches available'));
+  }
+  return Promise.resolve(matches);
+}

@@ -4,7 +4,7 @@ import { auth, ioServer } from '..';
 import { Grid } from '../models/Grid';
 import { GridCoordinates } from '../models/GridCoordinates';
 import { Player } from '../models/Player';
-import { createMatch, getMatchById, MatchDocument } from '../models/Match';
+import { createMatch, getActiveMatches, getMatchById, MatchDocument } from '../models/Match';
 import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged';
 import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
 import { retrieveId } from '../utils/param-checking';
@@ -32,6 +32,19 @@ router.post(
     }
   }
 );
+
+/**
+ * GET /matches
+ */
+router.get('/matches', auth, async (req, res, next) => {
+  try {
+    const activeMatches: MatchDocument[] = await getActiveMatches();
+    console.log(activeMatches);
+    return res.status(200).json(activeMatches);
+  } catch (err) {
+    next(err);
+  }
+});
 
 /**
  * GET /matches/:matchId
