@@ -1,5 +1,8 @@
 import { Schema, SchemaTypes } from 'mongoose';
 
+/**
+ * Subdocument of User that represents the user statistics.
+ */
 export interface UserStats {
   elo: number;
   topElo: number;
@@ -8,7 +11,7 @@ export interface UserStats {
   totalShots: number;
 }
 
-export const userStatsSchema: Schema = new Schema<UserStats>(
+export const userStatsSchema = new Schema<UserStats>(
   {
     elo: {
       type: SchemaTypes.Number,

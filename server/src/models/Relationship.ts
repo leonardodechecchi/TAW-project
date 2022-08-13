@@ -8,7 +8,7 @@ export interface Relationship {
   chatId?: Types.ObjectId;
 }
 
-export const relationshipSchema: Schema = new Schema<Relationship>(
+export const relationshipSchema = new Schema<Relationship>(
   {
     friendId: {
       type: SchemaTypes.ObjectId,

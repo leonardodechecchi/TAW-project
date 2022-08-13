@@ -16,7 +16,7 @@ export interface Notification {
   type: NotificationType;
 }
 
-export const notificationSchema: Schema = new Schema<Notification>(
+export const notificationSchema = new Schema<Notification>(
   {
     senderId: {
       type: SchemaTypes.ObjectId,

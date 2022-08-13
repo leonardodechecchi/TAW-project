@@ -51,6 +51,7 @@ import { ChatModalComponent } from './components/match/chat-modal/chat-modal.com
 import { GridComponent } from './components/match/grid/grid.component';
 import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.component';
 import { ObserverComponent } from './components/match/observer/observer.component';
+import { MatchListComponent } from './components/match/match-list/match-list.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -104,6 +105,11 @@ const routes: Routes = [
     component: GameComponent,
     canActivate: [AuthGuardService, FirstLoginGuardService],
   },
+  {
+    path: 'match/:id/observer',
+    component: ObserverComponent,
+    canActivate: [AuthGuardService, FirstLoginGuardService],
+  },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 
@@ -132,6 +138,7 @@ const routes: Routes = [
     GridComponent,
     GameNavbarComponent,
     ObserverComponent,
+    MatchListComponent,
   ],
   imports: [
     BrowserModule,

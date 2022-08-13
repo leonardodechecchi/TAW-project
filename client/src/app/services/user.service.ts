@@ -51,7 +51,7 @@ export class UserService {
       },
     });
 
-    // connect to notification socket service
+    // subscribe to notification socket service
     this.socketService
       .notificationListener()
       .pipe(untilDestroyed(this))
@@ -68,7 +68,6 @@ export class UserService {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
-          console.log('match-founfd"');
           this.socketService.emit<{ matchId: string }>('match-joined', {
             matchId: eventData.matchId,
           });
@@ -79,6 +78,14 @@ export class UserService {
             'positioning-phase',
           ]);
         },
+      });
+
+    // subscribe to match available socket event
+    this.socketService
+      .matchAvailableListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {},
       });
   }
 

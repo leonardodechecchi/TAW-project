@@ -14,6 +14,26 @@ import { deleteChatById } from '../models/Chat';
 const router = Router();
 
 /**
+ * POST /matches
+ */
+router.post(
+  '/matches',
+  auth,
+  async (req: Request<{}, {}, { username1: string; username2: string }>, res, next) => {
+    try {
+      const { username1, username2 } = req.body;
+      const match: MatchDocument = await createMatch(username1, username2);
+
+      // TODO emit message that the opponent accepted the match
+
+      return res.status(200).json(match);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
  * GET /matches/:matchId
  */
 router.get('/matches/:matchId', auth, async (req: Request<{ matchId: string }>, res, next) => {
@@ -42,26 +62,6 @@ router.delete('/mathes/:matchId', auth, async (req: Request<{ matchId: string }>
     next(err);
   }
 });
-
-/**
- * POST /matches
- */
-router.post(
-  '/matches',
-  auth,
-  async (req: Request<{}, {}, { username1: string; username2: string }>, res, next) => {
-    try {
-      const { username1, username2 } = req.body;
-      const match: MatchDocument = await createMatch(username1, username2);
-
-      // TODO emit message that the opponent accepted the match
-
-      return res.status(200).json(match);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 /**
  * PUT /matches/:matchId/players/:playerUsername/grid

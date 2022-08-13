@@ -2,6 +2,7 @@ import { HydratedDocument, Model, model, Schema, SchemaTypes, Types } from 'mong
 import { ChatDocument, createChat } from './Chat';
 import { Grid } from './Grid';
 import { GridCoordinates } from './GridCoordinates';
+import { MatchStats, matchStatsSchema } from './MatchStats';
 import { Player, playerSchema } from './Player';
 import { StatusError } from './StatusError';
 
@@ -14,6 +15,7 @@ export interface Match {
   turnOf: string;
   playersChat: Types.ObjectId;
   observersChat: Types.ObjectId;
+  stats: MatchStats;
 }
 
 interface MatchProps {
@@ -67,6 +69,10 @@ export const matchSchema = new Schema<Match, Model<Match, {}, MatchProps>>({
   observersChat: {
     type: SchemaTypes.ObjectId,
     required: true,
+  },
+  stats: {
+    type: matchStatsSchema,
+    default: () => ({}),
   },
 });
 

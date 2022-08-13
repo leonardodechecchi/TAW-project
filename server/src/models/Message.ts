@@ -9,7 +9,7 @@ export interface Message {
   date: Date;
 }
 
-export const messageSchema: Schema = new Schema<Message>(
+export const messageSchema = new Schema<Message>(
   {
     author: {
       type: SchemaTypes.String,

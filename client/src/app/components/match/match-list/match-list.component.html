@@ -1,0 +1,20 @@
+<div class="container">
+  <div
+    class="card col-md-6 offset-md-3 mt-3 card-body text-center"
+    *ngIf="matches.length === 0"
+  >
+    <p class="card-text">No match available</p>
+  </div>
+  <div class="card col-md-6 offset-md-3 mt-3" *ngFor="let match of matches">
+    <div class="card-body">
+      <div class="d-flex">
+        ciao
+        <h5>
+          {{ match.player1.playerUsername }} vs
+          {{ match.player2.playerUsername }}
+        </h5>
+        <button class="btn btn-link ms-auto"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

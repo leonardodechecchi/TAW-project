@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { createMatch, MatchDocument } from '../../models/Match';
 import { getUserByUsername, UserDocument } from '../../models/User';
+import { MatchAvailableEmitter } from '../emitters/MatchAvailable';
 import { MatchFoundEmitter } from '../emitters/MatchFound';
 import { ListenerNotifier } from './ListenerNotifier';
 
@@ -17,6 +18,10 @@ export class MatchRequestAcceptedListener extends ListenerNotifier<
   MatchRequestAcceptedData,
   MatchData
 > {
+  /**
+   * @param ioServer the socket server instance
+   * @param client the client instance
+   */
   constructor(ioServer: Server, client: Socket) {
     super(ioServer, client, 'match-request-accepted');
   }
@@ -36,6 +41,11 @@ export class MatchRequestAcceptedListener extends ListenerNotifier<
 
     const emitDataProvider = async (eventData: MatchRequestAcceptedData): Promise<MatchData> => {
       const match: MatchDocument = await createMatch(eventData.player1, eventData.player2);
+
+      // inform all users that a new match has started
+      const matchAvailable = new MatchAvailableEmitter(this.ioServer);
+      matchAvailable.emit({ matchId: match._id.toString() });
+
       return Promise.resolve({ matchId: match._id.toString() });
     };
 
