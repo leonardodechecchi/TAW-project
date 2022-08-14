@@ -127,9 +127,9 @@ ioServer.on('connection', (client: io.Socket) => {
   matchJoined.listen();
 
   /**
-   * TODO
+   * TODO test
    */
-  const matchLeft = new MatchLeftListener(client);
+  const matchLeft = new MatchLeftListener(ioServer, client);
   matchLeft.listen();
 });
 

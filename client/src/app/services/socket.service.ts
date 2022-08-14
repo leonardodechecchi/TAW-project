@@ -19,6 +19,10 @@ interface PositioningCompletedData {
   message: string;
 }
 
+interface MatchEndedData {
+  message: string;
+}
+
 type SocketEvent =
   | 'chat-message'
   | 'notification'
@@ -26,7 +30,8 @@ type SocketEvent =
   | 'positioning-completed'
   | 'match-found'
   | 'shot-fired'
-  | 'match-available';
+  | 'match-available'
+  | 'match-ended';
 
 @Injectable({
   providedIn: 'root',
@@ -212,5 +217,27 @@ export class SocketService {
         this.socket.removeListener(event);
       };
     });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public matchEndedListener(): Observable<MatchEndedData> {
+    const event: SocketEvent = 'match-ended';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<MatchEndedData>(
+      (subscriber: Subscriber<MatchEndedData>) => {
+        this.on<MatchEndedData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
+
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
   }
 }

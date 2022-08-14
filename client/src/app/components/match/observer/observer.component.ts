@@ -52,6 +52,7 @@ export class ObserverComponent implements OnInit {
                   this.player1 = match.player1;
                   this.player2 = match.player2;
 
+                  // check if the players are positioning the ships
                   shot.shooterUsername === this.player1.playerUsername
                     ? this.initGrid(this.player2)
                     : this.initGrid(this.player1);

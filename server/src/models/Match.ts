@@ -1,5 +1,5 @@
 import { HydratedDocument, Model, model, Schema, SchemaTypes, Types } from 'mongoose';
-import { ChatDocument, createChat } from './Chat';
+import { ChatDocument, createChat, deleteChatById } from './Chat';
 import { Grid } from './Grid';
 import { GridCoordinates } from './GridCoordinates';
 import { MatchStats, matchStatsSchema } from './MatchStats';
@@ -172,4 +172,19 @@ export async function getActiveMatches(): Promise<MatchDocument[]> {
     return Promise.reject(new StatusError(404, 'No matches available'));
   }
   return Promise.resolve(matches);
+}
+
+/**
+ *
+ * @param matchId
+ * @returns
+ */
+export async function deleteMatchById(matchId: Types.ObjectId): Promise<void> {
+  const match = await MatchModel.findOne({ _id: matchId }).exec();
+  if (!match) {
+    return Promise.reject(new StatusError(404, 'Match not found'));
+  }
+
+  await deleteChatById(match.playersChat);
+  await deleteChatById(match.observersChat);
 }

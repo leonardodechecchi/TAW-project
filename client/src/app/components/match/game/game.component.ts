@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Match } from 'src/app/models/Match';
@@ -52,7 +52,8 @@ export class GameComponent implements OnInit {
     private matchService: MatchService,
     private modalService: MdbModalService,
     private socketService: SocketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
@@ -170,6 +171,7 @@ export class GameComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
+    //
     this.socketService
       .shotFiredListener(this.matchId)
       .pipe(untilDestroyed(this))
@@ -177,6 +179,17 @@ export class GameComponent implements OnInit {
         next: (shot) => {
           // update the grid
           this.initGrid();
+        },
+      });
+
+    //
+    this.socketService
+      .matchEndedListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          console.log(eventData.message);
+          this.router.navigate(['home']);
         },
       });
   }
@@ -398,7 +411,15 @@ export class GameComponent implements OnInit {
   /**
    *
    */
-  public leaveMatch(): void {}
+  public leaveMatch(): void {
+    this.socketService.emit<{ matchId: string; playerWhoLeft: string }>(
+      'match-left',
+      {
+        matchId: this.matchId,
+        playerWhoLeft: this.accountService.getUsername(),
+      }
+    );
+  }
 
   /**
    * Fire a shot.
