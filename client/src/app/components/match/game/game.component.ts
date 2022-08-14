@@ -5,13 +5,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Match } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
-import { UserStats } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 
-enum ShotType {
+export enum ShotType {
   Hit = 'Hit',
   Missed = 'Missed',
 }
@@ -39,13 +38,14 @@ export class GameComponent implements OnInit {
   public errorMessage: string;
   public infoMessage: string;
 
-  private shipColor: string;
-  private fireShotContent: string;
-  private missedShotColor: string;
-  private missedShotContent: string;
-  private hitShotColor: string;
-  private hitShotContent: string;
-  private shipDestroyedContent: string;
+  private shipColor: string = 'gray';
+  private fireShotContent: string = '<i class="fas fa-times"></i>';
+  private missedShotColor: string = '#1266f1';
+  private missedShotContent: string = '<i class="fas fa-water text-white"></i>';
+  private hitShotColor: string = '#f93154';
+  private hitShotContent: string = '<i class="fas fa-fire text-white"></i>';
+  private shipDestroyedContent: string =
+    '<i class="fas fa-times text-white"></i>';
 
   constructor(
     private accountService: AccountService,
@@ -54,18 +54,8 @@ export class GameComponent implements OnInit {
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {
-    this.winnerPlayer = null;
-
     this.rowField = new FormControl(null);
     this.colField = new FormControl(null);
-
-    this.shipColor = 'gray';
-    this.fireShotContent = '<i class="fas fa-times"></i>';
-    this.missedShotColor = '#1266f1';
-    this.missedShotContent = '<i class="fas fa-water text-white"></i>';
-    this.hitShotColor = '#f93154';
-    this.hitShotContent = '<i class="fas fa-fire text-white"></i>';
-    this.shipDestroyedContent = '<i class="fas fa-times text-white"></i>';
   }
 
   ngOnInit(): void {
@@ -73,7 +63,7 @@ export class GameComponent implements OnInit {
       next: (param) => {
         this.matchId = param['id'];
 
-        // initialize grid
+        // initialize grids
         this.initGrid();
 
         // initialize socket events

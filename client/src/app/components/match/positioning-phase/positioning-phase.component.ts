@@ -24,10 +24,10 @@ export class PositioningPhaseComponent implements OnInit {
   public errorMessage: string;
   public infoMessage: string;
 
-  public destroyerCount: number;
-  public cruiserCount: number;
-  public battleshipCount: number;
-  public carrierCount: number;
+  public destroyerCount: number = 5;
+  public cruiserCount: number = 3;
+  public battleshipCount: number = 2;
+  public carrierCount: number = 1;
 
   constructor(
     private accountService: AccountService,
@@ -37,18 +37,17 @@ export class PositioningPhaseComponent implements OnInit {
     private router: Router
   ) {
     this.matchLoading = false;
-
-    this.destroyerCount = 5;
-    this.cruiserCount = 3;
-    this.battleshipCount = 2;
-    this.carrierCount = 1;
   }
 
   ngOnInit(): void {
     this.route.params.subscribe({
       next: (param) => {
         this.matchId = param['id'];
+
+        // register socket events
         this.initSocketEvents();
+
+        // init grid
         this.initGrid();
       },
     });
@@ -103,13 +102,6 @@ export class PositioningPhaseComponent implements OnInit {
             : match.player2;
 
         this.grid = player.grid;
-
-        for (let ship of this.grid.ships) {
-          this.decreaseShipCount(ship.shipType);
-          for (let coordinate of ship.coordinates) {
-            this.changeCellColor(String(coordinate.row * 10 + coordinate.col));
-          }
-        }
       },
     });
   }
@@ -256,18 +248,27 @@ export class PositioningPhaseComponent implements OnInit {
     return true;
   }
 
+  /**
+   *
+   */
   private static randomInteger(): number {
     let min = 0;
     let max = 9;
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  /**
+   *
+   * @returns
+   */
   private static randomBool(): string {
-    // This is a 1/2 prob. for horizontal and 1/2 prob for vertical
     return Math.random() < 0.5 ? 'vertical' : 'horizontal';
   }
 
-  public randomDeploy() {
+  /**
+   *
+   */
+  public randomDeploy(): void {
     this.reset();
 
     let letters: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
@@ -403,13 +404,6 @@ export class PositioningPhaseComponent implements OnInit {
       ships: [],
       shotsReceived: [],
     };
-    this.matchService
-      .updatePlayerGrid(
-        this.matchId,
-        this.accountService.getUsername(),
-        this.grid
-      )
-      .subscribe();
 
     // reset the table cell colors
     for (let row = 0; row < 10; row++) {

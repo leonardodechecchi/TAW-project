@@ -37,17 +37,7 @@ export class GridComponent implements OnInit {
     this.shipDestroyedContent = '<i class="fas fa-times text-white"></i>';
   }
 
-  ngOnInit(): void {
-    this.socketService
-      .shotFiredListener(this.matchId)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (shot) => {
-          // update the grid
-          this.initGrid();
-        },
-      });
-  }
+  ngOnInit(): void {}
 
   /**
    * Calculate the index to access table cell.
