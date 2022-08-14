@@ -11,6 +11,7 @@ import { ShotType } from '../game/game.component';
 @Component({
   selector: 'observer',
   templateUrl: './observer.component.html',
+  styleUrls: ['./observer.component.scss'],
 })
 export class ObserverComponent implements OnInit {
   private matchId: string;
@@ -41,14 +42,12 @@ export class ObserverComponent implements OnInit {
       next: (param) => {
         this.matchId = param['id'];
 
-        //
+        // subscribe to shot fired socket event
         this.socketService
           .shotFiredListener(this.matchId)
           .pipe(untilDestroyed(this))
           .subscribe({
             next: (shot) => {
-              console.log(shot);
-
               this.matchService.getMatch(this.matchId).subscribe({
                 next: (match) => {
                   this.match = match;
@@ -63,7 +62,7 @@ export class ObserverComponent implements OnInit {
             },
           });
 
-        //
+        // init players grid
         this.matchService.getMatch(this.matchId).subscribe({
           next: (match) => {
             this.match = match;
