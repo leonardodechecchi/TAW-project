@@ -15,7 +15,6 @@ import { ShotType } from '../game/game.component';
 })
 export class ObserverComponent implements OnInit {
   private matchId: string;
-  private match: Match;
   public player1: Player;
   public player2: Player;
   private observersChatId: string;
@@ -50,7 +49,6 @@ export class ObserverComponent implements OnInit {
             next: (shot) => {
               this.matchService.getMatch(this.matchId).subscribe({
                 next: (match) => {
-                  this.match = match;
                   this.player1 = match.player1;
                   this.player2 = match.player2;
 
@@ -65,10 +63,13 @@ export class ObserverComponent implements OnInit {
         // init players grid
         this.matchService.getMatch(this.matchId).subscribe({
           next: (match) => {
-            this.match = match;
             this.player1 = match.player1;
             this.player2 = match.player2;
             this.observersChatId = match.observersChat;
+
+            this.player1.ready && this.player2.ready
+              ? (this.positioniongPhase = false)
+              : (this.positioniongPhase = true);
 
             this.initGrid(this.player1);
             this.initGrid(this.player2);
@@ -84,7 +85,7 @@ export class ObserverComponent implements OnInit {
    */
   private initGrid(player: Player) {
     const tableName: string =
-      player.playerUsername === this.match.player1.playerUsername
+      player.playerUsername === this.player1.playerUsername
         ? 'table1'
         : 'table2';
 
