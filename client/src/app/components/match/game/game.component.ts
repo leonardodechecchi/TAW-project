@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbModalService } from 'mdb-angular-ui-kit/modal';
-import { Match } from 'src/app/models/Match';
+import { Match, MatchStats } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -24,6 +24,7 @@ export enum ShotType {
 export class GameComponent implements OnInit {
   private matchId: string;
   private matchChatId: string;
+  private matchStats: MatchStats;
 
   private player: Player;
   private opponentPlayer: Player;
@@ -80,6 +81,7 @@ export class GameComponent implements OnInit {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
         this.matchChatId = match.playersChat;
+        this.matchStats = match.stats;
 
         this.setPlayers(match);
         this.setTurnOf(match);
@@ -150,6 +152,10 @@ export class GameComponent implements OnInit {
           }
 
           if (shipDestroyed) {
+            this.updateStats({
+              shipsDestroyed: this.matchStats.shipsDestroyed++,
+            });
+
             for (let coordinate of ship.coordinates) {
               this.setCellContent(
                 'table2',
@@ -161,7 +167,7 @@ export class GameComponent implements OnInit {
           }
         }
 
-        // check if there is already a winner
+        // check if there is a winner
         this.winnerPlayer = this.winner();
       },
     });
@@ -192,6 +198,18 @@ export class GameComponent implements OnInit {
           this.router.navigate(['home']);
         },
       });
+  }
+
+  /**
+   *
+   * @param stats
+   */
+  private updateStats(stats: Partial<MatchStats>): void {
+    this.matchStats = { ...this.matchStats, ...stats };
+
+    this.matchService
+      .updateMatchStats(this.matchId, this.matchStats)
+      .subscribe();
   }
 
   /**
@@ -344,16 +362,24 @@ export class GameComponent implements OnInit {
    */
   private winner(): string | null {
     if (this.isLoser(this.player)) {
+      const winner: string = this.opponentPlayer.playerUsername;
+
       this.rowField.disable();
       this.colField.disable();
-      this.infoMessage = `${this.opponentPlayer.playerUsername} won!`;
+
+      this.updateStats({ winner, endTime: new Date() });
+      this.infoMessage = `${winner} won!`;
 
       return this.opponentPlayer.playerUsername;
     } else {
       if (this.isLoser(this.opponentPlayer)) {
+        const winner: string = this.player.playerUsername;
+
         this.rowField.disable();
         this.colField.disable();
-        this.infoMessage = `${this.player.playerUsername} won!`;
+
+        this.updateStats({ winner, endTime: new Date() });
+        this.infoMessage = `${winner} won!`;
 
         return this.player.playerUsername;
       }
@@ -412,6 +438,10 @@ export class GameComponent implements OnInit {
    *
    */
   public leaveMatch(): void {
+    // update match stats first
+    this.updateStats({ endTime: new Date() });
+
+    // then emit event to leave the match room
     this.socketService.emit<{ matchId: string; playerWhoLeft: string }>(
       'match-left',
       {
@@ -434,6 +464,8 @@ export class GameComponent implements OnInit {
       this.errorMessage = 'Invalid coordinates!';
       return;
     }
+
+    this.updateStats({ totalShots: this.matchStats.totalShots++ });
 
     this.matchService
       .fireAShot(this.matchId, this.player.playerUsername, { row, col })

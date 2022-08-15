@@ -45,6 +45,12 @@ interface MatchProps {
    * @param turnOf the username of the player
    */
   setTurnOf: (turnOf: string) => Promise<MatchDocument>;
+
+  /**
+   * Update the match statistics.
+   * @param stats the new stats.
+   */
+  updateMatchStats: (stats: MatchStats) => Promise<MatchDocument>;
 }
 
 export interface MatchDocument extends HydratedDocument<Match, MatchProps> {}
@@ -118,6 +124,14 @@ matchSchema.method(
   'setTurnOf',
   async function (this: MatchDocument, turnOf: string): Promise<MatchDocument> {
     this.turnOf = turnOf;
+    return this.save();
+  }
+);
+
+matchSchema.method(
+  'updateMatchStats',
+  async function (this: MatchDocument, stats: MatchStats): Promise<MatchDocument> {
+    this.stats = stats;
     return this.save();
   }
 );

@@ -16,7 +16,7 @@ export enum UserRoles {
 }
 
 /**
- * Interface that represents a user stats.
+ * Interface that represents a set of user stats.
  */
 export interface UserStats {
   elo: number;

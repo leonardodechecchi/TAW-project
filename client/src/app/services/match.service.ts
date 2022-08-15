@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Grid } from '../models/Grid';
 import { GridCoordinates } from '../models/GridCoordinates';
-import { Match } from '../models/Match';
+import { Match, MatchStats } from '../models/Match';
 import { Message } from '../models/Message';
 
 @Injectable({
@@ -116,6 +116,20 @@ export class MatchService {
     );
   }
 
-  // TODO
-  public updateMatchStats() {}
+  /**
+   *
+   * @param matchId
+   * @param stats
+   * @returns
+   */
+  public updateMatchStats(
+    matchId: string,
+    stats: MatchStats
+  ): Observable<Match> {
+    const body = { stats };
+    return this.http.put<Match>(
+      `${environment.match_endpoint}/${matchId}/stats`,
+      body
+    );
+  }
 }

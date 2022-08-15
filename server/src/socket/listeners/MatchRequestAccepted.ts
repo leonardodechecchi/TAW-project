@@ -44,7 +44,7 @@ export class MatchRequestAcceptedListener extends ListenerNotifier<
 
       // inform all users that a new match has started
       const matchAvailable = new MatchAvailableEmitter(this.ioServer);
-      matchAvailable.emit({ matchId: match._id.toString() });
+      matchAvailable.emit({ match });
 
       return Promise.resolve({ matchId: match._id.toString() });
     };

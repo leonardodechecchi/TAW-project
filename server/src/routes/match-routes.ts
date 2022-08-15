@@ -10,6 +10,7 @@ import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompl
 import { retrieveId } from '../utils/param-checking';
 import { ShotFiredEmitter } from '../socket/emitters/ShotFired';
 import { deleteChatById } from '../models/Chat';
+import { MatchStats } from '../models/MatchStats';
 
 const router = Router();
 
@@ -164,6 +165,25 @@ router.put(
 
       await match.setTurnOf(opponentPlayer.playerUsername);
 
+      return res.status(200).json(match);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * PUT /matches/:matchId/stats
+ */
+router.put(
+  '/matches/:matchId/stats',
+  auth,
+  async (req: Request<{ matchId: string }, {}, { stats: MatchStats }>, res, next) => {
+    try {
+      const matchId: Types.ObjectId = retrieveId(req.params.matchId);
+      const match: MatchDocument = await getMatchById(matchId);
+
+      await match.updateMatchStats(req.body.stats);
       return res.status(200).json(match);
     } catch (err) {
       next(err);

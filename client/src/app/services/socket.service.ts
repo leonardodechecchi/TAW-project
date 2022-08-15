@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { Match } from '../models/Match';
 import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
 import { Shot } from '../models/Shot';
@@ -17,6 +18,10 @@ interface PlayerStateChangedData {
 
 interface PositioningCompletedData {
   message: string;
+}
+
+interface MatchAvailableData {
+  match: Match;
 }
 
 interface MatchEndedData {
@@ -203,20 +208,22 @@ export class SocketService {
    *
    * @returns
    */
-  public matchAvailableListener(): Observable<MatchData> {
+  public matchAvailableListener(): Observable<MatchAvailableData> {
     const event: SocketEvent = 'match-available';
     console.log(`Listening on '${event}' event`);
 
-    return new Observable<MatchData>((subscriber: Subscriber<MatchData>) => {
-      this.on<MatchData>(event, (eventData) => {
-        subscriber.next(eventData);
-      });
+    return new Observable<MatchAvailableData>(
+      (subscriber: Subscriber<MatchAvailableData>) => {
+        this.on<MatchAvailableData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
 
-      return () => {
-        console.log(`Unlistening '${event}' event`);
-        this.socket.removeListener(event);
-      };
-    });
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
   }
 
   /**

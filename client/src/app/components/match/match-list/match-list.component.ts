@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Match } from 'src/app/models/Match';
 import { MatchService } from 'src/app/services/match.service';
@@ -14,7 +14,6 @@ export class MatchListComponent implements OnInit {
   public matches: Match[];
 
   constructor(
-    private route: ActivatedRoute,
     private socketService: SocketService,
     private matchService: MatchService,
     private router: Router
@@ -23,6 +22,7 @@ export class MatchListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // get active matches
     this.matchService.getActiveMatches().subscribe({
       next: (matches) => {
         console.log(matches);
@@ -35,12 +35,14 @@ export class MatchListComponent implements OnInit {
       .matchAvailableListener()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (eventData) => {},
+        next: (eventData) => {
+          this.matches.push(eventData.match);
+        },
       });
   }
 
   /**
-   *
+   * Navigate to the match observers room.
    * @param match
    */
   public watchGame(match: Match) {

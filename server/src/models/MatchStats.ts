@@ -4,7 +4,7 @@ import { Schema, SchemaTypes, Types } from 'mongoose';
  * Subdocument of Match that represents the match statistics.
  */
 export interface MatchStats {
-  winner: Types.ObjectId;
+  winner: string;
   startTime: Date;
   endTime: Date;
   totalShots: number;
@@ -14,7 +14,7 @@ export interface MatchStats {
 export const matchStatsSchema = new Schema<MatchStats>(
   {
     winner: {
-      type: SchemaTypes.ObjectId,
+      type: SchemaTypes.String,
       default: null,
     },
     startTime: {
