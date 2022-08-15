@@ -25,6 +25,7 @@ interface MatchAvailableData {
 }
 
 interface MatchEndedData {
+  matchId: string;
   message: string;
 }
 

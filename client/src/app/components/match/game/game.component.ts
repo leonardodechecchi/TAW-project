@@ -27,7 +27,7 @@ export class GameComponent implements OnInit {
   private matchStats: MatchStats;
 
   private player: Player;
-  private opponentPlayer: Player;
+  public opponentPlayer: Player;
   public turnOf: string;
   public winnerPlayer: string;
 

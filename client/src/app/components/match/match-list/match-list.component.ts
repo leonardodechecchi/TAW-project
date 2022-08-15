@@ -38,6 +38,20 @@ export class MatchListComponent implements OnInit {
           this.matches.push(eventData.match);
         },
       });
+
+    // subscribe to match ended socket event
+    this.socketService
+      .matchEndedListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          for (let idx in this.matches) {
+            if (this.matchService[idx] === eventData.matchId) {
+              this.matches.splice(parseInt(idx), 1);
+            }
+          }
+        },
+      });
   }
 
   /**

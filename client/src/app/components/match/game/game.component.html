@@ -1,3 +1,24 @@
+<!-- Navbar -->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <div class="navbar-brand">
+      <button class="btn-transparent mb-1" *ngIf="opponentPlayer">
+        Playing agaist {{ opponentPlayer.playerUsername }}
+      </button>
+    </div>
+
+    <div class="d-flex align-items-center mb-1">
+      <button type="button" class="btn btn-link px-3 me-2" (click)="openChat()">
+        <i class="fas fa-comment me-2"></i>Chat
+      </button>
+      <button type="button" class="btn btn-danger" (click)="leaveMatch()">
+        <i class="fas fa-sign-out-alt me-2"></i>Leave
+      </button>
+    </div>
+  </div>
+</nav>
+<!-- Navbar -->
+
 <div class="container">
   <div
     class="card card-body border border-danger text-danger mt-3"
@@ -83,7 +104,7 @@
           <h6 class="card-header"><strong>Enter coordinates</strong></h6>
           <div class="card-body">
             <div class="row">
-              <div class="col-xl-11 p-2">
+              <div class="col-xl-10 p-2">
                 <div class="d-flex w-100">
                   <mdb-form-control class="flex-fill">
                     <input
@@ -110,16 +131,13 @@
                 </div>
               </div>
 
-              <div class="col-xl-1 p-2">
+              <div class="col-xl-2 p-2">
                 <button
                   class="btn btn-primary w-100"
                   (click)="shoot()"
                   [disabled]="winnerPlayer"
                 >
                   Shoot
-                </button>
-                <button class="btn btn-danger" (click)="leaveMatch()">
-                  Leave
                 </button>
               </div>
             </div>
@@ -130,7 +148,14 @@
   </div>
   <div *ngIf="!isMyTurn || winnerPlayer">
     <div class="card card-body border border-info text-info mt-3 mb-3">
-      {{ infoMessage }}
+      <div class="d-flex align-items-center">
+        <strong>{{ infoMessage }}</strong>
+        <div
+          class="spinner-border ms-auto"
+          role="status"
+          aria-hidden="true"
+        ></div>
+      </div>
     </div>
   </div>
 </div>

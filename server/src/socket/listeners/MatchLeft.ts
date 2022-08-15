@@ -12,6 +12,7 @@ interface MatchLeftListenerData {
 }
 
 interface MatchLeftEmitterData {
+  matchId: string;
   message: string;
 }
 
@@ -42,7 +43,10 @@ export class MatchLeftListener extends ListenerNotifier<
       const matchId: Types.ObjectId = retrieveId(eventData.matchId);
       await deleteMatchById(matchId);
 
-      return Promise.resolve({ message: eventData.playerWhoLeft + ' has left the match' });
+      return Promise.resolve({
+        matchId: eventData.matchId,
+        message: eventData.playerWhoLeft + ' has left the match',
+      });
     };
 
     await super.listenAndEmit(emitterProvider, emitDataProvider);

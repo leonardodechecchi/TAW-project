@@ -2,6 +2,7 @@ import { Server } from 'socket.io';
 import { RoomEmitter } from './RoomEmitter';
 
 interface MatchEndedEmitterData {
+  matchId: string;
   message: string;
 }
 
