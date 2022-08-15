@@ -1,24 +1,23 @@
 <div class="container">
-  <div
-    class="card col-md-6 offset-md-3 mt-3 card-body text-center"
-    *ngIf="matches.length === 0"
-  >
-    <p class="card-text">No games available</p>
-  </div>
   <div class="card col-md-6 offset-md-3 mt-3">
     <h6 class="card-header"><strong>Active games</strong></h6>
     <div class="card-body">
-      <ul class="list-group list-group-light" *ngFor="let match of matches">
-        <li
-          class="list-group-item d-flex justify-content-between align-items-center"
-        >
-          {{ match.player1.playerUsername }} vs
-          {{ match.player2.playerUsername }}
-          <button class="btn btn-link" (click)="watchGame(match)">
-            <i class="fas fa-eye"></i>
-          </button>
-        </li>
-      </ul>
+      <p class="card-text text-center" *ngIf="matches.length === 0">
+        No games available
+      </p>
+      <div *ngIf="matches.length > 0">
+        <ul class="list-group list-group-light" *ngFor="let match of matches">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ match.player1.playerUsername }} vs
+            {{ match.player2.playerUsername }}
+            <button class="btn btn-link" (click)="watchGame(match)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

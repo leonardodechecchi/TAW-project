@@ -25,7 +25,6 @@ export class MatchListComponent implements OnInit {
     // get active matches
     this.matchService.getActiveMatches().subscribe({
       next: (matches) => {
-        console.log(matches);
         this.matches = matches;
       },
     });
