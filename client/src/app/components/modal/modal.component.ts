@@ -30,6 +30,9 @@ export class ModalComponent {
     const recipientId: string = this.relationship.friendId._id;
     const type: NotificationType = NotificationType.MatchRequest;
 
+    this.matchService.updateMatchLoading(true);
+    this.router.navigate(['match', 'waiting-room']);
+
     this.userService
       .postNotification(recipientId, { senderId: userId, type })
       .subscribe({
@@ -39,7 +42,6 @@ export class ModalComponent {
       });
 
     this.modalRef.close();
-    this.matchService.updateMatchLoading(true);
   }
 
   // OK

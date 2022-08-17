@@ -132,4 +132,17 @@ export class MatchService {
       body
     );
   }
+
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  public searchForAMatch(userId: string): Observable<void> {
+    const body = { userId };
+    return this.http.post<void>(
+      `${environment.matchmaking_endpoint}/queue`,
+      body
+    );
+  }
 }

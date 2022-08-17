@@ -67,17 +67,6 @@ export class PositioningPhaseComponent implements OnInit {
       matchId: this.matchId,
     });
 
-    // when players are ready
-    this.socketService
-      .positioningCompletedListener()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (eventData) => {
-          this.matchService.updateMatchLoading(false);
-          this.router.navigate(['match', this.matchId, 'game']);
-        },
-      });
-
     // when the opponent is ready
     this.socketService
       .playerStateChangedListener()
@@ -439,8 +428,11 @@ export class PositioningPhaseComponent implements OnInit {
       )
       .subscribe();
 
-    // update player status
+    // go to waiting room
     this.matchService.updateMatchLoading(true);
+    this.router.navigate(['match', 'waiting-room']);
+
+    // update player status
     this.matchService
       .setPlayerReady(this.matchId, this.accountService.getUsername(), true)
       .subscribe();

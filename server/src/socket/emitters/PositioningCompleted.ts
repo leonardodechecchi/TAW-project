@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { RoomEmitter } from './RoomEmitter';
 
 interface PositioningCompletedData {
-  message: string;
+  matchId: string;
 }
 
 export class PositioningCompletedEmitter extends RoomEmitter<PositioningCompletedData> {

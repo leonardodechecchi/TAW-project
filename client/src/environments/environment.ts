@@ -12,7 +12,7 @@ export const environment = {
   moderator_endpoint: `http://localhost:${port}/moderators`,
   chat_endpoint: `http://localhost:${port}/chats`,
   match_endpoint: `http://localhost:${port}/matches`,
-  profile_picture: `http://localhost:${port}/images/default_profile_picture.jpg`,
+  matchmaking_endpoint: `http://localhost:${port}/matchmaking`,
 };
 
 /*

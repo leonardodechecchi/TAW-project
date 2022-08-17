@@ -42,7 +42,7 @@ import { BackNavbarComponent } from './components/back-navbar/back-navbar.compon
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ModeratorGuardService } from './services/moderator-guard.service';
-import { WaitingOpponentComponent } from './components/waiting-opponent/waiting-opponent.component';
+import { WaitingRoomComponent } from './components/waiting-opponent/waiting-room.component';
 
 import { PositioningPhaseFormComponent } from './components/match/positioning-phase-form/positioning-phase-form.component';
 import { PositioningPhaseComponent } from './components/match/positioning-phase/positioning-phase.component';
@@ -52,33 +52,54 @@ import { GridComponent } from './components/match/grid/grid.component';
 import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.component';
 import { ObserverComponent } from './components/match/observer/observer.component';
 import { MatchListComponent } from './components/match/match-list/match-list.component';
+import { MatchLoadingGuardService } from './services/match-loading-guard.service';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'friends',
     component: FriendListComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'chats',
     component: ChatListComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'chats/:id',
     component: ChatComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'admin-dashboard',
@@ -87,28 +108,50 @@ const routes: Routes = [
       AuthGuardService,
       FirstLoginGuardService,
       ModeratorGuardService,
+      MatchLoadingGuardService,
     ],
   },
   {
     path: 'notifications',
     component: NotificationListComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   { path: 'update-password', component: UpdatePasswordComponent },
   {
     path: 'match/:id/positioning-phase',
     component: PositioningPhaseComponent,
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
+  },
+  {
+    path: 'match/waiting-room',
+    component: WaitingRoomComponent,
     canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'match/:id/game',
     component: GameComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   {
     path: 'match/:id/observer',
     component: ObserverComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
@@ -130,7 +173,7 @@ const routes: Routes = [
     BackNavbarComponent,
     AdminDashboardComponent,
     ProfileComponent,
-    WaitingOpponentComponent,
+    WaitingRoomComponent,
     PositioningPhaseComponent,
     PositioningPhaseFormComponent,
     GameComponent,

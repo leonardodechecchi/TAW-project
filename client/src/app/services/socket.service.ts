@@ -17,7 +17,7 @@ interface PlayerStateChangedData {
 }
 
 interface PositioningCompletedData {
-  message: string;
+  matchId: string;
 }
 
 interface MatchAvailableData {
