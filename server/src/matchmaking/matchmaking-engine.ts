@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createMatch, MatchDocument } from '../models/Match';
-import { MatchmakingQueueModel, QueueEntry } from '../models/matchmaking/QueueEntry';
+import { MatchmakingQueueModel, QueueEntryDocument } from '../models/matchmaking/QueueEntry';
 import { getUserById, UserDocument } from '../models/User';
 import { MatchFoundEmitter } from '../socket/emitters/MatchFound';
 
@@ -54,11 +54,11 @@ export class MatchmakingEngine {
    *
    */
   private async arrangeMatches(): Promise<void> {
-    const queue: QueueEntry[] = await MatchmakingQueueModel.find({}).exec();
+    const queue: QueueEntryDocument[] = await MatchmakingQueueModel.find({}).exec();
 
     while (queue.length > 1) {
-      const player: QueueEntry | undefined = queue.pop();
-      const opponent: QueueEntry | undefined = undefined; /** todo find opponent */
+      const player: QueueEntryDocument | undefined = queue.pop();
+      const opponent: QueueEntryDocument | undefined = undefined; /** todo find opponent */
     }
   }
 
@@ -67,7 +67,10 @@ export class MatchmakingEngine {
    * @param player1
    * @param player2
    */
-  private static arePlayersMatchable(player1: QueueEntry, player2: QueueEntry): boolean {
+  private static arePlayersMatchable(
+    player1: QueueEntryDocument,
+    player2: QueueEntryDocument
+  ): boolean {
     const eloDiff: number = Math.abs(player1.elo - player2.elo);
 
     const isP1Skilled: boolean = eloDiff <= 200;
@@ -81,7 +84,10 @@ export class MatchmakingEngine {
    * @param player1
    * @param player2
    */
-  private async arrangeMatch(player1: QueueEntry, player2: QueueEntry): Promise<void> {
+  private async arrangeMatch(
+    player1: QueueEntryDocument,
+    player2: QueueEntryDocument
+  ): Promise<void> {
     const user1: UserDocument = await getUserById(player1.userId);
     const user2: UserDocument = await getUserById(player2.userId);
 
