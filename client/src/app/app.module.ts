@@ -122,6 +122,11 @@ const routes: Routes = [
   },
   { path: 'update-password', component: UpdatePasswordComponent },
   {
+    path: 'match/waiting-room',
+    component: WaitingRoomComponent,
+    canActivate: [AuthGuardService, FirstLoginGuardService],
+  },
+  {
     path: 'match/:id/positioning-phase',
     component: PositioningPhaseComponent,
     canActivate: [
@@ -129,11 +134,6 @@ const routes: Routes = [
       FirstLoginGuardService,
       MatchLoadingGuardService,
     ],
-  },
-  {
-    path: 'match/waiting-room',
-    component: WaitingRoomComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
   },
   {
     path: 'match/:id/game',
