@@ -8,6 +8,7 @@ import { Relationship } from 'src/app/models/Relationship';
 import { User } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ModalComponent } from '../modal/modal.component';
 
@@ -28,7 +29,8 @@ export class FriendListComponent implements OnInit {
     private accountService: AccountService,
     private userService: UserService,
     private matchService: MatchService,
-    private modalService: MdbModalService
+    private modalService: MdbModalService,
+    private socketService: SocketService
   ) {
     this.relationships = [];
     this.searchField = new FormControl('');
@@ -37,20 +39,31 @@ export class FriendListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // get the user relationships
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.relationships = relationships;
       },
     });
 
-    this.matchService.matchLoading.pipe(untilDestroyed(this)).subscribe({
-      next: (matchLoading) => {
-        this.matchLoading = matchLoading;
+    // subscribe to friend request accepted event
+    this.socketService.friendRequestAcceptedListener().subscribe({
+      next: () => {
+        this.userService
+          .getRelationships(this.accountService.getId())
+          .subscribe({
+            next: (relationships) => {
+              this.userService.updateRelationships(relationships);
+            },
+          });
       },
     });
   }
 
-  // OK
+  /**
+   * Open a modal dialog and displat the user statistics.
+   * @param relationship the relationship
+   */
   public openModal(relationship: Relationship): void {
     this.modalRef = this.modalService.open(ModalComponent, {
       data: { relationship },
@@ -58,7 +71,9 @@ export class FriendListComponent implements OnInit {
     });
   }
 
-  // OK
+  /**
+   * Search for a user within the database.
+   */
   public searchUser(): void {
     this.userService.getUserByUsername(this.searchField.value).subscribe({
       next: (user) => {
@@ -87,10 +102,14 @@ export class FriendListComponent implements OnInit {
     });
   }
 
-  // OK
-  public addFriend() {
+  /**
+   * Send a friend request notification.
+   */
+  public addFriend(): void {
     const senderId: string = this.accountService.getId();
     const type: NotificationType = NotificationType.FriendRequest;
+
+    // post notification
     this.userService
       .postNotification(this.userFound.userId, {
         senderId,

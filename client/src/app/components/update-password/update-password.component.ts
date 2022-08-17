@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
@@ -9,33 +14,40 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './update-password.component.html',
 })
 export class UpdatePasswordComponent implements OnInit {
-  public form: FormGroup;
+  public passwordForm: FormGroup;
+  public errorMessage: string;
 
   constructor(
-    private formBuilder: FormBuilder,
     private accountService: AccountService,
     private userService: UserService,
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.form = this.formBuilder.group({
-      currentPassword: [''],
-      newPassword: ['', Validators.required],
-      repeatPassword: ['', Validators.required],
+  public ngOnInit(): void {
+    this.passwordForm = new FormGroup({
+      currentPassword: new FormControl(''),
+      newPassword: new FormControl(''),
+      repeatPassword: new FormControl(''),
     });
   }
 
-  get currentPassword() {
-    return this.form.get('currentPassword');
+  public get currentPassword() {
+    return this.passwordForm.get('currentPassword');
   }
 
-  get newPassword() {
-    return this.form.get('newPassword');
+  public get newPassword() {
+    return this.passwordForm.get('newPassword');
   }
 
-  submit() {
-    if (this.form.valid) {
+  public get repeatPassword() {
+    return this.passwordForm.get('repeatPassword');
+  }
+
+  public submit() {
+    this.errorMessage = null;
+
+    if (this.passwordForm.valid) {
+      // update the password
       this.userService
         .updatePassword(
           this.accountService.getId(),
@@ -47,7 +59,7 @@ export class UpdatePasswordComponent implements OnInit {
             this.router.navigate(['/auth']);
           },
           error: (err) => {
-            console.error(err);
+            this.errorMessage = err.error;
           },
         });
     }

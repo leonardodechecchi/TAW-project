@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Match } from '../models/Match';
 import { Message } from '../models/Message';
 import { Notification } from '../models/Notification';
+import { Relationship } from '../models/Relationship';
 import { Shot } from '../models/Shot';
 import { AccountService } from './account.service';
 
@@ -37,7 +38,8 @@ type SocketEvent =
   | 'match-found'
   | 'shot-fired'
   | 'match-available'
-  | 'match-ended';
+  | 'match-ended'
+  | 'friend-request-accepted';
 
 @Injectable({
   providedIn: 'root',
@@ -91,6 +93,28 @@ export class SocketService {
       (subscriber: Subscriber<Notification>) => {
         this.on<Notification>(event, (notification) => {
           subscriber.next(notification);
+        });
+
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public friendRequestAcceptedListener(): Observable<Relationship> {
+    const event: SocketEvent = 'friend-request-accepted';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<Relationship>(
+      (subscriber: Subscriber<Relationship>) => {
+        this.on<Relationship>(event, (relationship) => {
+          subscriber.next(relationship);
         });
 
         return () => {

@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { AccountService } from 'src/app/services/account.service';
 import { Router } from '@angular/router';
-import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'login',
@@ -41,6 +40,8 @@ export class LoginComponent implements OnInit {
   }
 
   submit() {
+    this.errorMessage = null;
+
     if (this.form.valid) {
       this.authService
         .login(this.email.value, this.password.value, this.remember.value)
@@ -51,7 +52,7 @@ export class LoginComponent implements OnInit {
           },
           error: (err) => {
             console.error(err);
-            this.errorMessage = err;
+            this.errorMessage = err.error;
           },
         });
     }

@@ -35,5 +35,11 @@
     <button mdbRipple class="btn btn-primary mb-2" (click)="submit()">
       Sign in
     </button>
+    <div
+      *ngIf="errorMessage"
+      class="card card-body border border-danger text-danger"
+    >
+      {{ errorMessage }}
+    </div>
   </div>
 </form>

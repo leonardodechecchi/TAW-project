@@ -1,93 +1,86 @@
 <div class="container">
-  <div *ngIf="!matchLoading">
-    <!-- Search field -->
-    <div class="card col-md-6 offset-md-3 mt-3">
-      <div class="card-body">
-        <div class="d-flex">
-          <mdb-form-control class="flex-grow-1">
-            <input
-              mdbInput
-              [formControl]="searchField"
-              id="textArea"
-              class="form-control"
-              rows="1"
-              (input)="basicCollapse.hide()"
-            />
-            <label mdbLabel class="form-label" for="textArea"
-              >Find a user</label
-            >
-          </mdb-form-control>
-          <button
-            mdbRipple
-            class="btn btn-primary ms-2"
-            [disabled]="!searchField.value"
-            (click)="basicCollapse.toggle()"
-            [attr.aria-expanded]="!basicCollapse.collapsed"
-            (click)="searchUser()"
-          >
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search field collapsed -->
-    <div
-      class="card col-md-6 offset-md-3 mt-3"
-      id="collapseExample"
-      mdbCollapse
-      #basicCollapse="mdbCollapse"
-    >
-      <div class="card-header d-flex align-items-center">
-        <span><strong>Search result</strong></span>
-        <button class="btn-transparent ms-auto" (click)="basicCollapse.hide()">
-          <i class="fas fa-times"></i>
+  <!-- Search field -->
+  <div class="card col-md-6 offset-md-3 mt-3">
+    <div class="card-body">
+      <div class="d-flex">
+        <mdb-form-control class="flex-grow-1">
+          <input
+            mdbInput
+            [formControl]="searchField"
+            id="textArea"
+            class="form-control"
+            rows="1"
+            (input)="basicCollapse.hide()"
+          />
+          <label mdbLabel class="form-label" for="textArea">Find a user</label>
+        </mdb-form-control>
+        <button
+          mdbRipple
+          class="btn btn-primary ms-2"
+          [disabled]="!searchField.value"
+          (click)="basicCollapse.toggle()"
+          [attr.aria-expanded]="!basicCollapse.collapsed"
+          (click)="searchUser()"
+        >
+          <i class="fas fa-search"></i>
         </button>
       </div>
-      <div class="card-body">
-        <p class="card-text" *ngIf="!userFound">User not found</p>
-        <div class="d-flex align-items-center" *ngIf="userFound">
-          <span
-            ><div class="card-text">{{ userFound.username }}</div></span
-          >
-          <button
-            class="btn btn-success ms-auto"
-            (click)="basicCollapse.toggle()"
-            (click)="addFriend()"
-          >
-            <i class="fas fa-user-plus"></i>
-          </button>
-        </div>
+    </div>
+  </div>
+
+  <!-- Search field collapsed -->
+  <div
+    class="card col-md-6 offset-md-3 mt-3"
+    id="collapseExample"
+    mdbCollapse
+    #basicCollapse="mdbCollapse"
+  >
+    <div class="card-header d-flex align-items-center">
+      <span><strong>Search result</strong></span>
+      <button class="btn-transparent ms-auto" (click)="basicCollapse.hide()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <p class="card-text" *ngIf="!userFound">User not found</p>
+      <div class="d-flex align-items-center" *ngIf="userFound">
+        <span
+          ><div class="card-text">{{ userFound.username }}</div></span
+        >
+        <button
+          class="btn btn-success ms-auto"
+          (click)="basicCollapse.toggle()"
+          (click)="addFriend()"
+        >
+          <i class="fas fa-user-plus"></i>
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- No relationships found -->
+  <!-- No relationships found -->
+  <div
+    class="card col-md-6 offset-md-3 text-center mt-3"
+    *ngIf="relationships.length === 0"
+  >
+    <div class="card-body">
+      <p class="card-text">No friends found</p>
+    </div>
+  </div>
+
+  <!-- Relationships list -->
+  <div *ngFor="let relationship of relationships">
     <div
-      class="card col-md-6 offset-md-3 text-center mt-3"
-      *ngIf="relationships.length === 0"
+      class="card col-md-6 offset-md-3 mt-3"
+      (click)="openModal(relationship)"
     >
       <div class="card-body">
-        <p class="card-text">No friends found</p>
-      </div>
-    </div>
-
-    <!-- Relationships list -->
-    <div *ngFor="let relationship of relationships">
-      <div
-        class="card col-md-6 offset-md-3 mt-3"
-        (click)="openModal(relationship)"
-      >
-        <div class="card-body">
-          <div class="d-flex align-items-center">
-            <div class="flex-column">
-              <h5>{{ relationship.friendId.username }}</h5>
-            </div>
+        <div class="d-flex align-items-center">
+          <div class="flex-column">
+            <h5>{{ relationship.friendId.username }}</h5>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Display waiting room -->
-  <waiting-opponent *ngIf="matchLoading"></waiting-opponent>
 </div>

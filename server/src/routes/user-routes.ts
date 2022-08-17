@@ -2,7 +2,7 @@ import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth, storage } from '..';
 import { StatusError } from '../models/StatusError';
-import { getUserById, getUserByUsername, UserDocument } from '../models/User';
+import { getUserById, getUserByUsername, UserDocument, UserStatus } from '../models/User';
 import { UserStats } from '../models/UserStats';
 import { formatUser } from '../utils/format-user';
 import { retrieveId } from '../utils/param-checking';
@@ -69,6 +69,8 @@ router.put(
 
       const validatePassword = await user.validatePassword(req.body.currentPassword);
       if (validatePassword) {
+        if (user.isAdmin() || user.isModerator()) await user.setStatus(UserStatus.Active);
+
         await user.setPassword(req.body.password);
         return res.status(200).json(formatUser(user));
       }

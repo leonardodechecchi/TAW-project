@@ -1,6 +1,6 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth } from '..';
+import { auth, ioServer } from '..';
 import { ChatDocument } from '../models/Chat';
 import {
   createRelationshipChat,
@@ -9,6 +9,7 @@ import {
   UserDocument,
   UserRelationships,
 } from '../models/User';
+import { FriendRequestAcceptedEmitter } from '../socket/emitters/FriendRequestAccepted';
 import { retrieveId } from '../utils/param-checking';
 
 const router = Router();
@@ -43,6 +44,19 @@ router.post(
 
       const user: UserDocument = await getUserById(userId);
       await user.addRelationship(friendId);
+
+      const friendRequestAcceptedEmitter = new FriendRequestAcceptedEmitter(
+        ioServer,
+        req.body.friendId
+      );
+      friendRequestAcceptedEmitter.emit({
+        friendId: {
+          _id: user._id.toString(),
+          username: user.username,
+          online: user.online,
+          stats: user.stats,
+        },
+      });
 
       const relationships: UserRelationships = await getUserRelationships(userId);
       return res.status(200).json(relationships);
