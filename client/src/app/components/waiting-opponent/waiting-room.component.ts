@@ -28,9 +28,4 @@ export class WaitingRoomComponent implements OnInit {
         },
       });
   }
-
-  public cancel() {
-    this.matchService.updateMatchLoading(false);
-    this.router.navigate(['home']);
-  }
 }
