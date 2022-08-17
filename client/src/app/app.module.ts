@@ -93,6 +93,15 @@ const routes: Routes = [
     ],
   },
   {
+    path: 'notifications',
+    component: NotificationListComponent,
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
+  },
+  {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [
@@ -108,15 +117,6 @@ const routes: Routes = [
       AuthGuardService,
       FirstLoginGuardService,
       ModeratorGuardService,
-      MatchLoadingGuardService,
-    ],
-  },
-  {
-    path: 'notifications',
-    component: NotificationListComponent,
-    canActivate: [
-      AuthGuardService,
-      FirstLoginGuardService,
       MatchLoadingGuardService,
     ],
   },
