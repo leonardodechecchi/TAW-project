@@ -25,7 +25,6 @@ export class MatchLoadingGuardService implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    console.log(this.isLoading);
     if (this.isLoading) {
       this.router.navigate(['match', 'waiting-room']);
       return false;

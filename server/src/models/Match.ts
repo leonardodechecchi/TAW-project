@@ -113,9 +113,24 @@ matchSchema.method(
     playerUsername: string,
     coordinates: GridCoordinates
   ): Promise<MatchDocument> {
-    this.player1.playerUsername === playerUsername
-      ? this.player1.grid.shotsReceived.push(coordinates)
-      : this.player2.grid.shotsReceived.push(coordinates);
+    const player: Player =
+      this.player1.playerUsername === playerUsername ? this.player1 : this.player2;
+
+    let alreadyShot: boolean = false;
+    player.grid.shotsReceived.forEach((shot) => {
+      if (shot.row === coordinates.row && shot.col === coordinates.col) alreadyShot = true;
+    });
+
+    if (alreadyShot) {
+      return Promise.reject(
+        new StatusError(
+          400,
+          `Shot at coordinates (${coordinates.row}, ${coordinates.col}) already fired`
+        )
+      );
+    }
+
+    player.grid.shotsReceived.push(coordinates);
     return this.save();
   }
 );

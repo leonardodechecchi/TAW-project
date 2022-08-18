@@ -152,7 +152,7 @@ export class GameComponent implements OnInit {
           }
 
           if (shipDestroyed) {
-            this.updateStats({
+            this.updateMatchStats({
               shipsDestroyed: this.matchStats.shipsDestroyed++,
             });
 
@@ -177,7 +177,6 @@ export class GameComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
-    //
     this.socketService
       .shotFiredListener(this.matchId)
       .pipe(untilDestroyed(this))
@@ -188,7 +187,6 @@ export class GameComponent implements OnInit {
         },
       });
 
-    //
     this.socketService
       .matchEndedListener()
       .pipe(untilDestroyed(this))
@@ -201,10 +199,10 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Update the match stats with ones given in input.
    * @param stats
    */
-  private updateStats(stats: Partial<MatchStats>): void {
+  private updateMatchStats(stats: Partial<MatchStats>): void {
     this.matchStats = { ...this.matchStats, ...stats };
 
     this.matchService
@@ -367,7 +365,7 @@ export class GameComponent implements OnInit {
       this.rowField.disable();
       this.colField.disable();
 
-      this.updateStats({ winner, endTime: new Date() });
+      this.updateMatchStats({ winner, endTime: new Date() });
       this.infoMessage = `${winner} won!`;
 
       return this.opponentPlayer.playerUsername;
@@ -378,7 +376,7 @@ export class GameComponent implements OnInit {
         this.rowField.disable();
         this.colField.disable();
 
-        this.updateStats({ winner, endTime: new Date() });
+        this.updateMatchStats({ winner, endTime: new Date() });
         this.infoMessage = `${winner} won!`;
 
         return this.player.playerUsername;
@@ -435,11 +433,11 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Leave the match.
    */
   public leaveMatch(): void {
     // update match stats first
-    this.updateStats({ endTime: new Date() });
+    this.updateMatchStats({ endTime: new Date() });
 
     // then emit event to leave the match room
     this.socketService.emit<{ matchId: string; playerWhoLeft: string }>(
@@ -465,8 +463,10 @@ export class GameComponent implements OnInit {
       return;
     }
 
-    this.updateStats({ totalShots: this.matchStats.totalShots++ });
+    // update stats
+    this.updateMatchStats({ totalShots: this.matchStats.totalShots++ });
 
+    // fire the shot
     this.matchService
       .fireAShot(this.matchId, this.player.playerUsername, { row, col })
       .subscribe({
@@ -475,7 +475,6 @@ export class GameComponent implements OnInit {
           this.setTurnOf(match);
         },
         error: (err) => {
-          console.log(err);
           this.errorMessage = err.error;
         },
       });

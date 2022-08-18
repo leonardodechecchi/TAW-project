@@ -72,9 +72,4 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
-
-  /**
-   *
-   */
-  public updatePassword() {}
 }
