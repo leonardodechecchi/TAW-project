@@ -16,7 +16,7 @@ export class ChatService {
    * @param chatId the chat id
    * @returns
    */
-  getChat(chatId: string): Observable<Chat> {
+  public getChat(chatId: string): Observable<Chat> {
     return this.http.get<Chat>(`${environment.chat_endpoint}/${chatId}`);
   }
 
@@ -25,7 +25,7 @@ export class ChatService {
    * @param chatId the chat id
    * @returns
    */
-  deleteChat(chatId: string): Observable<void> {
+  public deleteChat(chatId: string): Observable<void> {
     return this.http.delete<void>(`${environment.chat_endpoint}/${chatId}`);
   }
 
@@ -35,7 +35,7 @@ export class ChatService {
    * @param message the message to add
    * @returns
    */
-  addMessage(chatId: string, message: Message): Observable<Message> {
+  public addMessage(chatId: string, message: Message): Observable<Message> {
     return this.http.post<Message>(
       `${environment.chat_endpoint}/${chatId}/messages`,
       message
@@ -48,7 +48,7 @@ export class ChatService {
    * @param username the user username
    * @returns
    */
-  addUser(chatId: string, username: string): Observable<Chat> {
+  public addUser(chatId: string, username: string): Observable<Chat> {
     const body = { username };
     return this.http.post<Chat>(
       `${environment.chat_endpoint}/${chatId}/users`,
@@ -61,7 +61,7 @@ export class ChatService {
    * @param chatId the chat id
    * @param username the user username
    */
-  removeUser(chatId: string, username: string): Observable<void> {
+  public removeUser(chatId: string, username: string): Observable<void> {
     const params = new HttpParams().set('username', username);
     return this.http.delete<void>(
       `${environment.chat_endpoint}/${chatId}/users`,

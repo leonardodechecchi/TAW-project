@@ -10,6 +10,7 @@ import { SocketService } from './socket.service';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatchService } from './match.service';
 import { Router } from '@angular/router';
+import { Chat } from '../models/Chat';
 
 @UntilDestroy()
 @Injectable({
