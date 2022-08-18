@@ -28,7 +28,6 @@ export class FriendListComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private userService: UserService,
-    private matchService: MatchService,
     private modalService: MdbModalService,
     private socketService: SocketService
   ) {
@@ -66,7 +65,7 @@ export class FriendListComponent implements OnInit {
    */
   public openModal(relationship: Relationship): void {
     this.modalRef = this.modalService.open(ModalComponent, {
-      data: { relationship },
+      data: { relationship, showFooter: true },
       modalClass: 'modal-fullscreen-sm-down',
     });
   }

@@ -17,6 +17,8 @@ export class ChatComponent implements OnInit {
   public messages: Message[];
   public messageText: FormControl;
 
+  public friendName: string;
+
   constructor(
     private chatService: ChatService,
     private accountService: AccountService,
@@ -53,6 +55,10 @@ export class ChatComponent implements OnInit {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
         this.messages = chat.messages;
+
+        this.friendName = chat.users.filter((username) => {
+          return username !== this.accountService.getUsername();
+        })[0];
       },
     });
   }

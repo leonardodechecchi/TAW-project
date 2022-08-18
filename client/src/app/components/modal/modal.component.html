@@ -22,7 +22,7 @@
     </li>
   </ul>
 </div>
-<div class="modal-footer">
+<div class="modal-footer" *ngIf="showFooter">
   <button mdbRipple class="btn btn-success me-2" (click)="match()">
     <i class="fas fa-gamepad me-2"></i>Match
   </button>

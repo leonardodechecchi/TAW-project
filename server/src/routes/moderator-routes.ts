@@ -1,6 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth } from '..';
+import { ChatDocument, createChat, getChats } from '../models/Chat';
 import { StatusError } from '../models/StatusError';
 import {
   createUser,
@@ -54,6 +55,50 @@ router.post(
         });
         await newModerator.setRole(UserRoles.Moderator);
         return res.status(200).json(formatUser(newModerator));
+      }
+      return next(new StatusError(401, 'Unauthorized'));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * GET /moderators/:moderatorId/chats
+ */
+router.get(
+  '/moderators/:moderatorId/chats',
+  auth,
+  async (req: Request<{ moderatorId: string }>, res, next) => {
+    try {
+      const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
+      const moderator: UserDocument = await getUserById(moderatorId);
+
+      if (moderator.isAdmin() || moderator.isModerator()) {
+        const chats: ChatDocument[] = await getChats();
+        return res.status(200).json(chats);
+      }
+      return next(new StatusError(401, 'Unauthorized'));
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * POST /moderators/:moderatorId/chats
+ */
+router.post(
+  '/moderators/:moderatorId/chats',
+  auth,
+  async (req: Request<{ moderatorId: string }, {}, { userUsername: string }>, res, next) => {
+    try {
+      const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
+      const moderator: UserDocument = await getUserById(moderatorId);
+
+      if (moderator.isAdmin() || moderator.isModerator()) {
+        const chat = await createChat([moderator.username, req.body.userUsername]);
+        return res.status(200).json(chat);
       }
       return next(new StatusError(401, 'Unauthorized'));
     } catch (err) {

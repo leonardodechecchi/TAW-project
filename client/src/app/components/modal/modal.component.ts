@@ -14,6 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ModalComponent {
   public relationship: Relationship;
+  public showFooter: boolean;
 
   constructor(
     public modalRef: MdbModalRef<ModalComponent>,

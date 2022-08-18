@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Relationship } from 'src/app/models/Relationship';
-import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
 
 @UntilDestroy()
@@ -17,7 +16,7 @@ export class ChatListComponent implements OnInit {
     this.relationships = [];
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
         this.relationships = relationships.filter((relationship) => {
@@ -31,7 +30,7 @@ export class ChatListComponent implements OnInit {
    * Redirect the user to the given chat.
    * @param chatId the chat id
    */
-  public openChat(chatId: string) {
+  public openChat(chatId: string): void {
     this.router.navigate(['chats', chatId]);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 
 @Component({
@@ -6,6 +6,8 @@ import { Location } from '@angular/common';
   templateUrl: './back-navbar.component.html',
 })
 export class BackNavbarComponent {
+  @Input() title: string;
+
   constructor(private location: Location) {}
 
   public back(): void {

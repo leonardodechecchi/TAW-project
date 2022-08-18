@@ -83,6 +83,15 @@ chatSchema.method(
 export const ChatModel = model<Chat, Model<Chat, {}, ChatProps>>('Chat', chatSchema);
 
 /**
+ * Return all the chats present in the db.
+ * @returns a Promise of `ChatDocument[]`, i.e. the chats found
+ */
+export async function getChats(): Promise<ChatDocument[]> {
+  const chats: ChatDocument[] = await ChatModel.find({}).exec();
+  return chats;
+}
+
+/**
  * Create a new chat for the given users.
  * @param users the list of user usernames
  * @returns a Promise of `ChatDocument`, i.e. the new chat created

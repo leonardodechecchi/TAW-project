@@ -1,4 +1,14 @@
-<div class="container" *ngIf="!matchLoading">
+<!-- Navbar -->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button class="btn-transparent mb-1">
+      <div class="navbar-brand">Positioning phase</div>
+    </button>
+  </div>
+</nav>
+<!-- Navbar -->
+
+<div class="container">
   <!-- Error -->
   <div
     class="card card-body border border-danger text-danger mt-3"
@@ -108,6 +118,3 @@
     </div>
   </div>
 </div>
-
-<waiting-opponent *ngIf="matchLoading"></waiting-opponent>
-<router-outlet></router-outlet>

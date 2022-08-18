@@ -1,23 +1,26 @@
 <div class="container">
   <div class="card col-md-6 offset-md-3 mt-3">
     <div class="table-responsive">
-      <table class="table align-middle mb-0 bg-white">
+      <table class="table align-middle text-center mb-0 bg-white">
         <thead class="bg-light">
           <tr>
             <th>Name</th>
             <th>Status</th>
-            <th>Action</th>
+            <th>Ban</th>
+            <th>Chat</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let user of users">
             <td>
-              <div class="d-flex align-items-center">
-                <div class="">
-                  <p class="fw-bold mb-1">{{ user.username }}</p>
-                  <p class="text-muted mb-0">{{ user.email }}</p>
+              <button class="btn-transparent" (click)="openUserStats(user)">
+                <div class="d-flex align-items-center">
+                  <div class="">
+                    <p class="fw-bold mb-1">{{ user.username }}</p>
+                    <p class="text-muted mb-0">{{ user.email }}</p>
+                  </div>
                 </div>
-              </div>
+              </button>
             </td>
             <td>
               <span
@@ -32,12 +35,25 @@
             <td>
               <button
                 type="button"
-                class="btn btn-link btn-rounded btn-sm fw-bold"
+                class="btn btn-danger btn-rounded btn-sm me-2"
                 mdbRipple
                 rippleColor="dark"
                 (click)="deleteUser(user._id)"
               >
+                <i class="fas fa-ban me-1"></i>
                 DELETE
+              </button>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-primary btn-rounded btn-sm"
+                mdbRipple
+                rippleColor="dark"
+                (click)="openChat(user.username)"
+              >
+                <i class="fas fa-comment me-1"></i>
+                CHAT
               </button>
             </td>
           </tr>
