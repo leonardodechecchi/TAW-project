@@ -25,12 +25,7 @@
       ></textarea>
       <label mdbLabel class="form-label" for="textArea">Type a message</label>
     </mdb-form-control>
-    <button
-      mdbRipple
-      class="btn btn-primary ms-2"
-      [disabled]="!messageText.value"
-      (click)="sendMessage()"
-    >
+    <button mdbRipple class="btn btn-primary ms-2" (click)="sendMessage()">
       <i class="fas fa-paper-plane"></i>
     </button>
   </div>

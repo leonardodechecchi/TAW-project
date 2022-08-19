@@ -1,64 +1,52 @@
 <div class="container">
-  <div class="card col-md-6 offset-md-3 mt-3">
-    <div class="table-responsive">
-      <table class="table align-middle text-center mb-0 bg-white">
-        <thead class="bg-light">
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Ban</th>
-            <th>Chat</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of users">
-            <td>
-              <button class="btn-transparent" (click)="openUserStats(user)">
-                <div class="d-flex align-items-center">
-                  <div class="">
-                    <p class="fw-bold mb-1">{{ user.username }}</p>
-                    <p class="text-muted mb-0">{{ user.email }}</p>
-                  </div>
-                </div>
-              </button>
-            </td>
-            <td>
-              <span
-                [ngClass]="{
-                  'badge-success': user.status === 'Active',
-                  'badge-warning': user.status === 'Pending'
-                }"
-                class="badge rounded-pill d-inline"
-                >{{ user.status }}</span
-              >
-            </td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-danger btn-rounded btn-sm me-2"
-                mdbRipple
-                rippleColor="dark"
-                (click)="deleteUser(user._id)"
-              >
-                <i class="fas fa-ban me-1"></i>
-                DELETE
-              </button>
-            </td>
-            <td>
-              <button
-                type="button"
-                class="btn btn-primary btn-rounded btn-sm"
-                mdbRipple
-                rippleColor="dark"
-                (click)="openChat(user.username)"
-              >
-                <i class="fas fa-comment me-1"></i>
-                CHAT
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <h1 class="h5 text-center py-5 mb-0">User management</h1>
+  <section>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table text-center align-middle mb-0 bg-white">
+          <thead class="bg-light">
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>
+                <button class="btn-transparent" (click)="openUserStats(user)">
+                  <p class="fw-bold mb-1">{{ user.username }}</p>
+                  <p class="text-muted mb-0">{{ user.email }}</p>
+                </button>
+              </td>
+              <td>
+                <span
+                  [ngClass]="{
+                    'badge-success': user.status === 'Active',
+                    'badge-warning': user.status === 'Pending'
+                  }"
+                  class="badge rounded-pill d-inline"
+                  >{{ user.status }}</span
+                >
+              </td>
+              <td>
+                <button
+                  class="me-2 m-0 p-0 shadow-0 btn btn-lg text-dark"
+                  (click)="deleteUser(user._id)"
+                >
+                  <i class="far fa-trash-alt"></i>
+                </button>
+                <button
+                  class="me-2 m-0 p-0 shadow-0 btn btn-lg text-dark"
+                  (click)="openChat(user.username)"
+                >
+                  <i class="far fa-comment-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </section>
 </div>

@@ -1,14 +1,18 @@
 <div class="container">
-  <div
-    class="card col-md-6 offset-md-3 text-center mt-3"
-    *ngIf="notifications.length === 0"
-  >
-    <div class="card-body">
-      <p class="card-text">All notifications read</p>
+  <h1 class="h5 text-center py-5 mb-0">Notifications</h1>
+  <section>
+    <div
+      class="card col-md-6 offset-md-3 text-center"
+      *ngIf="notifications.length === 0"
+    >
+      <div class="card-body">
+        <p class="card-text">All notifications read.</p>
+      </div>
     </div>
-  </div>
-  <div *ngFor="let notification of notifications">
-    <div class="card col-md-6 offset-md-3 mt-3">
+    <div
+      class="card col-md-6 offset-md-3 mt-3"
+      *ngFor="let notification of notifications"
+    >
       <!-- Friend Request -->
       <div *ngIf="notification.type === 'FriendRequest'">
         <div class="card-body">
@@ -71,5 +75,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </div>

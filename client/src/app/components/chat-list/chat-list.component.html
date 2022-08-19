@@ -1,25 +1,28 @@
 <div class="container">
-  <div
-    class="card col-md-6 offset-md-3 text-center mt-3"
-    *ngIf="relationships.length === 0"
-  >
-    <div class="card-body">
-      <p class="card-text">No chat found</p>
-    </div>
-  </div>
-  <div *ngFor="let relationship of relationships">
+  <h1 class="h5 text-center py-5 mb-0">Chats</h1>
+  <section>
     <div
-      class="card col-md-6 offset-md-3 mt-3"
-      (click)="openChat(relationship.chatId)"
+      class="card col-md-6 offset-md-3 text-center"
+      *ngIf="relationships.length === 0"
     >
       <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="flex-column">
-            <h5 class="card-title">{{ relationship.friendId.username }}</h5>
-            <p class="card-text">{{ this.lastMessage }}</p>
+        <p class="card-text">No chat found.</p>
+      </div>
+    </div>
+    <div *ngFor="let relationship of relationships">
+      <div
+        class="card col-md-6 offset-md-3"
+        (click)="openChat(relationship.chatId)"
+      >
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="flex-column">
+              <h5 class="card-title">{{ relationship.friendId.username }}</h5>
+              <p class="card-text">{{ this.lastMessage }}</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </div>
