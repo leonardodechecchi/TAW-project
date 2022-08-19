@@ -1,14 +1,17 @@
-<!-- Navbar -->
-<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <button class="btn-transparent mb-1">
-      <div class="navbar-brand">Positioning phase</div>
-    </button>
+<div class="container py-4">
+  <div class="card mb-3">
+    <div class="card-body py-3">
+      <div class="row">
+        <div class="col-sm-6 text-center text-sm-start">
+          <h5 class="mb-3 mb-sm-0 mt-1">Positioning phase</h5>
+        </div>
+        <div class="col-sm-6 text-center text-sm-end">
+          <button type="button" class="btn btn-danger">Leave</button>
+        </div>
+      </div>
+    </div>
   </div>
-</nav>
-<!-- Navbar -->
 
-<div class="container">
   <!-- Error -->
   <div
     class="card card-body border border-danger text-danger mt-3"
@@ -16,11 +19,10 @@
   >
     {{ errorMessage }}
   </div>
-  <div
-    class="card card-body border border-info text-info mt-3"
-    *ngIf="infoMessage"
-  >
-    {{ infoMessage }}
+  <div class="card text-white bg-info mt-3" *ngIf="infoMessage">
+    <div class="card-body">
+      <h5 class="mb-3 mb-sm-0 mt-1">{{ infoMessage }}</h5>
+    </div>
   </div>
   <div class="row">
     <div class="col-xl-6">
