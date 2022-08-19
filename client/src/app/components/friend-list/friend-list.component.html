@@ -77,13 +77,15 @@
         class="card col-md-6 offset-md-3 mt-3"
         (click)="openModal(relationship)"
       >
-        <div class="card-body">
-          <div class="d-flex align-items-center">
-            <div class="flex-column">
-              <h5>{{ relationship.friendId.username }}</h5>
+        <a role="button">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-column">
+                <h5>{{ relationship.friendId.username }}</h5>
+              </div>
             </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>

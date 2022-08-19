@@ -56,6 +56,7 @@ import { MatchLoadingGuardService } from './services/match-loading-guard.service
 import { Error404Component } from './components/error-404/error-404.component';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'auth', component: AuthComponent },
   {
     path: 'home',
