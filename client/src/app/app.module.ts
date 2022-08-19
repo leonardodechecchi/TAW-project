@@ -53,6 +53,7 @@ import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.
 import { ObserverComponent } from './components/match/observer/observer.component';
 import { MatchListComponent } from './components/match/match-list/match-list.component';
 import { MatchLoadingGuardService } from './services/match-loading-guard.service';
+import { Error404Component } from './components/error-404/error-404.component';
 
 const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -153,7 +154,7 @@ const routes: Routes = [
       MatchLoadingGuardService,
     ],
   },
-  { path: '**', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', component: Error404Component, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -182,6 +183,7 @@ const routes: Routes = [
     GameNavbarComponent,
     ObserverComponent,
     MatchListComponent,
+    Error404Component,
   ],
   imports: [
     BrowserModule,
