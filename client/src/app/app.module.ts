@@ -68,7 +68,7 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'friends',
+    path: 'relationships',
     component: FriendListComponent,
     canActivate: [
       AuthGuardService,

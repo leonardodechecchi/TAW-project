@@ -1,71 +1,79 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <div class="navbar-brand">
-      <button class="btn-transparent mb-1">Home</button>
-    </div>
+  <div class="container-fluid justify-content-between">
+    <a
+      class="navbar-brand me-2 mb-1 d-flex align-items-center"
+      routerLink="/home"
+      >Home</a
+    >
+
     <ul class="navbar-nav flex-row">
+      <!-- Profile -->
+      <li mdbDropdown class="nav-item me-3 me-lg-1">
+        <a
+          class="nav-link d-sm-flex align-items-sm-center dropdown-toggle hidden-arrow"
+          id="navbarDropdownMenuLink"
+          role="button"
+          mdbDropdownToggle
+        >
+          <img
+            src="https://mdbootstrap.com/img/new/avatars/1.webp"
+            class="rounded-circle"
+            height="22"
+            alt=""
+            loading="lazy"
+          />
+          <strong class="d-none d-sm-block ms-1">{{ username }}</strong>
+        </a>
+        <ul
+          mdbDropdownMenu
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="navbarDropdownMenuLink"
+        >
+          <li>
+            <a class="dropdown-item" role="button" routerLink="/profile"
+              ><i class="fas fa-user me-3"></i>My profile</a
+            >
+          </li>
+          <li *ngIf="isAdminOrModerator">
+            <a class="dropdown-item" role="button" routerLink="/admin-dashboard"
+              ><i class="fas fa-hammer me-3"></i>User management</a
+            >
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" role="button" (click)="logout()"
+              ><i class="fas fa-sign-out-alt me-3"></i>Logout</a
+            >
+          </li>
+        </ul>
+      </li>
+
+      <!-- Relationships -->
       <li class="nav-item me-3 me-lg-1">
-        <a class="nav-link" routerLink="/friends">
+        <a class="nav-link" routerLink="/relationships">
           <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
         </a>
       </li>
+
+      <!-- Chats -->
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/chats">
           <span><i class="fas fa-comments fa-lg fa-fw"></i></span>
         </a>
       </li>
-      <li class="nav-item me-3 me-lg-1">
+
+      <!-- Notifications -->
+      <li class="nav-item me-lg-1">
         <a class="nav-link" routerLink="/notifications">
-          <span><i class="fas fa-bell fa-lg fa-fw"></i></span>
+          <i class="fas fa-bell fa-lg fa-fw"></i>
           <span
-            *ngIf="notifications.length > 0"
             class="badge rounded-pill badge-notification bg-danger"
+            *ngIf="notifications.length > 0"
             >{{ notifications.length }}</span
           >
         </a>
       </li>
-      <li mdbDropdown class="nav-item dropdown">
-        <a
-          class="nav-link dropdown-toggle d-flex align-items-center"
-          id="navbarDropdownMenuLink"
-          role="button"
-          mdbDropdownToggle
-          aria-expanded="false"
-        >
-          <span>{{ accountService.getUsername() }}</span>
-        </a>
-        <ul
-          mdbDropdownMenu
-          class="dropdown-menu dropdown-menu-end shadow-5"
-          aria-labelledby="navbarDropdownMenuLink"
-        >
-          <li>
-            <button class="dropdown-item" routerLink="/profile">
-              <i class="fas fa-user me-3"></i>My profile
-            </button>
-          </li>
-          <li>
-            <button
-              class="dropdown-item"
-              *ngIf="
-                this.accountService.isModerator() ||
-                this.accountService.isAdmin()
-              "
-              routerLink="/admin-dashboard"
-            >
-              <i class="fas fa-hammer me-3"></i>Admin dashboard
-            </button>
-          </li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li>
-          <li>
-            <button class="dropdown-item" (click)="logout()">
-              <i class="fas fa-sign-out-alt me-3"></i>Logout
-            </button>
-          </li>
-        </ul>
-      </li>
     </ul>
+    <!-- Right elements -->
   </div>
 </nav>

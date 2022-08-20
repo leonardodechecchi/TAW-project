@@ -25,7 +25,10 @@ router.get('/moderators/:moderatorId/users', auth, async (req, res, next) => {
     const moderator: UserDocument = await getUserById(moderatorId);
 
     if (moderator.isAdmin() || moderator.isModerator()) {
-      const users: UserDocument[] = await UserModel.find({ _id: { $nin: moderatorId } }).exec();
+      // get all users except admins and moderators
+      const users: UserDocument[] = await UserModel.find({
+        roles: { $nin: ['Moderator', 'Admin'] },
+      }).exec();
       return res.status(200).json(users);
     }
     return next(new StatusError(401, 'Unauthorized'));
