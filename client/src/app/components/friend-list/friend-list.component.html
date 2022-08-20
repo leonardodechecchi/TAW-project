@@ -39,16 +39,16 @@
       #basicCollapse="mdbCollapse"
     >
       <div class="card-header d-flex align-items-center">
-        <span><strong>Search result</strong></span>
+        <strong><i class="fas fa-search me-2"></i>Search result</strong>
         <button class="btn-transparent ms-auto" (click)="basicCollapse.hide()">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <div class="card-body">
-        <p class="card-text" *ngIf="!userFound">User not found</p>
+        <p class="card-text" *ngIf="!userFound">User not found.</p>
         <div class="d-flex align-items-center" *ngIf="userFound">
           <span
-            ><div class="card-text">{{ userFound.username }}</div></span
+            ><p class="card-text">{{ userFound.username }}</p></span
           >
           <button
             class="btn btn-success ms-auto"

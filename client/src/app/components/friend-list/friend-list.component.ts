@@ -21,7 +21,6 @@ export class FriendListComponent implements OnInit {
   public relationships: Relationship[];
   public searchField: FormControl;
   public userFound: User | null;
-  public basicCollapse: MdbCollapseDirective;
   public matchLoading: boolean;
   private modalRef: MdbModalRef<ModalComponent> | null;
 
