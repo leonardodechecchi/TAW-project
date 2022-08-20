@@ -1,6 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
-import { auth, storage } from '..';
+import { auth } from '..';
+import { ChatDocument, ChatModel } from '../models/Chat';
 import { StatusError } from '../models/StatusError';
 import { getUserById, getUserByUsername, UserDocument, UserStatus } from '../models/User';
 import { UserStats } from '../models/UserStats';
@@ -17,6 +18,21 @@ router.get('/users/:userId', auth, async (req: Request<{ userId: string }>, res,
     const userId: Types.ObjectId = retrieveId(req.params.userId);
     const user: UserDocument = await getUserById(userId);
     return res.status(200).json(formatUser(user));
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /users/:userId/chats
+ */
+router.get('/users/:userId/chats', auth, async (req, res, next) => {
+  try {
+    const userId: Types.ObjectId = retrieveId(req.params.userId);
+    const user: UserDocument = await getUserById(userId);
+
+    const chats: ChatDocument[] = await ChatModel.find({ users: { $in: [user.username] } }).exec();
+    return res.status(200).json(chats);
   } catch (err) {
     next(err);
   }
@@ -99,22 +115,5 @@ router.put(
     }
   }
 );
-
-/**
- *
- */
-router.put('/users/:userId/picture', storage, async (req, res, next) => {
-  try {
-    const userId: Types.ObjectId = retrieveId(req.params.userId);
-    const imagePath = 'http://localhost:8000/images/' + req.file?.filename;
-
-    const user: UserDocument = await getUserById(userId);
-    await user.updateProfilePicture(imagePath);
-
-    return res.status(200).json({});
-  } catch (err) {
-    next(err);
-  }
-});
 
 export = router;

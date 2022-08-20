@@ -3,23 +3,34 @@
   <section>
     <div
       class="card col-md-6 offset-md-3 text-center"
-      *ngIf="relationships.length === 0"
+      *ngIf="chats.length === 0"
     >
       <div class="card-body">
         <p class="card-text">No chat found.</p>
       </div>
     </div>
-    <div *ngFor="let relationship of relationships">
-      <div
-        class="card col-md-6 offset-md-3 mb-3"
-        (click)="openChat(relationship.chatId)"
-      >
+    <div *ngFor="let chat of chats">
+      <div class="card col-md-6 offset-md-3 mb-3" (click)="openChat(chat._id)">
         <a role="button">
-          <div class="card-body">
+          <div class="card-body text-with-dots">
             <div class="d-flex align-items-center">
               <div class="flex-column">
-                <h5 class="card-title">{{ relationship.friendId.username }}</h5>
-                <p class="card-text">{{ this.lastMessage }}</p>
+                <h5 class="card-title">
+                  {{
+                    chat.users[0] === this.accountService.getUsername()
+                      ? chat.users[1]
+                      : chat.users[0]
+                  }}
+                </h5>
+                <p class="card-text">
+                  {{
+                    chat.messages[chat.messages.length - 1].author ===
+                    this.accountService.getUsername()
+                      ? "You"
+                      : chat.messages[chat.messages.length - 1].author
+                  }}:
+                  {{ chat.messages[chat.messages.length - 1].content }}
+                </p>
               </div>
             </div>
           </div>

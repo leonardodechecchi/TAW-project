@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Chat } from 'src/app/models/Chat';
 import { Relationship } from 'src/app/models/Relationship';
+import { AccountService } from 'src/app/services/account.service';
 import { UserService } from 'src/app/services/user.service';
 
 @UntilDestroy()
@@ -11,17 +13,35 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ChatListComponent implements OnInit {
   public relationships: Relationship[];
+  public chats: Chat[];
 
-  constructor(private userService: UserService, private router: Router) {
+  constructor(
+    private userService: UserService,
+    public accountService: AccountService,
+    private router: Router
+  ) {
     this.relationships = [];
+    this.chats = [];
   }
 
   public ngOnInit(): void {
-    this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
-      next: (relationships) => {
-        this.relationships = relationships.filter((relationship) => {
-          return !!relationship.chatId;
-        });
+    /*
+     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
+       next: (relationships) => {
+         this.relationships = relationships.filter((relationship) => {
+           return !!relationship.chatId;
+         });
+       },
+     });
+     */
+
+    this.populateChatList();
+  }
+
+  private populateChatList(): void {
+    this.userService.getUserChats(this.accountService.getId()).subscribe({
+      next: (chats) => {
+        this.chats = chats;
       },
     });
   }

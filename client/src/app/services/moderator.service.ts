@@ -37,11 +37,14 @@ export class ModeratorService {
   /**
    *
    * @param moderatorId
-   * @param userId
+   * @param userUsername
    * @returns
    */
-  public createChat(moderatorId: string, userId: string): Observable<Chat> {
-    const body = { userId };
+  public createChat(
+    moderatorId: string,
+    userUsername: string
+  ): Observable<Chat> {
+    const body = { userUsername };
     return this.http.post<Chat>(
       `${environment.moderator_endpoint}/${moderatorId}/chats`,
       body

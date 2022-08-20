@@ -23,11 +23,19 @@
   height: 100% !important;
 }
 
-html, body {
+html,
+body {
   height: 100%;
-
 }
 
 .background-img {
   background: whitesmoke;
+}
+
+.text-with-dots {
+  display: block;
+  max-width: 98%;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
 }

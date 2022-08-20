@@ -1,7 +1,7 @@
 import Router, { Request } from 'express';
 import { Types } from 'mongoose';
 import { auth, ioServer } from '..';
-import { ChatDocument } from '../models/Chat';
+import { StatusError } from '../models/StatusError';
 import {
   createRelationshipChat,
   getUserById,
@@ -102,7 +102,15 @@ router.post(
       const user: UserDocument = await getUserById(userId);
       const friend: UserDocument = await getUserById(friendId);
 
-      await createRelationshipChat(user, friend);
+      // check if the relationship exists
+      let relationshipFound: boolean = false;
+      for (let relationship of user.relationships) {
+        if (relationship.friendId.equals(friendId)) relationshipFound = true;
+      }
+
+      if (relationshipFound) {
+        await createRelationshipChat(user, friend);
+      } else return next(new StatusError(401, 'Unauthorized'));
 
       const relationships: UserRelationships = await getUserRelationships(userId);
       return res.status(200).json(relationships);

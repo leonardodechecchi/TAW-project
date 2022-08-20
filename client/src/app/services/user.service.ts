@@ -108,6 +108,17 @@ export class UserService {
   }
 
   /**
+   *
+   * @param userId
+   * @returns
+   */
+  public getUserChats(userId: string): Observable<Chat[]> {
+    return this.http.get<Chat[]>(
+      `${environment.user_endpoint}/${userId}/chats`
+    );
+  }
+
+  /**
    * Retrieve the user who match `username`.
    * @param username the user username
    * @returns an Observable of `User`, i.e. the user found
