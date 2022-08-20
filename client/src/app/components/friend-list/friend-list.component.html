@@ -80,10 +80,20 @@
         <a role="button">
           <div class="card-body">
             <div class="d-flex align-items-center">
+              <div class="ms-1 me-4">
+                <i class="fas fa-user-circle fa-xl"></i>
+                <span
+                  class="badge bg-success badge-dot"
+                  *ngIf="relationship.friendId.online"
+                ></span>
+              </div>
               <div class="flex-column">
-                <h5>{{ relationship.friendId.username }}</h5>
-                <p class="card-text">
-                  {{ relationship.friendId.online ? "online" : "offline" }}
+                <h5 class="card-title">{{ relationship.friendId.username }}</h5>
+                <p class="card-text" *ngIf="relationship.friendId.online">
+                  online
+                </p>
+                <p class="card-text" *ngIf="!relationship.friendId.online">
+                  offline
                 </p>
               </div>
             </div>
