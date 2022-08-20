@@ -1,20 +1,10 @@
 <div class="container">
-  <h1 class="h5 text-center py-5 mb-0">Home</h1>
-  <div class="card col-md-6 offset-md-3 mb-3">
-    <h6 class="card-header">
-      <strong><i class="fas fa-random me-2"></i>Random game</strong>
-    </h6>
-    <div class="card-body text-center">
-      <p class="card-text">Click below to play with a random player!</p>
-      <button
-        mdbRipple
-        type="button"
-        class="btn btn-primary"
-        (click)="searchForAMatch()"
-      >
-        Play
-      </button>
-    </div>
-  </div>
+  <section class="my-5 text-center">
+    <h1 class="display-2">Battleship</h1>
+    <p class="mb-3">Click below to play against a random player</p>
+    <a role="button" class="btn btn-primary" (click)="searchForAMatch()"
+      >Play</a
+    >
+  </section>
 </div>
 <match-list></match-list>
