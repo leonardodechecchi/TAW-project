@@ -49,7 +49,6 @@ import { PositioningPhaseComponent } from './components/match/positioning-phase/
 import { GameComponent } from './components/match/game/game.component';
 import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
 import { GridComponent } from './components/match/grid/grid.component';
-import { GameNavbarComponent } from './components/match/game-navbar/game-navbar.component';
 import { ObserverComponent } from './components/match/observer/observer.component';
 import { MatchListComponent } from './components/match/match-list/match-list.component';
 import { MatchLoadingGuardService } from './services/match-loading-guard.service';
@@ -181,7 +180,6 @@ const routes: Routes = [
     GameComponent,
     ChatModalComponent,
     GridComponent,
-    GameNavbarComponent,
     ObserverComponent,
     MatchListComponent,
     Error404Component,
