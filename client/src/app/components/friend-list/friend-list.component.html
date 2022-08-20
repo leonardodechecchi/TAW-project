@@ -82,6 +82,9 @@
             <div class="d-flex align-items-center">
               <div class="flex-column">
                 <h5>{{ relationship.friendId.username }}</h5>
+                <p class="card-text">
+                  {{ relationship.friendId.online ? "online" : "offline" }}
+                </p>
               </div>
             </div>
           </div>

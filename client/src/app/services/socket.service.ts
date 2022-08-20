@@ -30,6 +30,10 @@ interface MatchEndedData {
   message: string;
 }
 
+interface FriendOnlineData {
+  userId: string;
+}
+
 type SocketEvent =
   | 'chat-message'
   | 'notification'
@@ -39,7 +43,9 @@ type SocketEvent =
   | 'shot-fired'
   | 'match-available'
   | 'match-ended'
-  | 'friend-request-accepted';
+  | 'friend-request-accepted'
+  | 'friend-online'
+  | 'friend-offline';
 
 @Injectable({
   providedIn: 'root',
@@ -115,6 +121,49 @@ export class SocketService {
       (subscriber: Subscriber<Relationship>) => {
         this.on<Relationship>(event, (relationship) => {
           subscriber.next(relationship);
+        });
+
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public friendOnlineListener(): Observable<FriendOnlineData> {
+    const event: SocketEvent = 'friend-online';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<FriendOnlineData>(
+      (subscriber: Subscriber<FriendOnlineData>) => {
+        this.on<FriendOnlineData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
+
+        return () => {
+          console.log(`Unlistening '${event}' event`);
+          this.socket.removeListener(event);
+        };
+      }
+    );
+  }
+  /**
+   *
+   * @returns
+   */
+  public friendOfflineListener(): Observable<FriendOnlineData> {
+    const event: SocketEvent = 'friend-offline';
+    console.log(`Listening on '${event}' event`);
+
+    return new Observable<FriendOnlineData>(
+      (subscriber: Subscriber<FriendOnlineData>) => {
+        this.on<FriendOnlineData>(event, (eventData) => {
+          subscriber.next(eventData);
         });
 
         return () => {

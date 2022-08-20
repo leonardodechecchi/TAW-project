@@ -42,6 +42,10 @@ export class NavbarComponent implements OnInit {
    * Log out the user and clean the session.
    */
   public logout(): void {
-    this.authService.logout();
+    this.userService.userLogout(this.accountService.getUsername()).subscribe({
+      next: () => {
+        this.authService.logout();
+      },
+    });
   }
 }

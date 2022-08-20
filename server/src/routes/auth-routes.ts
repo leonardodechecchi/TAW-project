@@ -3,6 +3,8 @@ import { createUser, getUserByEmail, getUserByUsername, UserDocument } from '../
 import { StatusError } from '../models/StatusError';
 import { issueJwt } from '../utils/issue-jwt';
 import { auth, ioServer } from '..';
+import { FriendOnlineEmitter } from '../socket/emitters/FriendOnline';
+import { FriendOfflineEmitter } from '../socket/emitters/FriendOffline';
 const router = Router();
 
 /**
@@ -20,7 +22,13 @@ router.post(
         return next(new StatusError(401, 'Invalid username or password'));
       }
 
+      // update online status and inform all friends
       await user.setOnlineStatus(true);
+      user.relationships.map((relationship) => {
+        new FriendOnlineEmitter(ioServer, relationship.friendId.toString()).emit({
+          userId: user._id.toString(),
+        });
+      });
 
       const token = issueJwt(user);
       return res.status(200).json(token);
@@ -36,7 +44,13 @@ router.post(
 router.put('/auth/logout', auth, async (req: Request<{}, {}, { username: string }>, res, next) => {
   try {
     const user: UserDocument = await getUserByUsername(req.body.username);
+
     await user.setOnlineStatus(false);
+    user.relationships.map((relationship) => {
+      new FriendOfflineEmitter(ioServer, relationship.friendId.toString()).emit({
+        userId: user._id.toString(),
+      });
+    });
 
     return res.status(200).json({});
   } catch (err) {

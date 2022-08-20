@@ -80,6 +80,36 @@ export class UserService {
           ]);
         },
       });
+
+    //
+    this.socketService
+      .friendOnlineListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.relationshipsSubject.value.forEach((relationship) => {
+            if (relationship.friendId._id === eventData.userId) {
+              relationship.friendId.online = true;
+              this.updateRelationships(this.relationshipsSubject.value);
+            }
+          });
+        },
+      });
+
+    //
+    this.socketService
+      .friendOfflineListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.relationshipsSubject.value.forEach((relationship) => {
+            if (relationship.friendId._id === eventData.userId) {
+              relationship.friendId.online = false;
+              this.updateRelationships(this.relationshipsSubject.value);
+            }
+          });
+        },
+      });
   }
 
   /**
@@ -105,6 +135,16 @@ export class UserService {
    */
   public getUser(userId: string): Observable<User> {
     return this.http.get<User>(`${environment.user_endpoint}/${userId}`);
+  }
+
+  /**
+   *
+   * @param username
+   * @returns
+   */
+  public userLogout(username: string): Observable<{}> {
+    const body = { username };
+    return this.http.put<{}>(`${environment.auth_endpoint}/logout`, body);
   }
 
   /**
