@@ -15,6 +15,7 @@ import { ServerLeft } from './socket/listeners/ServerLeft';
 import { MatchJoinedListener } from './socket/listeners/MatchJoined';
 import { MatchLeftListener } from './socket/listeners/MatchLeft';
 import { MatchRequestAcceptedListener } from './socket/listeners/MatchRequestAccepted';
+import { CloseConnectionListener } from './socket/listeners/CloseConnection';
 
 dotenv.config();
 colors.enable();
