@@ -5,9 +5,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Match, MatchStats } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
+import { UserStats } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
+import { LocalStorageService } from 'src/app/services/local-storage.service';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
+import { UserService } from 'src/app/services/user.service';
 import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 
 export enum ShotType {
@@ -25,6 +28,7 @@ export class GameComponent implements OnInit {
   private matchId: string;
   private matchChatId: string;
   private matchStats: MatchStats;
+  private userStats: UserStats;
 
   private player: Player;
   public opponentPlayer: Player;
@@ -54,6 +58,8 @@ export class GameComponent implements OnInit {
     private modalService: MdbModalService,
     private socketService: SocketService,
     private route: ActivatedRoute,
+    private localStorageService: LocalStorageService,
+    private userService: UserService,
     private router: Router
   ) {
     this.rowField = new FormControl(null);
@@ -68,6 +74,20 @@ export class GameComponent implements OnInit {
         // initialize grids
         this.initGrid();
 
+        // retrieve user stats
+        this.localStorageService.get('userStats')
+          ? (this.userStats = JSON.parse(
+              this.localStorageService.get('userStats')
+            ))
+          : this.userService
+              .getUserByUsername(this.accountService.getUsername())
+              .subscribe({
+                next: (user) => {
+                  this.userStats = user.stats;
+                  console.log(this.userStats);
+                },
+              });
+
         // initialize socket events
         this.initSocketEvents();
       },
@@ -77,7 +97,7 @@ export class GameComponent implements OnInit {
   /**
    * Initialize the grid
    */
-  private initGrid(): void {
+  private initGrid(isShot: boolean = false): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
         this.matchChatId = match.playersChat;
@@ -152,9 +172,14 @@ export class GameComponent implements OnInit {
           }
 
           if (shipDestroyed) {
-            this.updateMatchStats({
-              shipsDestroyed: this.matchStats.shipsDestroyed++,
-            });
+            if (isShot) {
+              this.updateMatchStats({
+                shipsDestroyed: ++this.matchStats.shipsDestroyed,
+              });
+              this.updateLocalUserStats({
+                shipsDestroyed: ++this.userStats.shipsDestroyed,
+              });
+            }
 
             for (let coordinate of ship.coordinates) {
               this.setCellContent(
@@ -183,7 +208,7 @@ export class GameComponent implements OnInit {
       .subscribe({
         next: (shot) => {
           // update the grid
-          this.initGrid();
+          this.initGrid(true);
         },
       });
 
@@ -192,10 +217,21 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
-          console.log(eventData.message);
           this.router.navigate(['home']);
         },
       });
+  }
+
+  /**
+   *
+   * @param stats
+   */
+  private updateLocalUserStats(stats: Partial<UserStats>): void {
+    this.userStats = { ...this.userStats, ...stats };
+    this.localStorageService.setLocal(
+      'userStats',
+      JSON.stringify(this.userStats)
+    );
   }
 
   /**
@@ -365,9 +401,17 @@ export class GameComponent implements OnInit {
       this.rowField.disable();
       this.colField.disable();
 
+      // update match stats
       this.updateMatchStats({ winner, endTime: new Date() });
-      this.infoMessage = `${winner} won!`;
 
+      // update user stats
+      this.userService.getUserByUsername(this.player.playerUsername).subscribe({
+        next: (user) => {
+          this.userService.updateStats(user.userId, this.userStats).subscribe();
+        },
+      });
+
+      this.infoMessage = `${winner} won!`;
       return this.opponentPlayer.playerUsername;
     } else {
       if (this.isLoser(this.opponentPlayer)) {
@@ -376,9 +420,21 @@ export class GameComponent implements OnInit {
         this.rowField.disable();
         this.colField.disable();
 
+        // update match stats
         this.updateMatchStats({ winner, endTime: new Date() });
-        this.infoMessage = `${winner} won!`;
 
+        // update user stats
+        this.userService
+          .getUserByUsername(this.player.playerUsername)
+          .subscribe({
+            next: (user) => {
+              this.userService
+                .updateStats(user.userId, this.userStats)
+                .subscribe();
+            },
+          });
+
+        this.infoMessage = `${winner} won!`;
         return this.player.playerUsername;
       }
     }
@@ -438,6 +494,7 @@ export class GameComponent implements OnInit {
   public leaveMatch(): void {
     // update match stats first
     this.updateMatchStats({ endTime: new Date() });
+    this.localStorageService.removeLocal('userStats');
 
     // then emit event to leave the match room
     this.socketService.emit<{ matchId: string; playerWhoLeft: string }>(
@@ -463,8 +520,13 @@ export class GameComponent implements OnInit {
       return;
     }
 
+    // update user stats
+    this.updateLocalUserStats({
+      totalShots: ++this.userStats.totalShots,
+    });
+
     // update stats
-    this.updateMatchStats({ totalShots: this.matchStats.totalShots++ });
+    this.updateMatchStats({ totalShots: ++this.matchStats.totalShots });
 
     // fire the shot
     this.matchService

@@ -9,8 +9,8 @@
         {{ message.author }}
       </h5>
       <div class="card-text">{{ message.content }}</div>
+      <small>{{ message.date | date: "shortTime" }}</small>
     </div>
-    <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
   </div>
 </div>
 <footer class="card fixed-bottom">

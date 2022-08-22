@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Socket } from 'socket.io-client';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
 import { Player } from 'src/app/models/Player';

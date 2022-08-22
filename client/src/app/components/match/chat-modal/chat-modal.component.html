@@ -21,27 +21,29 @@
           {{ message.author }}
         </h5>
         <div class="card-text">{{ message.content }}</div>
+        <small>{{ message.date | date: "shortTime" }}</small>
       </div>
-      <div class="card-footer">{{ message.date | date: "shortTime" }}</div>
     </div>
   </div>
-</div>
-<div class="fixed-bottom">
-  <div class="card-body">
-    <div class="d-flex">
-      <mdb-form-control class="flex-grow-1">
-        <textarea
-          mdbInput
-          [formControl]="messageField"
-          id="textArea"
-          class="form-control"
-          rows="1"
-        ></textarea>
-        <label mdbLabel class="form-label" for="textArea">Type a message</label>
-      </mdb-form-control>
-      <button mdbRipple class="btn btn-primary ms-2" (click)="sendMessage()">
-        <i class="fas fa-paper-plane"></i>
-      </button>
+  <div class="fixed-bottom">
+    <div class="card-body">
+      <div class="d-flex">
+        <mdb-form-control class="flex-grow-1">
+          <textarea
+            mdbInput
+            [formControl]="messageField"
+            id="textArea"
+            class="form-control"
+            rows="1"
+          ></textarea>
+          <label mdbLabel class="form-label" for="textArea"
+            >Type a message</label
+          >
+        </mdb-form-control>
+        <button mdbRipple class="btn btn-primary ms-2" (click)="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>

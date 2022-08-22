@@ -93,7 +93,6 @@ export class SocketService {
    */
   public notificationListener(): Observable<Notification> {
     const event: SocketEvent = 'notification';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<Notification>(
       (subscriber: Subscriber<Notification>) => {
@@ -102,7 +101,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -115,7 +113,6 @@ export class SocketService {
    */
   public friendRequestAcceptedListener(): Observable<Relationship> {
     const event: SocketEvent = 'friend-request-accepted';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<Relationship>(
       (subscriber: Subscriber<Relationship>) => {
@@ -124,7 +121,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -137,7 +133,6 @@ export class SocketService {
    */
   public friendOnlineListener(): Observable<FriendOnlineData> {
     const event: SocketEvent = 'friend-online';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<FriendOnlineData>(
       (subscriber: Subscriber<FriendOnlineData>) => {
@@ -146,7 +141,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -158,7 +152,6 @@ export class SocketService {
    */
   public friendOfflineListener(): Observable<FriendOnlineData> {
     const event: SocketEvent = 'friend-offline';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<FriendOnlineData>(
       (subscriber: Subscriber<FriendOnlineData>) => {
@@ -167,7 +160,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -181,7 +173,6 @@ export class SocketService {
    */
   public chatMessageListener(chatId: string): Observable<Message> {
     const event: SocketEvent = 'chat-message';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<Message>((subscriber: Subscriber<Message>) => {
       this.emit<string>('chat-joined', chatId);
@@ -189,7 +180,6 @@ export class SocketService {
         subscriber.next(message);
       });
       return () => {
-        console.log(`Unlistening '${event}' event`);
         this.socket.removeListener(event);
         this.emit<string>('chat-left', chatId);
       };
@@ -202,7 +192,6 @@ export class SocketService {
    */
   public matchFoundListener(): Observable<MatchData> {
     const event: SocketEvent = 'match-found';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<MatchData>((subscriber: Subscriber<MatchData>) => {
       this.on<MatchData>(event, (eventData) => {
@@ -210,7 +199,6 @@ export class SocketService {
       });
 
       return () => {
-        console.log(`Unlistening '${event}' event`);
         this.socket.removeListener(event);
       };
     });
@@ -222,7 +210,6 @@ export class SocketService {
    */
   public positioningCompletedListener(): Observable<PositioningCompletedData> {
     const event: SocketEvent = 'positioning-completed';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<PositioningCompletedData>(
       (subscriber: Subscriber<PositioningCompletedData>) => {
@@ -230,7 +217,6 @@ export class SocketService {
           subscriber.next(eventData);
         });
         return () => {
-          console.log(`Unlistening ${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -243,7 +229,6 @@ export class SocketService {
    */
   public playerStateChangedListener(): Observable<PlayerStateChangedData> {
     const event: SocketEvent = 'player-state-changed';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<PlayerStateChangedData>(
       (subscriber: Subscriber<PlayerStateChangedData>) => {
@@ -251,7 +236,6 @@ export class SocketService {
           subscriber.next(eventData);
         });
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -264,7 +248,6 @@ export class SocketService {
    */
   public shotFiredListener(matchId: string): Observable<Shot> {
     const event: SocketEvent = 'shot-fired';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<Shot>((subscriber: Subscriber<Shot>) => {
       this.emit<MatchData>('match-joined', { matchId });
@@ -272,7 +255,6 @@ export class SocketService {
         subscriber.next(shot);
       });
       return () => {
-        console.log(`Unlistening '${event}' event`);
         this.socket.removeListener(event);
       };
     });
@@ -284,7 +266,6 @@ export class SocketService {
    */
   public matchAvailableListener(): Observable<MatchAvailableData> {
     const event: SocketEvent = 'match-available';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<MatchAvailableData>(
       (subscriber: Subscriber<MatchAvailableData>) => {
@@ -293,7 +274,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }
@@ -306,7 +286,6 @@ export class SocketService {
    */
   public matchEndedListener(): Observable<MatchEndedData> {
     const event: SocketEvent = 'match-ended';
-    console.log(`Listening on '${event}' event`);
 
     return new Observable<MatchEndedData>(
       (subscriber: Subscriber<MatchEndedData>) => {
@@ -315,7 +294,6 @@ export class SocketService {
         });
 
         return () => {
-          console.log(`Unlistening '${event}' event`);
           this.socket.removeListener(event);
         };
       }

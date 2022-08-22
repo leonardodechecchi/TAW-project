@@ -17,6 +17,24 @@ export class WaitingRoomComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    // subscribe to match found socket event
+    this.socketService
+      .matchFoundListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.socketService.emit<{ matchId: string }>('match-joined', {
+            matchId: eventData.matchId,
+          });
+          this.matchService.updateMatchLoading(false);
+          this.router.navigate([
+            'match',
+            eventData.matchId,
+            'positioning-phase',
+          ]);
+        },
+      });
+
     // when both players are ready
     this.socketService
       .positioningCompletedListener()
