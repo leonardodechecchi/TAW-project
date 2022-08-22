@@ -8,7 +8,6 @@ export interface MatchStats {
   startTime: Date;
   endTime: Date;
   totalShots: number;
-  shipsDestroyed: number;
 }
 
 /**

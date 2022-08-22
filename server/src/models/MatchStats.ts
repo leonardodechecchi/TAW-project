@@ -8,7 +8,6 @@ export interface MatchStats {
   startTime: Date;
   endTime: Date;
   totalShots: number;
-  shipsDestroyed: number;
 }
 
 export const matchStatsSchema = new Schema<MatchStats>(
@@ -26,10 +25,6 @@ export const matchStatsSchema = new Schema<MatchStats>(
       default: null,
     },
     totalShots: {
-      type: SchemaTypes.Number,
-      default: 0,
-    },
-    shipsDestroyed: {
       type: SchemaTypes.Number,
       default: 0,
     },

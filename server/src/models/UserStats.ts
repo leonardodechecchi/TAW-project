@@ -7,7 +7,8 @@ export interface UserStats {
   elo: number;
   topElo: number;
   gamesWon: number;
-  shipsDestroyed: number;
+  gamesLost: number;
+  numOfGamesPlayed: number;
   totalShots: number;
 }
 
@@ -25,7 +26,11 @@ export const userStatsSchema = new Schema<UserStats>(
       type: SchemaTypes.Number,
       default: 0,
     },
-    shipsDestroyed: {
+    gamesLost: {
+      type: SchemaTypes.Number,
+      default: 0,
+    },
+    numOfGamesPlayed: {
       type: SchemaTypes.Number,
       default: 0,
     },

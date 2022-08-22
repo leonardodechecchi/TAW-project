@@ -97,7 +97,7 @@ export class GameComponent implements OnInit {
   /**
    * Initialize the grid
    */
-  private initGrid(isShot: boolean = false): void {
+  private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
         this.matchChatId = match.playersChat;
@@ -172,15 +172,6 @@ export class GameComponent implements OnInit {
           }
 
           if (shipDestroyed) {
-            if (isShot) {
-              this.updateMatchStats({
-                shipsDestroyed: ++this.matchStats.shipsDestroyed,
-              });
-              this.updateLocalUserStats({
-                shipsDestroyed: ++this.userStats.shipsDestroyed,
-              });
-            }
-
             for (let coordinate of ship.coordinates) {
               this.setCellContent(
                 'table2',
@@ -208,7 +199,7 @@ export class GameComponent implements OnInit {
       .subscribe({
         next: (shot) => {
           // update the grid
-          this.initGrid(true);
+          this.initGrid();
         },
       });
 
@@ -217,6 +208,7 @@ export class GameComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
+          this.localStorageService.removeLocal('userStats');
           this.router.navigate(['home']);
         },
       });
@@ -398,9 +390,6 @@ export class GameComponent implements OnInit {
     if (this.isLoser(this.player)) {
       const winner: string = this.opponentPlayer.playerUsername;
 
-      this.rowField.disable();
-      this.colField.disable();
-
       // update match stats
       this.updateMatchStats({ winner, endTime: new Date() });
 
@@ -416,9 +405,6 @@ export class GameComponent implements OnInit {
     } else {
       if (this.isLoser(this.opponentPlayer)) {
         const winner: string = this.player.playerUsername;
-
-        this.rowField.disable();
-        this.colField.disable();
 
         // update match stats
         this.updateMatchStats({ winner, endTime: new Date() });
@@ -446,7 +432,7 @@ export class GameComponent implements OnInit {
    * @param letter the letter to parse
    * @returns the corresponding number index
    */
-  public parseRow = (letter: string): number => {
+  public parseRow(letter: string): number {
     try {
       switch (letter.toUpperCase()) {
         case 'A':
@@ -476,7 +462,7 @@ export class GameComponent implements OnInit {
     } catch (err) {
       return -1;
     }
-  };
+  }
 
   /**
    * Open the game chat.
@@ -520,13 +506,13 @@ export class GameComponent implements OnInit {
       return;
     }
 
+    // update stats
+    this.updateMatchStats({ totalShots: ++this.matchStats.totalShots });
+
     // update user stats
     this.updateLocalUserStats({
       totalShots: ++this.userStats.totalShots,
     });
-
-    // update stats
-    this.updateMatchStats({ totalShots: ++this.matchStats.totalShots });
 
     // fire the shot
     this.matchService

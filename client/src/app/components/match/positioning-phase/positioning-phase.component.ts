@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Grid } from 'src/app/models/Grid';
 import { GridCoordinates } from 'src/app/models/GridCoordinates';
+import { Match } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
 import { Ship, ShipTypes } from 'src/app/models/Ship';
 import { AccountService } from 'src/app/services/account.service';
@@ -17,6 +18,7 @@ import { SocketService } from 'src/app/services/socket.service';
 })
 export class PositioningPhaseComponent implements OnInit {
   private matchId: string;
+  public match: Match;
   public grid: Grid;
   public matchLoading: boolean;
 
@@ -75,6 +77,16 @@ export class PositioningPhaseComponent implements OnInit {
           this.infoMessage = eventData.message;
         },
       });
+
+    // if the match ended
+    this.socketService
+      .matchEndedListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.router.navigate(['home']);
+        },
+      });
   }
 
   /**
@@ -83,6 +95,7 @@ export class PositioningPhaseComponent implements OnInit {
   private initGrid(): void {
     this.matchService.getMatch(this.matchId).subscribe({
       next: (match) => {
+        this.match = match;
         const userUsername: string = this.accountService.getUsername();
         const player: Player =
           match.player1.playerUsername === userUsername
@@ -317,12 +330,12 @@ export class PositioningPhaseComponent implements OnInit {
    * @param col the column index
    * @param direction the ship direction, i.e. `Vertical` or `Horizontal`
    */
-  public deployShip = (
+  public deployShip(
     type: string,
     rowLetter: string,
     col: number,
     direction: string
-  ): boolean => {
+  ): boolean {
     const row: number = this.parseRow(rowLetter);
 
     if (!this.checkCoordinates(row, col)) return;
@@ -373,7 +386,7 @@ export class PositioningPhaseComponent implements OnInit {
     }
 
     return true;
-  };
+  }
 
   /**
    *
@@ -435,5 +448,22 @@ export class PositioningPhaseComponent implements OnInit {
     this.matchService
       .setPlayerReady(this.matchId, this.accountService.getUsername(), true)
       .subscribe();
+  }
+
+  public leaveMatch(): void {
+    // update match stats first
+    this.match.stats.endTime = new Date();
+    this.matchService
+      .updateMatchStats(this.matchId, this.match.stats)
+      .subscribe();
+
+    // then emit event to leave the match room
+    this.socketService.emit<{ matchId: string; playerWhoLeft: string }>(
+      'match-left',
+      {
+        matchId: this.matchId,
+        playerWhoLeft: this.accountService.getUsername(),
+      }
+    );
   }
 }
