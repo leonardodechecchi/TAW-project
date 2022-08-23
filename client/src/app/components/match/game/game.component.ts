@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { Observable } from 'rxjs';
 import { Match, MatchStats } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
 import { UserStats } from 'src/app/models/User';
@@ -27,13 +28,13 @@ export enum ShotType {
 export class GameComponent implements OnInit {
   private matchId: string;
   private matchChatId: string;
+
   private matchStats: MatchStats;
   private userStats: UserStats;
 
   private player: Player;
   public opponentPlayer: Player;
   public turnOf: string;
-  public winnerPlayer: string;
 
   public isMyTurn: boolean = false;
 
@@ -184,7 +185,7 @@ export class GameComponent implements OnInit {
         }
 
         // check if there is a winner
-        this.winnerPlayer = this.winner();
+        this.checkWinner();
       },
     });
   }
@@ -209,7 +210,9 @@ export class GameComponent implements OnInit {
       .subscribe({
         next: (eventData) => {
           this.localStorageService.removeLocal('userStats');
-          this.router.navigate(['home']);
+          this.router.navigate(['home'], {
+            state: { message: eventData.message },
+          });
         },
       });
   }
@@ -230,12 +233,9 @@ export class GameComponent implements OnInit {
    * Update the match stats with ones given in input.
    * @param stats
    */
-  private updateMatchStats(stats: Partial<MatchStats>): void {
+  private updateMatchStats(stats: Partial<MatchStats>): Observable<Match> {
     this.matchStats = { ...this.matchStats, ...stats };
-
-    this.matchService
-      .updateMatchStats(this.matchId, this.matchStats)
-      .subscribe();
+    return this.matchService.updateMatchStats(this.matchId, this.matchStats);
   }
 
   /**
@@ -384,47 +384,56 @@ export class GameComponent implements OnInit {
 
   /**
    * Check if there is a winner.
-   * @returns the winner of the match if exists, `null` otherwise
    */
-  private winner(): string | null {
+  private checkWinner(): void {
     if (this.isLoser(this.player)) {
       const winner: string = this.opponentPlayer.playerUsername;
 
       // update match stats
-      this.updateMatchStats({ winner, endTime: new Date() });
+      this.updateMatchStats({ winner, endTime: new Date() }).subscribe({
+        next: () => {
+          // the player lost
+          this.updateLocalUserStats({
+            numOfGamesPlayed: ++this.userStats.numOfGamesPlayed,
+          });
 
-      // update user stats
-      this.userService.getUserByUsername(this.player.playerUsername).subscribe({
-        next: (user) => {
-          this.userService.updateStats(user.userId, this.userStats).subscribe();
+          // update user stats
+          this.userService
+            .updateStats(this.accountService.getId(), this.userStats)
+            .subscribe({
+              next: () => {
+                this.localStorageService.removeLocal('userStats');
+                this.router.navigate(['match', this.matchId, 'result']);
+              },
+            });
         },
       });
-
-      this.infoMessage = `${winner} won!`;
-      return this.opponentPlayer.playerUsername;
     } else {
       if (this.isLoser(this.opponentPlayer)) {
         const winner: string = this.player.playerUsername;
 
         // update match stats
-        this.updateMatchStats({ winner, endTime: new Date() });
+        this.updateMatchStats({ winner, endTime: new Date() }).subscribe({
+          next: () => {
+            // the player won
+            this.updateLocalUserStats({
+              numOfGamesPlayed: ++this.userStats.numOfGamesPlayed,
+              gamesWon: ++this.userStats.gamesWon,
+            });
 
-        // update user stats
-        this.userService
-          .getUserByUsername(this.player.playerUsername)
-          .subscribe({
-            next: (user) => {
-              this.userService
-                .updateStats(user.userId, this.userStats)
-                .subscribe();
-            },
-          });
-
-        this.infoMessage = `${winner} won!`;
-        return this.player.playerUsername;
+            // update user stats
+            this.userService
+              .updateStats(this.accountService.getId(), this.userStats)
+              .subscribe({
+                next: () => {
+                  this.localStorageService.removeLocal('userStats');
+                  this.router.navigate(['match', this.matchId, 'result']);
+                },
+              });
+          },
+        });
       }
     }
-    return null;
   }
 
   /**
@@ -480,6 +489,8 @@ export class GameComponent implements OnInit {
   public leaveMatch(): void {
     // update match stats first
     this.updateMatchStats({ endTime: new Date() });
+
+    // delete user stats
     this.localStorageService.removeLocal('userStats');
 
     // then emit event to leave the match room

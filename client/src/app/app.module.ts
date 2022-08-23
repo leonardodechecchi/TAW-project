@@ -53,6 +53,7 @@ import { ObserverComponent } from './components/match/observer/observer.componen
 import { MatchListComponent } from './components/match/match-list/match-list.component';
 import { MatchLoadingGuardService } from './services/match-loading-guard.service';
 import { Error404Component } from './components/error-404/error-404.component';
+import { WinnerComponent } from './components/match/winner/winner.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -154,6 +155,15 @@ const routes: Routes = [
       MatchLoadingGuardService,
     ],
   },
+  {
+    path: 'match/:id/result',
+    component: WinnerComponent,
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchLoadingGuardService,
+    ],
+  },
   { path: '**', component: Error404Component, pathMatch: 'full' },
 ];
 
@@ -183,6 +193,7 @@ const routes: Routes = [
     ObserverComponent,
     MatchListComponent,
     Error404Component,
+    WinnerComponent,
   ],
   imports: [
     BrowserModule,

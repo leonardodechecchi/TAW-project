@@ -40,7 +40,9 @@ export class FriendListComponent implements OnInit {
     // get the user relationships
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {
-        this.relationships = relationships;
+        this.relationships = relationships.sort((relationship) =>
+          relationship.friendId.online ? -1 : 0
+        );
       },
     });
 

@@ -1,0 +1,40 @@
+<div class="container">
+  <section class="my-5 text-center">
+    <h1 class="display-1">{{ stats.winner }} won!</h1>
+    <h1 class="display-1" *ngIf="!stats.winner"></h1>
+    <div class="card col-md-6 offset-md-3">
+      <div class="card-body">
+        <h6 class="bg-light p-2 border-top border-bottom">Match stats</h6>
+        <ul class="list-group list-group-light">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            Match started
+            <span class="badge badge-primary rounded-pill">{{
+              stats.startTime | date: "short"
+            }}</span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            Match ended
+            <span class="badge badge-primary rounded-pill">{{
+              stats.endTime | date: "short"
+            }}</span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            Total shots
+            <span class="badge badge-primary rounded-pill">{{
+              stats.totalShots
+            }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <a role="button" class="btn btn-primary mt-4" (click)="goBackToHomepage()"
+      >Go back to homepage</a
+    >
+  </section>
+</div>

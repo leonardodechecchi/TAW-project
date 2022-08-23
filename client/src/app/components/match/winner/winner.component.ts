@@ -1,0 +1,47 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatchStats } from 'src/app/models/Match';
+import { MatchService } from 'src/app/services/match.service';
+
+@Component({
+  selector: 'winner',
+  templateUrl: './winner.component.html',
+})
+export class WinnerComponent implements OnInit {
+  private matchId: string;
+  public stats: MatchStats;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private matchService: MatchService
+  ) {
+    this.stats = {
+      winner: null,
+      startTime: null,
+      endTime: null,
+      totalShots: 0,
+    };
+  }
+
+  public ngOnInit(): void {
+    this.route.params.subscribe({
+      next: (param) => {
+        this.matchId = param['id'];
+
+        this.matchService.getMatch(this.matchId).subscribe({
+          next: (match) => {
+            this.stats = match.stats;
+          },
+        });
+      },
+    });
+  }
+
+  /**
+   * Navigate the user to the homepage.
+   */
+  public goBackToHomepage(): void {
+    this.router.navigate(['home']);
+  }
+}

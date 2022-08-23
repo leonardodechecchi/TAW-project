@@ -10,26 +10,43 @@
   ></button>
 </div>
 <div class="modal-body">
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      Games won: {{ relationship.friendId.stats.gamesWon }}
+  <ul class="list-group list-group-light">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      Games won
+      <span class="badge badge-primary rounded-pill">{{
+        relationship.friendId.stats.gamesWon
+      }}</span>
     </li>
-    <li class="list-group-item">
-      Ships destroyed: {{ relationship.friendId.stats.shipsDestroyed }}
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      Total games played
+      <span class="badge badge-primary rounded-pill">{{
+        relationship.friendId.stats.numOfGamesPlayed
+      }}</span>
     </li>
-    <li class="list-group-item">
-      Total shots: {{ relationship.friendId.stats.totalShots }}
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      Total shots
+      <span class="badge badge-primary rounded-pill">{{
+        relationship.friendId.stats.totalShots
+      }}</span>
     </li>
   </ul>
 </div>
-<div class="modal-footer" *ngIf="showFooter">
-  <button mdbRipple class="btn btn-success me-2" (click)="match()">
-    <i class="fas fa-gamepad me-2"></i>Match
-  </button>
-  <button mdbRipple class="btn btn-primary me-2" (click)="chat()">
-    <i class="fas fa-comment me-2"></i>Chat
-  </button>
-  <button mdbRipple class="btn btn-danger" (click)="removeFriend()">
-    <i class="fas fa-user-slash me-2"></i>Remove
-  </button>
+<div class="card-body" *ngIf="showFooter">
+  <div class="d-flex">
+    <button mdbRipple class="btn btn-success me-2 flex-fill" (click)="match()">
+      <i class="fas fa-gamepad me-2"></i>Match
+    </button>
+    <button mdbRipple class="btn btn-primary me-2 flex-fill" (click)="chat()">
+      <i class="fas fa-comment me-2"></i>Chat
+    </button>
+    <button mdbRipple class="btn btn-danger flex-fill" (click)="removeFriend()">
+      <i class="fas fa-user-slash me-2"></i>Remove
+    </button>
+  </div>
 </div>

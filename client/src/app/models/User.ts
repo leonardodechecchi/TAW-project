@@ -22,7 +22,6 @@ export interface UserStats {
   elo: number;
   topElo: number;
   gamesWon: number;
-  gamesLost: number;
   numOfGamesPlayed: number;
   totalShots: number;
 }
