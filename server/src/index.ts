@@ -16,6 +16,7 @@ import { MatchJoinedListener } from './socket/listeners/MatchJoined';
 import { MatchLeftListener } from './socket/listeners/MatchLeft';
 import { MatchRequestAcceptedListener } from './socket/listeners/MatchRequestAccepted';
 import { CloseConnectionListener } from './socket/listeners/CloseConnection';
+import { MatchRequestRejectedListener } from './socket/listeners/MatchRequestRejected';
 
 dotenv.config();
 colors.enable();
@@ -120,6 +121,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchRequestAccepted = new MatchRequestAcceptedListener(ioServer, client);
   matchRequestAccepted.listen();
+
+  /**
+   *
+   */
+  const matchRequestRejected = new MatchRequestRejectedListener(ioServer, client);
+  matchRequestRejected.listen();
 
   /**
    * TODO test

@@ -39,7 +39,6 @@ export class MatchLeftListener extends ListenerNotifier<
     const emitDataProvider = async (
       eventData: MatchLeftListenerData
     ): Promise<MatchLeftEmitterData> => {
-      // TODO delete match
       const matchId: Types.ObjectId = retrieveId(eventData.matchId);
       await deleteMatchById(matchId);
 

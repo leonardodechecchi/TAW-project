@@ -72,14 +72,16 @@ export class NotificationListComponent implements OnInit {
     this.deleteNotification({ senderId, type });
   }
 
-  // TO FINISH
+  /**
+   *
+   * @param notification
+   */
   public acceptMatchRequest(notification: Notification): void {
     this.deleteNotification({
       senderId: notification.senderId._id,
       type: notification.type,
     });
 
-    // ...
     this.socketService.emit<{ player1: string; player2: string }>(
       'match-request-accepted',
       {
@@ -89,11 +91,17 @@ export class NotificationListComponent implements OnInit {
     );
   }
 
-  // TO FINISH
+  /**
+   *
+   * @param senderId
+   * @param type
+   */
   public rejectMatchRequest(senderId: string, type: NotificationType) {
     this.deleteNotification({ senderId, type });
 
     // ...
-    this.socketService.emit<string>('match-rejected', senderId);
+    this.socketService.emit<{ senderId: string }>('match-rejected', {
+      senderId,
+    });
   }
 }

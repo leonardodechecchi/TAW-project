@@ -11,6 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { MatchService } from './match.service';
 import { Router } from '@angular/router';
 import { Chat } from '../models/Chat';
+import { Location } from '@angular/common';
 
 @UntilDestroy()
 @Injectable({
@@ -28,7 +29,8 @@ export class UserService {
     private accountService: AccountService,
     private socketService: SocketService,
     private matchService: MatchService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     const userId: string = this.accountService.getId();
 
@@ -108,6 +110,17 @@ export class UserService {
               this.updateRelationships(this.relationshipsSubject.value);
             }
           });
+        },
+      });
+
+    //
+    this.socketService
+      .matchRejectListener()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (eventData) => {
+          this.matchService.updateMatchLoading(false);
+          this.location.back();
         },
       });
   }

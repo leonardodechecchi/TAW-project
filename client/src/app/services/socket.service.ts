@@ -34,6 +34,10 @@ interface FriendOnlineData {
   userId: string;
 }
 
+interface MatchRejectData {
+  message: string;
+}
+
 type SocketEvent =
   | 'chat-message'
   | 'notification'
@@ -45,7 +49,8 @@ type SocketEvent =
   | 'match-ended'
   | 'friend-request-accepted'
   | 'friend-online'
-  | 'friend-offline';
+  | 'friend-offline'
+  | 'match-reject';
 
 @Injectable({
   providedIn: 'root',
@@ -202,6 +207,26 @@ export class SocketService {
         this.socket.removeListener(event);
       };
     });
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public matchRejectListener(): Observable<MatchRejectData> {
+    const event: SocketEvent = 'match-reject';
+
+    return new Observable<MatchRejectData>(
+      (subscriber: Subscriber<MatchRejectData>) => {
+        this.on<MatchRejectData>(event, (eventData) => {
+          subscriber.next(eventData);
+        });
+
+        return () => {
+          this.socket.removeListener(event);
+        };
+      }
+    );
   }
 
   /**

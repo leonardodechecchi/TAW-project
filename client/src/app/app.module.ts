@@ -53,6 +53,7 @@ import { MatchListComponent } from './components/match/match-list/match-list.com
 import { MatchLoadingGuardService } from './services/match-loading-guard.service';
 import { Error404Component } from './components/error-404/error-404.component';
 import { WinnerComponent } from './components/match/winner/winner.component';
+import { MatchNotLoadingGuardService } from './services/match-not-loading-guard.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -125,7 +126,11 @@ const routes: Routes = [
   {
     path: 'match/waiting-room',
     component: WaitingRoomComponent,
-    canActivate: [AuthGuardService, FirstLoginGuardService],
+    canActivate: [
+      AuthGuardService,
+      FirstLoginGuardService,
+      MatchNotLoadingGuardService,
+    ],
   },
   {
     path: 'match/:id/positioning-phase',

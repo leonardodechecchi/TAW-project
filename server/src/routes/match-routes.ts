@@ -40,7 +40,6 @@ router.post(
 router.get('/matches', auth, async (req, res, next) => {
   try {
     const activeMatches: MatchDocument[] = await getActiveMatches();
-    console.log(activeMatches);
     return res.status(200).json(activeMatches);
   } catch (err) {
     next(err);

@@ -7,21 +7,41 @@
     >
 
     <ul class="navbar-nav flex-row">
+      <!-- Relationships -->
+      <li class="nav-item me-3 me-lg-1">
+        <a class="nav-link" routerLink="/relationships">
+          <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
+        </a>
+      </li>
+
+      <!-- Chats -->
+      <li class="nav-item me-3 me-lg-1">
+        <a class="nav-link" routerLink="/chats">
+          <span><i class="fas fa-comments fa-lg fa-fw"></i></span>
+        </a>
+      </li>
+
+      <!-- Notifications -->
+      <li class="nav-item me-3 me-lg-0">
+        <a class="nav-link" routerLink="/notifications">
+          <i class="fas fa-bell fa-lg fa-fw"></i>
+          <span
+            class="badge rounded-pill badge-notification bg-danger"
+            *ngIf="notifications.length > 0"
+            >{{ notifications.length }}</span
+          >
+        </a>
+      </li>
+
       <!-- Profile -->
-      <li mdbDropdown class="nav-item me-3 me-lg-1">
+      <li mdbDropdown class="nav-item me-2 me-lg-1">
         <a
           class="nav-link d-sm-flex align-items-sm-center dropdown-toggle hidden-arrow"
           id="navbarDropdownMenuLink"
           role="button"
           mdbDropdownToggle
         >
-          <img
-            src="https://mdbootstrap.com/img/new/avatars/1.webp"
-            class="rounded-circle"
-            height="22"
-            alt=""
-            loading="lazy"
-          />
+          <i class="fas fa-user-circle fa-lg fa-fw"></i>
           <strong class="d-none d-sm-block ms-1">{{ username }}</strong>
         </a>
         <ul
@@ -47,33 +67,8 @@
           </li>
         </ul>
       </li>
-
-      <!-- Relationships -->
-      <li class="nav-item me-3 me-lg-1">
-        <a class="nav-link" routerLink="/relationships">
-          <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
-        </a>
-      </li>
-
-      <!-- Chats -->
-      <li class="nav-item me-3 me-lg-1">
-        <a class="nav-link" routerLink="/chats">
-          <span><i class="fas fa-comments fa-lg fa-fw"></i></span>
-        </a>
-      </li>
-
-      <!-- Notifications -->
-      <li class="nav-item me-1">
-        <a class="nav-link" routerLink="/notifications">
-          <i class="fas fa-bell fa-lg fa-fw"></i>
-          <span
-            class="badge rounded-pill badge-notification bg-danger"
-            *ngIf="notifications.length > 0"
-            >{{ notifications.length }}</span
-          >
-        </a>
-      </li>
     </ul>
+
     <!-- Right elements -->
   </div>
 </nav>
