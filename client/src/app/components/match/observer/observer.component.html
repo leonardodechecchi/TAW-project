@@ -1,5 +1,21 @@
 <back-navbar></back-navbar>
-<div class="container">
+<div class="container py-4">
+  <div class="card sticky-top">
+    <div class="card-body py-3">
+      <div class="row">
+        <div class="col-sm-6 text-center text-sm-start">
+          <h5 class="mb-3 mb-sm-0 mt-1">
+            Turn of <strong>{{ turnOf }}</strong>
+          </h5>
+        </div>
+        <div class="col-sm-6 text-center text-sm-end">
+          <button type="button" class="btn btn-primary" (click)="openChat()">
+            <i class="fas fa-comment me-2"></i>Chat
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div
     class="card col-md-6 offset-md-3 mt-3 card-body mt-3 text-center"
     *ngIf="positioniongPhase"

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Match } from 'src/app/models/Match';
 import { Player } from 'src/app/models/Player';
 import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
+import { ChatModalComponent } from '../chat-modal/chat-modal.component';
 import { ShotType } from '../game/game.component';
 
 @UntilDestroy()
@@ -17,6 +19,7 @@ export class ObserverComponent implements OnInit {
   private matchId: string;
   public player1: Player;
   public player2: Player;
+  public turnOf: string = '';
   private observersChatId: string;
 
   public positioniongPhase: boolean;
@@ -31,7 +34,9 @@ export class ObserverComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private socketService: SocketService,
-    private matchService: MatchService
+    private matchService: MatchService,
+    private modalService: MdbModalService,
+    private router: Router
   ) {
     this.positioniongPhase = true;
   }
@@ -61,12 +66,25 @@ export class ObserverComponent implements OnInit {
             },
           });
 
+        this.socketService
+          .matchEndedListener()
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: (eventData) => {
+              this.router.navigate(['match', this.matchId, 'result'], {
+                state: { message: eventData.message },
+              });
+            },
+          });
+
         // init players grid
         this.matchService.getMatch(this.matchId).subscribe({
           next: (match) => {
             this.player1 = match.player1;
             this.player2 = match.player2;
             this.observersChatId = match.observersChat;
+
+            this.setTurnOf(match);
 
             this.player1.ready && this.player2.ready
               ? (this.positioniongPhase = false)
@@ -251,5 +269,21 @@ export class ObserverComponent implements OnInit {
     } catch (err) {
       return -1;
     }
+  }
+
+  private setTurnOf(match: Match): void {
+    match.turnOf === match.player1.playerUsername
+      ? (this.turnOf = match.player1.playerUsername)
+      : (this.turnOf = match.player2.playerUsername);
+  }
+
+  /**
+   * Open the observers chat.
+   */
+  public openChat(): void {
+    this.modalService.open(ChatModalComponent, {
+      data: { chatId: this.observersChatId },
+      modalClass: 'modal-fullscreen modal-dialog-scrollable',
+    });
   }
 }

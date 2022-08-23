@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { MatchStats } from 'src/app/models/Match';
 import { MatchService } from 'src/app/services/match.service';
 
+@UntilDestroy()
 @Component({
   selector: 'winner',
   templateUrl: './winner.component.html',
@@ -10,6 +12,7 @@ import { MatchService } from 'src/app/services/match.service';
 export class WinnerComponent implements OnInit {
   private matchId: string;
   public stats: MatchStats;
+  public extras: NavigationExtras;
 
   constructor(
     private route: ActivatedRoute,
@@ -22,6 +25,8 @@ export class WinnerComponent implements OnInit {
       endTime: null,
       totalShots: 0,
     };
+
+    this.extras = this.router.getCurrentNavigation().extras;
   }
 
   public ngOnInit(): void {

@@ -14,7 +14,6 @@ import { SocketService } from 'src/app/services/socket.service';
 })
 export class ChatModalComponent implements OnInit {
   private chatId: string;
-  public opponentUsername: string;
   public messages: Message[];
   public messageField: FormControl;
 
@@ -47,9 +46,6 @@ export class ChatModalComponent implements OnInit {
   private populateMessageList(): void {
     this.chatService.getChat(this.chatId).subscribe({
       next: (chat) => {
-        this.opponentUsername = chat.users.find((username) => {
-          return username !== this.accountService.getUsername();
-        });
         this.messages = chat.messages;
       },
     });

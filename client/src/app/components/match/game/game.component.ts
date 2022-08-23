@@ -194,6 +194,7 @@ export class GameComponent implements OnInit {
    * Register socket events
    */
   private initSocketEvents(): void {
+    // subscribe to shot fired event
     this.socketService
       .shotFiredListener(this.matchId)
       .pipe(untilDestroyed(this))
@@ -204,13 +205,14 @@ export class GameComponent implements OnInit {
         },
       });
 
+    // if someone leaves the match change route
     this.socketService
       .matchEndedListener()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (eventData) => {
           this.localStorageService.removeLocal('userStats');
-          this.router.navigate(['home'], {
+          this.router.navigate(['match', this.matchId, 'result'], {
             state: { message: eventData.message },
           });
         },
@@ -218,7 +220,7 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   *
+   * Update the user stats in local
    * @param stats
    */
   private updateLocalUserStats(stats: Partial<UserStats>): void {

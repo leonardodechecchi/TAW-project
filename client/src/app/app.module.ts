@@ -48,7 +48,6 @@ import { PositioningPhaseFormComponent } from './components/match/positioning-ph
 import { PositioningPhaseComponent } from './components/match/positioning-phase/positioning-phase.component';
 import { GameComponent } from './components/match/game/game.component';
 import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
-import { GridComponent } from './components/match/grid/grid.component';
 import { ObserverComponent } from './components/match/observer/observer.component';
 import { MatchListComponent } from './components/match/match-list/match-list.component';
 import { MatchLoadingGuardService } from './services/match-loading-guard.service';
@@ -189,7 +188,6 @@ const routes: Routes = [
     PositioningPhaseFormComponent,
     GameComponent,
     ChatModalComponent,
-    GridComponent,
     ObserverComponent,
     MatchListComponent,
     Error404Component,
