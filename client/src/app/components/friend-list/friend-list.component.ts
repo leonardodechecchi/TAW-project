@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { MdbCollapseDirective } from 'mdb-angular-ui-kit/collapse';
 import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { NotificationType } from 'src/app/models/Notification';
 import { Relationship } from 'src/app/models/Relationship';
 import { User } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
-import { MatchService } from 'src/app/services/match.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { ModalComponent } from '../modal/modal.component';
@@ -36,7 +34,13 @@ export class FriendListComponent implements OnInit {
     this.matchLoading = false;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
+    this.userService.getRelationships(this.accountService.getId()).subscribe({
+      next: (relationships) => {
+        this.userService.updateRelationships(relationships);
+      },
+    });
+
     // get the user relationships
     this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
       next: (relationships) => {

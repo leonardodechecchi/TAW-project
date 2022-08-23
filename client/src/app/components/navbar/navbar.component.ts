@@ -15,6 +15,7 @@ export class NavbarComponent implements OnInit {
   public notifications: Notification[];
   public username: string;
   public isAdminOrModerator: boolean;
+  public numOnlineFriends: number;
 
   constructor(
     public authService: AuthService,
@@ -24,12 +25,22 @@ export class NavbarComponent implements OnInit {
     this.notifications = [];
     this.username = '';
     this.isAdminOrModerator = false;
+    this.numOnlineFriends = 0;
   }
 
   public ngOnInit(): void {
     this.userService.notifications.pipe(untilDestroyed(this)).subscribe({
       next: (notifications) => {
         this.notifications = notifications;
+      },
+    });
+
+    this.userService.relationships.pipe(untilDestroyed(this)).subscribe({
+      next: (relationships) => {
+        this.numOnlineFriends = 0;
+        for (let relationship of relationships) {
+          if (relationship.friendId.online) this.numOnlineFriends++;
+        }
       },
     });
 

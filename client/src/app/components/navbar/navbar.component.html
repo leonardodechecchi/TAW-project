@@ -10,7 +10,12 @@
       <!-- Relationships -->
       <li class="nav-item me-3 me-lg-1">
         <a class="nav-link" routerLink="/relationships">
-          <span><i class="fas fa-user-friends fa-lg fa-fw"></i></span>
+          <i class="fas fa-user-friends fa-lg fa-fw"></i>
+          <span
+            class="badge rounded-pill badge-notification bg-success"
+            *ngIf="numOnlineFriends > 0"
+            >{{ numOnlineFriends }}</span
+          >
         </a>
       </li>
 
