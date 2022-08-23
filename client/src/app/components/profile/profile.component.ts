@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CustomValidators } from 'src/app/helpers/CustomValidators';
+import { UserStats } from 'src/app/models/User';
 import { AccountService } from 'src/app/services/account.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -16,16 +17,27 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
+  public userStats: UserStats;
   public profileForm: FormGroup;
   public passwordForm: FormGroup;
+  public loading: boolean;
 
   constructor(
     public accountService: AccountService,
     private userService: UserService,
     private authService: AuthService
-  ) {}
+  ) {
+    this.loading = true;
+  }
 
   ngOnInit(): void {
+    this.userService.getUser(this.accountService.getId()).subscribe({
+      next: (user) => {
+        this.loading = false;
+        this.userStats = user.stats;
+      },
+    });
+
     this.profileForm = new FormGroup({
       username: new FormControl(this.accountService.getUsername(), [
         Validators.required,

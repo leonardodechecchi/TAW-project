@@ -1,6 +1,49 @@
-<div class="container">
+<div class="container" style="padding-bottom: 15px">
   <h1 class="display-5 text-center py-5 mb-0">Profile</h1>
   <div class="card col-md-6 offset-md-3">
+    <div class="card-header">
+      <strong><i class="fas fa-chart-line me-2"></i>Your stats</strong>
+    </div>
+    <div class="card-body">
+      <div
+        class="d-flex align-items-center justify-content-center"
+        role="status"
+        *ngIf="loading"
+      >
+        <div class="spinner-border text-primary">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <ul class="list-group list-group-light" *ngIf="userStats">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Games won
+          <span class="badge badge-primary rounded-pill">{{
+            userStats.gamesWon
+          }}</span>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Total games played
+          <span class="badge badge-primary rounded-pill">{{
+            userStats.numOfGamesPlayed
+          }}</span>
+        </li>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          Total shots
+          <span class="badge badge-primary rounded-pill">{{
+            userStats.totalShots
+          }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card col-md-6 offset-md-3 mt-3">
     <div class="card-header">
       <strong><i class="fas fa-user me-2"></i>Edit profile</strong>
     </div>
