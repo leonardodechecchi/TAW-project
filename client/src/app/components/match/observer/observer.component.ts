@@ -22,7 +22,7 @@ export class ObserverComponent implements OnInit {
   public turnOf: string = '';
   private observersChatId: string;
 
-  public positioniongPhase: boolean;
+  public positioningPhase: boolean;
 
   private missedShotColor: string = '#1266f1';
   private missedShotContent: string = '<i class="fas fa-water text-white"></i>';
@@ -38,7 +38,7 @@ export class ObserverComponent implements OnInit {
     private modalService: MdbModalService,
     private router: Router
   ) {
-    this.positioniongPhase = true;
+    this.positioningPhase = true;
   }
 
   ngOnInit(): void {
@@ -52,6 +52,8 @@ export class ObserverComponent implements OnInit {
           .pipe(untilDestroyed(this))
           .subscribe({
             next: (shot) => {
+              if (this.positioningPhase) this.positioningPhase = false;
+
               this.matchService.getMatch(this.matchId).subscribe({
                 next: (match) => {
                   this.player1 = match.player1;
@@ -87,8 +89,8 @@ export class ObserverComponent implements OnInit {
             this.setTurnOf(match);
 
             this.player1.ready && this.player2.ready
-              ? (this.positioniongPhase = false)
-              : (this.positioniongPhase = true);
+              ? (this.positioningPhase = false)
+              : (this.positioningPhase = true);
 
             this.initGrid(this.player1);
             this.initGrid(this.player2);

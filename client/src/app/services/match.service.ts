@@ -18,6 +18,7 @@ export class MatchService {
   public chatMessages: Observable<Message[]>;
 
   constructor(private http: HttpClient) {
+    console.log('constructor from match service');
     this.matchLoadingSubject = new BehaviorSubject<boolean>(false);
     this.matchLoading = this.matchLoadingSubject.asObservable();
 

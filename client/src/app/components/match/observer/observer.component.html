@@ -16,11 +16,17 @@
       </div>
     </div>
   </div>
-  <div
-    class="card col-md-6 offset-md-3 mt-3 card-body mt-3 text-center"
-    *ngIf="positioniongPhase"
-  >
-    <p class="card-text">The players are placing their ships... Please wait</p>
+  <div class="card bg-info text-white mt-3 shadow-5" *ngIf="positioningPhase">
+    <div class="card-body">
+      <div class="d-flex align-items-center">
+        <strong>The players are placing their ships...</strong>
+        <div
+          class="spinner-border ms-auto"
+          role="status"
+          aria-hidden="true"
+        ></div>
+      </div>
+    </div>
   </div>
 
   <div class="row">
