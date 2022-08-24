@@ -490,7 +490,7 @@ export class GameComponent implements OnInit {
    */
   public leaveMatch(): void {
     // update match stats first
-    this.updateMatchStats({ endTime: new Date() });
+    this.updateMatchStats({ endTime: new Date() }).subscribe();
 
     // delete user stats
     this.localStorageService.removeLocal('userStats');

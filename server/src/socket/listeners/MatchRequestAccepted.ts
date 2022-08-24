@@ -26,7 +26,7 @@ export class MatchRequestAcceptedListener extends ListenerNotifier<
     super(ioServer, client, 'match-request-accepted');
   }
 
-  public async listen(): Promise<MatchFoundEmitter[]> {
+  public async listen(): Promise<void> {
     const emitterProvider = async (
       eventData: MatchRequestAcceptedData
     ): Promise<MatchFoundEmitter[]> => {
