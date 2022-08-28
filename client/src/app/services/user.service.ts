@@ -83,7 +83,7 @@ export class UserService {
         },
       });
 
-    //
+    // when a friend connect this event will be triggered
     this.socketService
       .friendOnlineListener()
       .pipe(untilDestroyed(this))
@@ -98,7 +98,7 @@ export class UserService {
         },
       });
 
-    //
+    // when a friend disconnect this event will be triggered
     this.socketService
       .friendOfflineListener()
       .pipe(untilDestroyed(this))
@@ -113,7 +113,7 @@ export class UserService {
         },
       });
 
-    //
+    // when the other user reject the match
     this.socketService
       .matchRejectListener()
       .pipe(untilDestroyed(this))

@@ -17,6 +17,10 @@ import { MatchLeftListener } from './socket/listeners/MatchLeft';
 import { MatchRequestAcceptedListener } from './socket/listeners/MatchRequestAccepted';
 import { CloseConnectionListener } from './socket/listeners/CloseConnection';
 import { MatchRequestRejectedListener } from './socket/listeners/MatchRequestRejected';
+import { Types } from 'mongoose';
+import { getUserById, UserDocument } from './models/User';
+import { retrieveId } from './utils/param-checking';
+import { FriendOnlineEmitter } from './socket/emitters/FriendOnline';
 
 dotenv.config();
 colors.enable();
@@ -86,13 +90,23 @@ export const ioServer: io.Server = new io.Server(httpServer, {
 });
 
 // Socket server configuration
-ioServer.use((client, next) => {
-  const userId = client.handshake.auth.userId;
-  client.userId = userId;
+ioServer.use(async (client, next) => {
+  const id = client.handshake.auth.userId;
+  client.userId = id;
+  client.join(id);
 
-  client.join(userId);
+  const userId: Types.ObjectId = retrieveId(client.userId);
+  const user: UserDocument = await getUserById(userId);
+  await user.setOnlineStatus(true);
+
+  // inform other users
+  user.relationships.map((relationship) => {
+    new FriendOnlineEmitter(ioServer, relationship.friendId.toString()).emit({
+      userId: user._id.toString(),
+    });
+  });
+
   console.log(`${client.userId} connected!`);
-
   next();
 });
 

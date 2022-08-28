@@ -8,7 +8,7 @@ interface FriendOfflineEmitterData {
 export class FriendOfflineEmitter extends RoomEmitter<FriendOfflineEmitterData> {
   /**
    * @param ioServer the socket server istance
-   * @param friendId the match id
+   * @param friendId the friend id
    */
   constructor(ioServer: Server, friendId: string) {
     super(ioServer, 'friend-offline', friendId);
