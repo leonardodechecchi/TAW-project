@@ -24,9 +24,11 @@ export class HomeComponent implements OnInit {
     this.matchService.updateMatchLoading(true);
 
     // post request to enter queue list
-    this.matchService.searchForAMatch(this.accountService.getId()).subscribe();
-
-    // navigate to waiting room component
-    this.router.navigate(['match', 'waiting-room']);
+    this.matchService.searchForAMatch(this.accountService.getId()).subscribe({
+      next: () => {
+        // navigate to waiting room component
+        this.router.navigate(['match', 'waiting-room']);
+      },
+    });
   }
 }

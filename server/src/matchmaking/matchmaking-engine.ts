@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createMatch, MatchDocument } from '../models/Match';
-import { MatchmakingQueueModel, QueueEntryDocument } from '../models/matchmaking/QueueEntry';
+import { MatchmakingQueueModel, QueueEntryDocument } from '../models/QueueEntry';
 import { getUserById, UserDocument } from '../models/User';
 import { MatchFoundEmitter } from '../socket/emitters/MatchFound';
 

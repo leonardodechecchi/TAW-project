@@ -1,5 +1,5 @@
 import { Schema, SchemaTypes, Types, model, HydratedDocument } from 'mongoose';
-import { StatusError } from '../StatusError';
+import { StatusError } from './StatusError';
 
 /**
  * Interface that represents a queue entry for the matchmaking engine.

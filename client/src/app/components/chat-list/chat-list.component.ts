@@ -25,7 +25,11 @@ export class ChatListComponent implements OnInit {
   public ngOnInit(): void {
     this.userService.getUserChats(this.accountService.getId()).subscribe({
       next: (chats) => {
-        this.chats = chats;
+        this.chats = chats.sort((a, b) => {
+          const date1: Date = new Date(a.messages[a.messages.length - 1].date);
+          const date2: Date = new Date(b.messages[b.messages.length - 1].date);
+          return date2.getTime() - date1.getTime();
+        });
       },
     });
   }
