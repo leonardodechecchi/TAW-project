@@ -35,7 +35,6 @@ export interface User {
   roles: string[];
   online: boolean;
   stats: UserStats;
-  imagePath: string;
   relationships: Relationship[];
   notifications: Notification[];
 }
@@ -184,11 +183,6 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
     type: userStatsSchema,
     default: () => ({}),
   },
-  imagePath: {
-    type: SchemaTypes.String,
-    required: true,
-    default: 'http://localhost:8000/images/default_profile_picture.jpg',
-  },
   relationships: {
     type: [relationshipSchema],
   },
@@ -281,14 +275,6 @@ userSchema.method(
   'updateStats',
   async function (this: UserDocument, stats: UserStats): Promise<UserDocument> {
     this.stats = stats;
-    return this.save();
-  }
-);
-
-userSchema.method(
-  'updateProfilePicture',
-  async function (this: UserDocument, imagePath: string): Promise<UserDocument> {
-    this.imagePath = imagePath;
     return this.save();
   }
 );
@@ -436,7 +422,7 @@ export async function getUserRelationships(userId: Types.ObjectId): Promise<User
  * Delete the relationship between the user and the given friend id.
  * Return an error if the relationship does not exists.
  * @param user the user record
- * @param friendId the friend id
+ * @param friend the friend record
  * @returns a Promise of `UserDocument`, i.e. the user record updated
  */
 async function deleteUserRelationship(

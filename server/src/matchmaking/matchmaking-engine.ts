@@ -1,65 +1,81 @@
 import { Server } from 'socket.io';
-import { createMatch, MatchDocument } from '../models/Match';
-import { MatchmakingQueueModel, QueueEntryDocument } from '../models/QueueEntry';
-import { getUserById, UserDocument } from '../models/User';
-import { MatchFoundEmitter } from '../socket/emitters/MatchFound';
+import { MatchmakingQueueModel, QueueEntry, QueueEntryDocument } from '../models/QueueEntry';
 
 export class MatchmakingEngine {
   /**
    *
    */
-  private intervalId: NodeJS.Timer | null;
+  private _intervalId: NodeJS.Timer;
 
   /**
    *
    */
-  private readonly ioServer: Server;
+  private readonly _sIoServer: Server;
 
   /**
    *
    */
-  private readonly pollingTime: number;
+  private readonly _pollingTime: number;
 
-  public constructor(ioServer: Server, pollingTime: number = 5000) {
-    this.intervalId = null;
-    this.ioServer = ioServer;
-    this.pollingTime = pollingTime;
+  public constructor(sIoServer: Server, pollingTime: number = 5000) {
+    this._intervalId = null;
+    this._sIoServer = sIoServer;
+    this._pollingTime = pollingTime;
   }
 
   /**
    *
    */
   public start(): void {
-    if (this.intervalId !== null) {
+    if (this._intervalId !== null) {
       return;
     }
 
-    this.intervalId = setInterval(() => {}, this.pollingTime);
-  }
-
-  /**
-   *
-   * @returns
-   */
-  public stop(): void {
-    if (this.intervalId === null) {
-      return;
-    }
-
-    clearInterval(this.intervalId);
-    this.intervalId = null;
+    this._intervalId = setTimeout(this.arrangeMatches, this._pollingTime);
   }
 
   /**
    *
    */
   private async arrangeMatches(): Promise<void> {
-    const queue: QueueEntryDocument[] = await MatchmakingQueueModel.find({}).exec();
+    const queue: QueueEntryDocument[] = await MatchmakingQueueModel.find({}).sort({
+      queuedSince: 1,
+    });
 
     while (queue.length > 1) {
-      const player: QueueEntryDocument | undefined = queue.pop();
-      const opponent: QueueEntryDocument | undefined = undefined; /** todo find opponent */
+      console.log('arranging matches...');
+      const player: QueueEntryDocument = queue.pop();
+      const opponent: QueueEntryDocument | null = this.findOpponent(player, queue);
+
+      if (opponent !== null) {
+        await this.arrangeMatch(player, opponent);
+      }
     }
+  }
+
+  /**
+   *
+   * @param player
+   * @param queue
+   * @returns
+   */
+  private findOpponent(
+    player: QueueEntryDocument,
+    queue: QueueEntryDocument[]
+  ): QueueEntryDocument | null {
+    const potentialOpponents: QueueEntryDocument[] = queue.filter((entry) => {
+      return this.arePlayersMatchable(player, entry);
+    });
+
+    if (potentialOpponents.length === 0) return null;
+
+    potentialOpponents.sort((entry1: QueueEntryDocument, entry2: QueueEntryDocument) => {
+      if (entry1.queuedSince < entry2.queuedSince) return 1;
+      else if (entry1.queuedSince > entry2.queuedSince) return -1;
+      else return 0;
+    });
+
+    return potentialOpponents.pop();
   }
 
   /**
@@ -67,16 +83,33 @@ export class MatchmakingEngine {
    * @param player1
    * @param player2
    */
-  private static arePlayersMatchable(
-    player1: QueueEntryDocument,
-    player2: QueueEntryDocument
-  ): boolean {
+  private arePlayersMatchable(player1: QueueEntryDocument, player2: QueueEntryDocument): boolean {
+    const p1EloDelta: number = this.getEloDelta(player1);
+    const p2EloDelta: number = this.getEloDelta(player2);
     const eloDiff: number = Math.abs(player1.elo - player2.elo);
 
-    const isP1Skilled: boolean = eloDiff <= 200;
-    const isP2Skilled: boolean = eloDiff <= 200;
+    const isP1Skill: boolean = eloDiff <= p1EloDelta;
+    const isP2Skill: boolean = eloDiff <= p2EloDelta;
 
-    return isP1Skilled && isP2Skilled;
+    return isP1Skill && isP2Skill;
+  }
+
+  /**
+   *
+   * @param player
+   * @returns
+   */
+  private getEloDelta(player: QueueEntry): number {
+    const startingDelta: number = 100;
+    const timeBeforeIncreaseMs: number = 5000;
+
+    // Delta's multiplier depends on time spent in queue
+    // The more time he spent there, the more the delta is wide,
+    // which means that a match should be found more easily
+    const timeSpentInQueueMs: number = player.queuedSince.getMilliseconds();
+    const multiplier = Math.ceil(timeSpentInQueueMs / timeBeforeIncreaseMs);
+
+    return startingDelta * multiplier;
   }
 
   /**
@@ -88,6 +121,8 @@ export class MatchmakingEngine {
     player1: QueueEntryDocument,
     player2: QueueEntryDocument
   ): Promise<void> {
+    console.log('creating match...');
+    /*
     const user1: UserDocument = await getUserById(player1.userId);
     const user2: UserDocument = await getUserById(player2.userId);
 
@@ -104,5 +139,19 @@ export class MatchmakingEngine {
 
     emitter1.emit({ matchId: match._id.toString() });
     emitter2.emit({ matchId: match._id.toString() });
+    */
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public stop(): void {
+    if (this._intervalId === null) {
+      return;
+    }
+
+    clearInterval(this._intervalId);
+    this._intervalId = null;
   }
 }

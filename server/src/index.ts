@@ -21,6 +21,7 @@ import { Types } from 'mongoose';
 import { getUserById, UserDocument } from './models/User';
 import { retrieveId } from './utils/param-checking';
 import { FriendOnlineEmitter } from './socket/emitters/FriendOnline';
+import { MatchmakingEngine } from './matchmaking/matchmaking-engine';
 
 dotenv.config();
 colors.enable();
@@ -159,3 +160,6 @@ ioServer.on('connection', (client: io.Socket) => {
 httpServer.listen(port, () => {
   console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
 });
+
+const matchmakingEngine = new MatchmakingEngine(ioServer, 5000);
+matchmakingEngine.start();
