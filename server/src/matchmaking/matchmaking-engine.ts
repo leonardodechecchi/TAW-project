@@ -1,37 +1,54 @@
 import { Server } from 'socket.io';
-import { MatchmakingQueueModel, QueueEntry, QueueEntryDocument } from '../models/QueueEntry';
+import { createMatch, MatchDocument } from '../models/Match';
+import {
+  deleteQueueEntry,
+  MatchmakingQueueModel,
+  QueueEntry,
+  QueueEntryDocument,
+} from '../models/QueueEntry';
+import { getUserById, UserDocument } from '../models/User';
+import { MatchFoundEmitter } from '../socket/emitters/MatchFound';
 
 export class MatchmakingEngine {
   /**
-   *
+   * The timer id.
    */
-  private _intervalId: NodeJS.Timer;
+  private timeoutId: NodeJS.Timer;
 
   /**
-   *
+   * The socket io server instance.
    */
-  private readonly _sIoServer: Server;
+  private readonly ioServer: Server;
 
   /**
-   *
+   * The time to wait before the server start to work.
    */
-  private readonly _pollingTime: number;
+  private readonly pollingTime: number;
 
-  public constructor(sIoServer: Server, pollingTime: number = 5000) {
-    this._intervalId = null;
-    this._sIoServer = sIoServer;
-    this._pollingTime = pollingTime;
+  public constructor(ioServer: Server, pollingTime: number = 5000) {
+    this.timeoutId = null;
+    this.ioServer = ioServer;
+    this.pollingTime = pollingTime;
   }
 
   /**
-   *
+   * Start the matchmaking engine
    */
   public start(): void {
-    if (this._intervalId !== null) {
-      return;
+    if (this.timeoutId !== null) {
+      throw new Error('Matchmaking engine already started');
     }
 
-    this._intervalId = setTimeout(this.arrangeMatches, this._pollingTime);
+    this.refreshMatchmakingEngine();
+  }
+
+  /**
+   * Refresh the matchmaking engine.
+   */
+  private refreshMatchmakingEngine(): void {
+    this.timeoutId = setTimeout(async () => {
+      await this.arrangeMatches();
+    }, this.pollingTime);
   }
 
   /**
@@ -43,7 +60,6 @@ export class MatchmakingEngine {
     });
 
     while (queue.length > 1) {
-      console.log('arranging matches...');
       const player: QueueEntryDocument = queue.pop();
       const opponent: QueueEntryDocument | null = this.findOpponent(player, queue);
 
@@ -51,13 +67,15 @@ export class MatchmakingEngine {
         await this.arrangeMatch(player, opponent);
       }
     }
+
+    this.refreshMatchmakingEngine();
   }
 
   /**
-   *
-   * @param player
-   * @param queue
-   * @returns
+   * Find a potential opponent for the given player.
+   * @param player the player
+   * @param queue the matchmaking queue
+   * @returns the opponent or `null` if no potential player has been found
    */
   private findOpponent(
     player: QueueEntryDocument,
@@ -79,9 +97,10 @@ export class MatchmakingEngine {
   }
 
   /**
-   *
-   * @param player1
-   * @param player2
+   * Check if the given players are matchable based on their elo points.
+   * @param player1 the first player
+   * @param player2 the second player
+   * @returns `true` if the players are matchable, `false` otherwise
    */
   private arePlayersMatchable(player1: QueueEntryDocument, player2: QueueEntryDocument): boolean {
     const p1EloDelta: number = this.getEloDelta(player1);
@@ -113,16 +132,14 @@ export class MatchmakingEngine {
   }
 
   /**
-   *
-   * @param player1
-   * @param player2
+   * Create a match for the matched players and inform them.
+   * @param player1 the first player
+   * @param player2 the second player
    */
   private async arrangeMatch(
     player1: QueueEntryDocument,
     player2: QueueEntryDocument
   ): Promise<void> {
-    console.log('creating match...');
-    /*
     const user1: UserDocument = await getUserById(player1.userId);
     const user2: UserDocument = await getUserById(player2.userId);
 
@@ -137,21 +154,10 @@ export class MatchmakingEngine {
       player2.userId.toString()
     );
 
+    await deleteQueueEntry(user1._id);
+    await deleteQueueEntry(user2._id);
+
     emitter1.emit({ matchId: match._id.toString() });
     emitter2.emit({ matchId: match._id.toString() });
-    */
-  }
-
-  /**
-   *
-   * @returns
-   */
-  public stop(): void {
-    if (this._intervalId === null) {
-      return;
-    }
-
-    clearInterval(this._intervalId);
-    this._intervalId = null;
   }
 }

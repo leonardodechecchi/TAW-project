@@ -85,7 +85,6 @@ export class GameComponent implements OnInit {
               .subscribe({
                 next: (user) => {
                   this.userStats = user.stats;
-                  console.log(this.userStats);
                 },
               });
 
@@ -520,7 +519,9 @@ export class GameComponent implements OnInit {
     }
 
     // update stats
-    this.updateMatchStats({ totalShots: ++this.matchStats.totalShots });
+    this.updateMatchStats({
+      totalShots: ++this.matchStats.totalShots,
+    }).subscribe();
 
     // update user stats
     this.updateLocalUserStats({

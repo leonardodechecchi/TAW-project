@@ -5,7 +5,6 @@ import { environment } from 'src/environments/environment';
 import { Grid } from '../models/Grid';
 import { GridCoordinates } from '../models/GridCoordinates';
 import { Match, MatchStats } from '../models/Match';
-import { Message } from '../models/Message';
 
 @Injectable({
   providedIn: 'root',
@@ -14,57 +13,43 @@ export class MatchService {
   private matchLoadingSubject: BehaviorSubject<boolean>;
   public matchLoading: Observable<boolean>;
 
-  private chatMessagesSubject: BehaviorSubject<Message[]>;
-  public chatMessages: Observable<Message[]>;
-
   constructor(private http: HttpClient) {
     this.matchLoadingSubject = new BehaviorSubject<boolean>(false);
     this.matchLoading = this.matchLoadingSubject.asObservable();
-
-    this.chatMessagesSubject = new BehaviorSubject<Message[]>([]);
-    this.chatMessages = this.chatMessagesSubject.asObservable();
   }
 
   /**
-   *
-   * @param isLoading
+   * Update the `matchLoading` BehaviorSubject.
+   * @param isLoading if `true` it means that the match is loading,
+   * if `false` the match is not loading
    */
   public updateMatchLoading(isLoading: boolean): void {
     this.matchLoadingSubject.next(isLoading);
   }
 
   /**
-   *
-   * @param message
-   */
-  public updateChatMessages(message: Message): void {
-    this.chatMessagesSubject.value.push(message);
-    this.chatMessagesSubject.next(this.chatMessagesSubject.value);
-  }
-
-  /**
-   *
-   * @param matchId
-   * @returns
+   * Return the match that matches `matchId`.
+   * @param matchId the match id
+   * @returns an Observable of `Match`, i.e. the match found
    */
   public getMatch(matchId: string): Observable<Match> {
     return this.http.get<Match>(`${environment.match_endpoint}/${matchId}`);
   }
 
   /**
-   *
-   * @returns
+   * Return the list of the active matches.
+   * @returns an Observable of `Match[]`, i.e. the list of active matches
    */
   public getActiveMatches(): Observable<Match[]> {
     return this.http.get<Match[]>(environment.match_endpoint);
   }
 
   /**
-   *
-   * @param matchId
-   * @param playerUsername
-   * @param grid
-   * @returns
+   * Update the player grid.
+   * @param matchId the match id
+   * @param playerUsername the player username
+   * @param grid the updated grid
+   * @returns an Observable of `Match`, i.e. the match record updated
    */
   public updatePlayerGrid(
     matchId: string,
@@ -79,11 +64,11 @@ export class MatchService {
   }
 
   /**
-   *
-   * @param matchId
-   * @param playerUsername
-   * @param isReady
-   * @returns
+   * Set the player as ready (or not) to play.
+   * @param matchId the match id
+   * @param playerUsername the player username
+   * @param isReady `true` if ready, `false` otherwise
+   * @returns an Observable of `Match`, i.e. the match record updated
    */
   public setPlayerReady(
     matchId: string,
@@ -98,11 +83,11 @@ export class MatchService {
   }
 
   /**
-   *
-   * @param matchId
-   * @param playerUsername
-   * @param coordinates
-   * @returns
+   * Fires a shot.
+   * @param matchId the match id
+   * @param playerUsername the player username
+   * @param coordinates the shot coordinates
+   * @returns an Observable of `Match`, i.e. the match record updated
    */
   public fireAShot(
     matchId: string,
@@ -117,10 +102,10 @@ export class MatchService {
   }
 
   /**
-   *
-   * @param matchId
-   * @param stats
-   * @returns
+   * Update the match stats with the given ones.
+   * @param matchId the match id
+   * @param stats the new stats
+   * @returns an Observable of `Match`, i.e. the match record updated
    */
   public updateMatchStats(
     matchId: string,
@@ -134,9 +119,9 @@ export class MatchService {
   }
 
   /**
-   *
-   * @param userId
-   * @returns
+   * Put the user into the matchmaking queue.
+   * @param userId the user id
+   * @returns an empty Observable
    */
   public searchForAMatch(userId: string): Observable<void> {
     const body = { userId };
