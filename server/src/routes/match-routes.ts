@@ -4,7 +4,7 @@ import { auth, ioServer } from '..';
 import { Grid } from '../models/Grid';
 import { GridCoordinates } from '../models/GridCoordinates';
 import { Player } from '../models/Player';
-import { createMatch, getActiveMatches, getMatchById, MatchDocument } from '../models/Match';
+import { getActiveMatches, getMatchById, MatchDocument } from '../models/Match';
 import { PlayerStateChangedEmitter } from '../socket/emitters/PlayerStateChanged';
 import { PositioningCompletedEmitter } from '../socket/emitters/PositioningCompleted';
 import { retrieveId } from '../utils/param-checking';
@@ -13,26 +13,6 @@ import { deleteChatById } from '../models/Chat';
 import { MatchStats } from '../models/MatchStats';
 
 const router = Router();
-
-/**
- * POST /matches
- */
-router.post(
-  '/matches',
-  auth,
-  async (req: Request<{}, {}, { username1: string; username2: string }>, res, next) => {
-    try {
-      const { username1, username2 } = req.body;
-      const match: MatchDocument = await createMatch(username1, username2);
-
-      // TODO emit message that the opponent accepted the match
-
-      return res.status(200).json(match);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 /**
  * GET /matches

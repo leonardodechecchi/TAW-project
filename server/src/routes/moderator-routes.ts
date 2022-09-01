@@ -19,23 +19,27 @@ const router = Router();
 /**
  * GET /users
  */
-router.get('/moderators/:moderatorId/users', auth, async (req, res, next) => {
-  try {
-    const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
-    const moderator: UserDocument = await getUserById(moderatorId);
+router.get(
+  '/moderators/:moderatorId/users',
+  auth,
+  async (req: Request<{ moderatorId: string }>, res, next) => {
+    try {
+      const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
+      const moderator: UserDocument = await getUserById(moderatorId);
 
-    if (moderator.isAdmin() || moderator.isModerator()) {
-      // get all users except admins and moderators
-      const users: UserDocument[] = await UserModel.find({
-        roles: { $nin: ['Moderator', 'Admin'] },
-      }).exec();
-      return res.status(200).json(users);
+      if (moderator.isAdmin() || moderator.isModerator()) {
+        // get all users except admins and moderators
+        const users: UserDocument[] = await UserModel.find({
+          roles: { $nin: ['Moderator', 'Admin'] },
+        }).exec();
+        return res.status(200).json(users);
+      }
+      return next(new StatusError(401, 'Unauthorized'));
+    } catch (err) {
+      next(err);
     }
-    return next(new StatusError(401, 'Unauthorized'));
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 /**
  * POST /moderators/:moderatorId/users

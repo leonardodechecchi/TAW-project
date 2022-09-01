@@ -35,10 +35,10 @@ export class ModeratorService {
   }
 
   /**
-   *
-   * @param moderatorId
-   * @param userUsername
-   * @returns
+   * Create a new chat with the given user.
+   * @param moderatorId the moderator id
+   * @param userUsername the user username
+   * @returns an Observable of `Chat`, i.e. the chat created
    */
   public createChat(
     moderatorId: string,
@@ -52,9 +52,10 @@ export class ModeratorService {
   }
 
   /**
-   *
-   * @param moderatorId
-   * @returns
+   * Get all the chats from db if the requester has
+   * moderator or admin role.
+   * @param moderatorId the moderator id
+   * @returns an Observable of `Chat[]`, i.e. the list of chats
    */
   public getChats(moderatorId: string): Observable<Chat[]> {
     return this.http.get<Chat[]>(

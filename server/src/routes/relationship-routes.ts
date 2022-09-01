@@ -120,16 +120,4 @@ router.post(
   }
 );
 
-/**
- * // TODO
- * DELETE /users/:userId/relationships/chat/:chatId
- */
-router.delete('/users/:userId/relationships/chat/:chatId', auth, async (req, res, next) => {
-  try {
-    throw new Error('Not implemented');
-  } catch (err) {
-    next(err);
-  }
-});
-
 export = router;
