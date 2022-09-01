@@ -55,6 +55,7 @@ import { Error404Component } from './components/error-404/error-404.component';
 import { WinnerComponent } from './components/match/winner/winner.component';
 import { MatchNotLoadingGuardService } from './services/match-not-loading-guard.service';
 import { ModeratorFormComponent } from './components/admin-dashboard/moderator-form/moderator-form.component';
+import { Error403Component } from './components/error-403/error-403.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -169,6 +170,7 @@ const routes: Routes = [
       MatchLoadingGuardService,
     ],
   },
+  { path: 'access-denied', component: Error403Component },
   { path: '**', component: Error404Component, pathMatch: 'full' },
 ];
 
@@ -199,6 +201,7 @@ const routes: Routes = [
     Error404Component,
     WinnerComponent,
     ModeratorFormComponent,
+    Error403Component,
   ],
   imports: [
     BrowserModule,

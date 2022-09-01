@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
+  Router,
   RouterStateSnapshot,
 } from '@angular/router';
 import { AccountService } from './account.service';
@@ -13,7 +14,8 @@ import { AuthService } from './auth.service';
 export class AuthGuardService implements CanActivate {
   constructor(
     private accountService: AccountService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   canActivate(
@@ -22,13 +24,16 @@ export class AuthGuardService implements CanActivate {
   ): boolean {
     if (
       !this.accountService.getToken() ||
-      !this.accountService.isTokenValid() ||
-      (!this.accountService.isAdmin() &&
-        !this.accountService.isModerator() &&
-        !this.accountService.isActive())
+      !this.accountService.isTokenValid()
     ) {
       this.authService.logout();
       return false;
+    } else if (
+      !this.accountService.isAdmin() &&
+      !this.accountService.isModerator() &&
+      !this.accountService.isActive()
+    ) {
+      this.router.navigate(['access-denied']);
     }
     return true;
   }
