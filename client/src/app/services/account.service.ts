@@ -53,6 +53,24 @@ export class AccountService {
   }
 
   /**
+   * Get the user name.
+   * @returns the user name or undefined if no token found
+   */
+  public getName(): string | undefined {
+    if (!this.token) return;
+    return this.token.name;
+  }
+
+  /**
+   * Get the user surname.
+   * @returns the user surname or undefined if no token found
+   */
+  public getSurname(): string | undefined {
+    if (!this.token) return;
+    return this.token.surname;
+  }
+
+  /**
    * Get the user username.
    * @returns the user username or undefined if no token found
    */

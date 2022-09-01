@@ -47,18 +47,26 @@ router.get(
 router.post(
   '/moderators/:moderatorId/users',
   auth,
-  async (req: Request<{ moderatorId: string }>, res, next) => {
+  async (
+    req: Request<{ moderatorId: string }, {}, { name: string; surname: string; email: string }>,
+    res,
+    next
+  ) => {
     try {
       const moderatorId: Types.ObjectId = retrieveId(req.params.moderatorId);
       const moderator: UserDocument = await getUserById(moderatorId);
 
-      if (moderator.isAdmin() || moderator.isModerator()) {
-        const randomPwd: string = process.env.TMP_PWD || '';
+      if (moderator.isAdmin()) {
+        const temporaryPwd: string = process.env.TMP_PWD || 'battleship-2022';
         const randomUsername: string = 'moderator' + Math.floor(Date.now() + Math.random());
+        const { name, surname, email } = req.body;
 
         const newModerator: UserDocument = await createUser({
+          name,
+          surname,
+          email,
           username: randomUsername,
-          password: randomPwd,
+          password: temporaryPwd,
         });
         await newModerator.setRole(UserRoles.Moderator);
         return res.status(200).json(formatUser(newModerator));

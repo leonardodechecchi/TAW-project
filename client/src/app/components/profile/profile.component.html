@@ -70,6 +70,29 @@
               Update
             </button>
           </div>
+          <mdb-form-control class="flex-grow-1">
+            <input
+              mdbInput
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              [readonly]="true"
+            />
+            <label mdbLabel class="form-label" for="name">Name</label>
+          </mdb-form-control>
+          <mdb-form-control class="flex-grow-1">
+            <input
+              mdbInput
+              type="text"
+              id="surname"
+              class="form-control"
+              formControlName="surname"
+              [readonly]="true"
+            />
+            <label mdbLabel class="form-label" for="surname">Surname</label>
+          </mdb-form-control>
+
           <mdb-form-control>
             <input
               mdbInput

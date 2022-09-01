@@ -11,6 +11,8 @@ export const formatUser = (
   user: User
 ): {
   userId: Types.ObjectId;
+  name: string;
+  surname: string;
   username: string;
   status: UserStatus;
   online: boolean;
@@ -19,6 +21,8 @@ export const formatUser = (
 } => {
   return {
     userId: user._id,
+    name: user.name,
+    surname: user.surname,
     username: user.username,
     status: user.status,
     online: user.online,

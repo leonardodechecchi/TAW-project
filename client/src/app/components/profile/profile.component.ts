@@ -39,6 +39,8 @@ export class ProfileComponent implements OnInit {
     });
 
     this.profileForm = new FormGroup({
+      name: new FormControl(this.accountService.getName()),
+      surname: new FormControl(this.accountService.getSurname()),
       username: new FormControl(this.accountService.getUsername(), [
         Validators.required,
         Validators.minLength(2),

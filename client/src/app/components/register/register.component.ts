@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -10,20 +9,29 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public errorMessage: string;
+  public infoMessage: string;
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.form = this.formBuilder.group({
+      name: ['', Validators.required],
+      surname: ['', Validators.required],
       username: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.required],
       repeatPassword: ['', Validators.required],
     });
+  }
+
+  get name() {
+    return this.form.get('name');
+  }
+  get surname() {
+    return this.form.get('surname');
   }
 
   get username() {
@@ -38,18 +46,30 @@ export class RegisterComponent implements OnInit {
     return this.form.get('password');
   }
 
-  submit() {
+  /**
+   * Submit the register form.
+   */
+  public submit() {
+    this.infoMessage = null;
+
     if (this.form.valid) {
       this.authService
-        .register(this.username.value, this.email.value, this.password.value)
+        .register(
+          this.name.value,
+          this.surname.value,
+          this.username.value,
+          this.email.value,
+          this.password.value
+        )
         .subscribe({
           next: () => {
             this.errorMessage = '';
-            this.router.navigate(['/login']);
+            this.infoMessage =
+              'We have sent you an email, please check it to continue';
           },
           error: (err) => {
             console.error(err);
-            this.errorMessage = err;
+            this.errorMessage = err.error;
           },
         });
     }

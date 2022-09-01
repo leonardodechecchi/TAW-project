@@ -31,6 +31,8 @@ export interface UserStats {
  */
 export interface User {
   userId: string;
+  name: string;
+  surname: string;
   username: string;
   status: UserStatus;
   online: boolean;

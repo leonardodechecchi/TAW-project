@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { UserModel, UserRoles, UserStatus } from '../models/User';
+import { createUser, UserDocument, UserModel, UserRoles, UserStatus } from '../models/User';
 import colors from 'colors';
 
 const dbURI: string | undefined = process.env.DATABASE_URI;
@@ -10,14 +10,18 @@ mongoose.connect(`mongodb://${dbURI}`);
 mongoose.connection.on('connected', async () => {
   try {
     // on connection create an admin user if not exists
-    let admin = await UserModel.findOne({ username: 'admin' }).exec();
+    let admin: UserDocument | null = await UserModel.findOne({ username: 'admin' }).exec();
     if (!admin) {
       console.log(`${strColor}: No admin account found. Creating a new one...`);
-      admin = new UserModel({
-        email: 'admin@battleship.it',
+
+      admin = await createUser({
+        name: 'Leonardo',
+        surname: 'De Checchi',
+        email: 'leonardo-dechecchi@battleship.it',
         username: 'admin',
+        password: 'admin',
       });
-      await admin.setPassword('admin');
+
       await admin.setRole(UserRoles.Admin);
       await admin.setStatus(UserStatus.Active);
     }
@@ -28,40 +32,41 @@ mongoose.connection.on('connected', async () => {
       console.log(`${strColor}: No test accounts found. Creating new ones...`);
 
       // user1
-      const user1 = new UserModel({
-        email: 'example1@battleship.it',
-        username: 'example1',
+      const user1: UserDocument = await createUser({
+        name: 'Mario',
+        surname: 'Rossi',
+        email: 'mario-rossi@battleship.it',
+        username: 'mario-rossi',
+        password: 'mario-rossi',
       });
-      await user1.setPassword('example1');
-      await user1.setRole(UserRoles.Standard);
       await user1.setStatus(UserStatus.Active);
 
       // user2
-      const user2 = new UserModel({
-        email: 'example2@battleship.it',
-        username: 'example2',
+      const user2: UserDocument = await createUser({
+        name: 'Laura',
+        surname: 'Villa',
+        email: 'laura-villa@battleship.it',
+        username: 'laura-villa',
+        password: 'laura-villa',
       });
-      await user2.setPassword('example2');
-      await user2.setRole(UserRoles.Standard);
       await user2.setStatus(UserStatus.Active);
 
-      // adding relationships for testing purposes
-      await admin.addRelationship(user1._id);
-      await admin.addRelationship(user2._id);
+      // adding relationshis for testing purpose
+      await user1.addRelationship(user2._id);
 
-      // moderator1
-      const user3 = new UserModel({
-        email: 'moderator1@battleship.it',
-        username: 'moderator1',
+      // user3 - moderator account
+      const user3: UserDocument = await createUser({
+        name: 'Roberto',
+        surname: 'Riva',
+        email: 'roberto-riva@battleship.it',
+        username: 'roberto-riva',
+        password: 'roberto-riva',
       });
-      await user3.setPassword('moderator');
-      await user3.setRole(UserRoles.Standard);
       await user3.setRole(UserRoles.Moderator);
     }
     console.log(`${strColor}: Mongoose connection open to mongodb://${dbURI}`);
   } catch (err) {
     console.log(err);
-    // che facciamo ???
   }
 });
 

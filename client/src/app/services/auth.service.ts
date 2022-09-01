@@ -15,7 +15,14 @@ export class AuthService {
     private router: Router
   ) {}
 
-  login(
+  /**
+   * Logs in the user.
+   * @param email the user email
+   * @param password the user password
+   * @param remember remember me
+   * @returns an Observable of `string`, i.e. the JWT token
+   */
+  public login(
     email: string,
     password: string,
     remember: boolean
@@ -35,12 +42,23 @@ export class AuthService {
       );
   }
 
-  register(
+  /**
+   * Create a new user account.
+   * @param name the user name
+   * @param surname the user surname
+   * @param username the user username
+   * @param email the user email
+   * @param password the user password
+   * @returns an empty Observable
+   */
+  public register(
+    name: string,
+    surname: string,
     username: string,
     email: string,
     password: string
   ): Observable<void> {
-    const body = { username, email, password };
+    const body = { name, surname, username, email, password };
     const options = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
@@ -51,7 +69,10 @@ export class AuthService {
     );
   }
 
-  logout(): void {
+  /**
+   * Logs out the user deleting the JWT token from local storage.
+   */
+  public logout(): void {
     this.localStorageService.removeLocal('token');
     this.localStorageService.removeSession('token');
     this.router.navigate(['/auth']);

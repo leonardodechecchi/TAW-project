@@ -1,0 +1,58 @@
+<div class="card col-md-6 offset-md-3 mt-3">
+  <div class="card-header">
+    <strong
+      ><i class="fas fa-user-plus me-2"></i>Create a moderator user</strong
+    >
+  </div>
+  <div class="card-body">
+    <form [formGroup]="moderatorForm">
+      <div class="d-grid gap-3">
+        <mdb-form-control class="flex-grow-1">
+          <input
+            mdbInput
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+          />
+          <label mdbLabel class="form-label" for="name">Name</label>
+        </mdb-form-control>
+        <mdb-form-control class="flex-grow-1">
+          <input
+            mdbInput
+            type="text"
+            id="surname"
+            class="form-control"
+            formControlName="surname"
+          />
+          <label mdbLabel class="form-label" for="surname">Surname</label>
+        </mdb-form-control>
+        <mdb-form-control>
+          <input
+            mdbInput
+            type="text"
+            id="email"
+            class="form-control"
+            formControlName="email"
+          />
+          <label mdbLabel class="form-label" for="email">Email</label>
+        </mdb-form-control>
+        <button
+          mdbRipple
+          class="btn btn-primary mb-2"
+          (click)="createModeratorUser()"
+        >
+          Create
+        </button>
+        <div
+          class="card bg-info text-white mt-1 mb-2 shadow-5"
+          *ngIf="infoMessage"
+        >
+          <div class="card-body">
+            <strong>{{ infoMessage }}</strong>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

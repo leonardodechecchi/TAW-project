@@ -15,7 +15,7 @@ export class AdminDashboardComponent implements OnInit {
   public users: User[];
 
   constructor(
-    private accountService: AccountService,
+    public accountService: AccountService,
     private moderatorService: ModeratorService,
     private modalService: MdbModalService,
     private router: Router

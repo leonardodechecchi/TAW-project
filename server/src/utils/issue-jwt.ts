@@ -13,6 +13,8 @@ const privKey: Buffer = fs.readFileSync(path.join(__dirname, '../../keys', 'jwtR
 export const issueJwt = (user: User): string => {
   const payload = {
     userId: user._id,
+    name: user.name,
+    surname: user.surname,
     username: user.username,
     email: user.email,
     status: user.status,

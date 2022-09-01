@@ -23,6 +23,31 @@ export class ModeratorService {
   }
 
   /**
+   * Create a new user with moderator role.
+   * @param moderatorId the moderator id
+   * @param name the new user name
+   * @param surname the new user surname
+   * @param email the new user email
+   * @returns an Observable of `User`, i.e the new user created
+   */
+  public createModeratorUser(
+    moderatorId: string,
+    name: string,
+    surname: string,
+    email: string
+  ): Observable<User> {
+    const body = {
+      name,
+      surname,
+      email,
+    };
+    return this.http.post<User>(
+      `${environment.moderator_endpoint}/${moderatorId}/users`,
+      body
+    );
+  }
+
+  /**
    * Delete a user.
    * @param moderatorId the moderator id
    * @param userId the user id

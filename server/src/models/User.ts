@@ -28,6 +28,8 @@ export enum UserStatus {
  */
 export interface User {
   readonly _id: Types.ObjectId;
+  name: string;
+  surname: string;
   username: string;
   email: string;
   password: string;
@@ -153,6 +155,14 @@ export type UserRelationships = Relationship[] & Types.DocumentArray<Relationshi
 export type UserNotifications = Notification[] & Types.DocumentArray<Notification>;
 
 const userSchema = new Schema<User, Model<User, {}, UserProps>>({
+  name: {
+    type: SchemaTypes.String,
+    required: true,
+  },
+  surname: {
+    type: SchemaTypes.String,
+    required: true,
+  },
   username: {
     type: SchemaTypes.String,
     required: true,
@@ -160,6 +170,8 @@ const userSchema = new Schema<User, Model<User, {}, UserProps>>({
   },
   email: {
     type: SchemaTypes.String,
+    required: true,
+    unique: true,
   },
   password: {
     type: SchemaTypes.String,
@@ -333,15 +345,22 @@ export const UserModel = model<User, Model<User, {}, UserProps>>('User', userSch
 
 /**
  * Create a standard user with the given information.
- * @param data the user email, username, password
- * @returns a Promise of `UserDocument`, i.e. the new user
+ * @param data the user name, surname, email, username and password
+ * @returns a Promise of `UserDocument`, i.e. the new user record created
  */
 export async function createUser(data: {
-  email?: string;
+  name: string;
+  surname: string;
+  email: string;
   username: string;
   password: string;
 }): Promise<UserDocument> {
-  const user = new UserModel({ email: data.email, username: data.username });
+  const user = new UserModel({
+    name: data.name,
+    surname: data.surname,
+    email: data.email,
+    username: data.username,
+  });
   await user.setPassword(data.password);
   await user.setRole(UserRoles.Standard);
   return Promise.resolve(user);

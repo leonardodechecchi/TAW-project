@@ -22,7 +22,10 @@ export class AuthGuardService implements CanActivate {
   ): boolean {
     if (
       !this.accountService.getToken() ||
-      !this.accountService.isTokenValid()
+      !this.accountService.isTokenValid() ||
+      (!this.accountService.isAdmin() &&
+        !this.accountService.isModerator() &&
+        !this.accountService.isActive())
     ) {
       this.authService.logout();
       return false;

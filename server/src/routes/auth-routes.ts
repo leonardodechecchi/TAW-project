@@ -1,10 +1,24 @@
 import Router, { Request } from 'express';
-import { createUser, getUserByEmail, getUserByUsername, UserDocument } from '../models/User';
+import {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUserByUsername,
+  UserDocument,
+  UserModel,
+  UserStatus,
+} from '../models/User';
 import { StatusError } from '../models/StatusError';
 import { issueJwt } from '../utils/issue-jwt';
 import { auth, ioServer } from '..';
 import { FriendOnlineEmitter } from '../socket/emitters/FriendOnline';
 import { FriendOfflineEmitter } from '../socket/emitters/FriendOffline';
+import { retrieveId } from '../utils/param-checking';
+import { Types } from 'mongoose';
+import { EmailTokenDocument, EmailTokenModel } from '../models/EmailToken';
+import crypto from 'crypto';
+import { sendEmail } from '../config/nodemailer';
+
 const router = Router();
 
 /**
@@ -30,6 +44,7 @@ router.post(
         });
       });
 
+      // create jwt token
       const token = issueJwt(user);
       return res.status(200).json(token);
     } catch (err) {
@@ -64,17 +79,63 @@ router.put('/auth/logout', auth, async (req: Request<{}, {}, { username: string 
 router.post(
   '/auth/register',
   async (
-    req: Request<{}, {}, { username: string; email: string; password: string }>,
+    req: Request<
+      {},
+      {},
+      { name: string; surname: string; username: string; email: string; password: string }
+    >,
     res,
     next
   ) => {
     try {
-      const { username, email, password } = req.body;
-      const user: UserDocument = await createUser({ email, username, password });
+      const { name, surname, username, email, password } = req.body;
 
-      // TODO send email
+      const user: UserDocument = await UserModel.findOne({ email }).exec();
+      if (user) return next(new StatusError(403, 'User with given email already exists'));
 
-      return res.sendStatus(200);
+      // create the new user and email token
+      const newUser: UserDocument = await createUser({ name, surname, email, username, password });
+      const emailToken: EmailTokenDocument = await new EmailTokenModel({
+        userId: newUser._id,
+        token: crypto.randomBytes(32).toString('hex'),
+      }).save();
+
+      // send email
+      const message: string = `Click the <a href="${
+        process.env.BASE_ENDPOINT
+      }/auth/verify/${newUser._id.toString()}/${
+        emailToken.token
+      }">link</a> to verify your email address`;
+
+      await sendEmail(newUser.email, 'Verify your email address', message);
+
+      return res
+        .status(200)
+        .json({ message: 'We sent an email to your account, please verify your email address' });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/**
+ * GET /auth/verify/:userId/:token
+ */
+router.get(
+  '/auth/verify/:userId/:token',
+  async (req: Request<{ userId: string; token: string }>, res, next) => {
+    try {
+      const userId: Types.ObjectId = retrieveId(req.params.userId);
+      const user: UserDocument = await getUserById(userId);
+      const token: EmailTokenDocument = await EmailTokenModel.findOneAndDelete({
+        userId,
+        token: req.params.token,
+      }).exec();
+
+      if (!user || !token) return next(new StatusError(401, 'Unauthorized'));
+
+      await user.setStatus(UserStatus.Active);
+      return res.status(200).send('Now you can login!');
     } catch (err) {
       next(err);
     }
