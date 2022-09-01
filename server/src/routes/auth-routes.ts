@@ -48,7 +48,7 @@ router.post(
       const token = issueJwt(user);
       return res.status(200).json(token);
     } catch (err) {
-      next(err);
+      next(new StatusError(401, 'Invalid username or password'));
     }
   }
 );

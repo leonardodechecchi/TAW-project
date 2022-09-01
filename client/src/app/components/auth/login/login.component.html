@@ -37,9 +37,11 @@
     </button>
     <div
       *ngIf="errorMessage"
-      class="card card-body border border-danger text-danger mt-1 mb-3"
+      class="card bg-danger text-white shadow-5 mt-1 mb-3"
     >
-      {{ errorMessage }}
+      <div class="card-body">
+        <strong>{{ errorMessage }}</strong>
+      </div>
     </div>
   </div>
 </form>
