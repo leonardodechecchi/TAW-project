@@ -53,7 +53,7 @@ export class RegisterComponent implements OnInit {
   }
 
   /**
-   * Submit the register form.
+   * Submit the register form and try to register.
    */
   public submit() {
     this.infoMessage = null;

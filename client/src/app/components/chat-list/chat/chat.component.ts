@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
     this.messageText = new FormControl('');
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.route.params.subscribe({
       next: (params) => {
         this.chatId = params['id'];

@@ -43,7 +43,11 @@ export class ModeratorFormComponent implements OnInit {
     return this.moderatorForm.get('email');
   }
 
-  public createModeratorUser() {
+  /**
+   * Create a user with moderator role with
+   * the given information.
+   */
+  public createModeratorUser(): void {
     if (this.moderatorForm.invalid) return;
 
     this.moderatorService

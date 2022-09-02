@@ -25,6 +25,9 @@ export class AdminDashboardComponent implements OnInit {
     this.populateUsersList();
   }
 
+  /**
+   * Get the list of standard users.
+   */
   private populateUsersList(): void {
     const moderatorId: string = this.accountService.getId();
     this.moderatorService.getUsers(moderatorId).subscribe({

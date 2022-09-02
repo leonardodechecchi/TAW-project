@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.form = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required],
@@ -39,7 +39,10 @@ export class LoginComponent implements OnInit {
     return this.form.get('remember');
   }
 
-  submit() {
+  /**
+   * Submit the form and and try to login.
+   */
+  public submit(): void {
     this.errorMessage = null;
 
     if (this.form.valid) {
