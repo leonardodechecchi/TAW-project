@@ -30,32 +30,33 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { UpdatePasswordComponent } from './components/update-password/update-password.component';
-import { AuthGuardService } from './services/auth-guard.service';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
-import { AuthInterceptor } from './helpers/auth.interceptor';
 import { FriendListComponent } from './components/friend-list/friend-list.component';
 import { NotificationListComponent } from './components/notification-list/notification-list.component';
-import { ChatComponent } from './components/chat/chat.component';
-import { FirstLoginGuardService } from './services/first-login-guard.service';
+import { ChatComponent } from './components/chat-list/chat/chat.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { BackNavbarComponent } from './components/back-navbar/back-navbar.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ModeratorGuardService } from './services/moderator-guard.service';
 import { WaitingRoomComponent } from './components/waiting-opponent/waiting-room.component';
-
 import { PositioningPhaseFormComponent } from './components/match/positioning-phase-form/positioning-phase-form.component';
 import { PositioningPhaseComponent } from './components/match/positioning-phase/positioning-phase.component';
 import { GameComponent } from './components/match/game/game.component';
 import { ChatModalComponent } from './components/match/chat-modal/chat-modal.component';
 import { ObserverComponent } from './components/match/observer/observer.component';
 import { MatchListComponent } from './components/match/match-list/match-list.component';
-import { MatchLoadingGuardService } from './services/match-loading-guard.service';
 import { Error404Component } from './components/error-404/error-404.component';
 import { WinnerComponent } from './components/match/winner/winner.component';
-import { MatchNotLoadingGuardService } from './services/match-not-loading-guard.service';
 import { ModeratorFormComponent } from './components/admin-dashboard/moderator-form/moderator-form.component';
 import { Error403Component } from './components/error-403/error-403.component';
+
+// Services
+import { MatchNotLoadingGuardService } from './services/match-not-loading-guard.service';
+import { MatchLoadingGuardService } from './services/match-loading-guard.service';
+import { ModeratorGuardService } from './services/moderator-guard.service';
+import { FirstLoginGuardService } from './services/first-login-guard.service';
+import { AuthInterceptor } from './helpers/auth.interceptor';
+import { AuthGuardService } from './services/auth-guard.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
