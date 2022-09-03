@@ -22,16 +22,25 @@ export class MatchEndedListener extends Listener<MatchEndedData> {
       const userA: UserDocument = await getUserByUsername(match.player1.playerUsername);
       const userB: UserDocument = await getUserByUsername(match.player2.playerUsername);
 
+      // calculate the rating difference
       const ratingADifference: number = userB.stats.elo - userA.stats.elo;
       const ratingBDifference: number = userA.stats.elo - userB.stats.elo;
 
+      // calculate the expected score
       const playerAProbability: number =
         1 / (match.stats.winner === userA.username ? 1 : 0 + Math.pow(10, ratingADifference / 400));
       const playerBProbability: number =
         1 / (match.stats.winner === userB.username ? 1 : 0 + Math.pow(10, ratingBDifference / 400));
 
-      userA.stats.elo += 10 * (match.stats.winner === userA.username ? 1 : 0 - playerAProbability);
-      userB.stats.elo += 10 * (match.stats.winner === userB.username ? 1 : 0 - playerBProbability);
+      // calculate the new elo score
+      const newAElo: number =
+        20 * (match.stats.winner === userA.username ? 1 : 0 - playerAProbability);
+      const newBElo: number =
+        20 * (match.stats.winner === userB.username ? 1 : 0 - playerBProbability);
+
+      // update
+      userA.stats.elo += Math.round((newAElo + Number.EPSILON) * 100) / 100;
+      userB.stats.elo += Math.round((newBElo + Number.EPSILON) * 100) / 100;
 
       await userA.save();
       await userB.save();
