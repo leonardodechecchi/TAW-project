@@ -6,8 +6,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import colors from 'colors';
-import multer from 'multer';
-import path from 'path';
 import { registerRoutes } from './utils/register-routes';
 import { ChatJoinedListener } from './socket/listeners/ChatJoined';
 import { ChatLeftListener } from './socket/listeners/ChatLeft';
@@ -21,6 +19,7 @@ import { getUserById, UserDocument } from './models/User';
 import { retrieveId } from './utils/param-checking';
 import { FriendOnlineEmitter } from './socket/emitters/FriendOnline';
 import { MatchmakingEngine } from './matchmaking/matchmaking-engine';
+import { MatchEndedListener } from './socket/listeners/MatchEnded';
 
 dotenv.config();
 colors.enable();
@@ -56,27 +55,6 @@ app.use(
   )
 );
 app.use(cors());
-app.use('/images', express.static(path.join(__dirname, '../images')));
-
-// Picture upload config
-const diskStorage: multer.Options['storage'] = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './images');
-  },
-  filename: (req, file, cb) => {
-    const mimeType = file.mimetype.split('/');
-    const fileType = mimeType[1];
-    const fileName = file.originalname + '.' + fileType;
-    cb(null, fileName);
-  },
-});
-
-const fileFilter: multer.Options['fileFilter'] = (req, file, cb) => {
-  const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-  allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(null, false);
-};
-
-export const storage = multer({ storage: diskStorage, fileFilter: fileFilter }).single('image');
 
 // Register routes
 registerRoutes(app);
@@ -153,6 +131,12 @@ ioServer.on('connection', (client: io.Socket) => {
    */
   const matchLeft = new MatchLeftListener(ioServer, client);
   matchLeft.listen();
+
+  /**
+   *
+   */
+  const matchEnded = new MatchEndedListener(client);
+  matchEnded.listen();
 });
 
 // Finally start http server
@@ -160,5 +144,8 @@ httpServer.listen(port, () => {
   console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
 });
 
+/**
+ * Start the matchmaking engine.
+ */
 const matchmakingEngine = new MatchmakingEngine(ioServer, 5000);
 matchmakingEngine.start();

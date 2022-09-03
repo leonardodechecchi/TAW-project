@@ -393,6 +393,9 @@ export class GameComponent implements OnInit {
       // update match stats
       this.updateMatchStats({ winner, endTime: new Date() }).subscribe({
         next: () => {
+          // emit socket event to update elo scores
+          this.socketService.emit('match-ended', { matchId: this.matchId });
+
           // the player lost
           this.updateLocalUserStats({
             numOfGamesPlayed: ++this.userStats.numOfGamesPlayed,
