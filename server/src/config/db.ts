@@ -15,9 +15,9 @@ mongoose.connection.on('connected', async () => {
       console.log(`${strColor}: No admin account found. Creating a new one...`);
 
       admin = await createUser({
-        name: 'Leonardo',
-        surname: 'De Checchi',
-        email: 'leonardo-dechecchi@battleship.it',
+        name: 'admin',
+        surname: 'admin',
+        email: 'admin@battleship.it',
         username: 'admin',
         password: 'admin',
       });
@@ -33,36 +33,47 @@ mongoose.connection.on('connected', async () => {
 
       // user1
       const user1: UserDocument = await createUser({
-        name: 'Mario',
-        surname: 'Rossi',
-        email: 'mario-rossi@battleship.it',
-        username: 'mario-rossi',
-        password: 'mario-rossi',
+        name: 'example1',
+        surname: 'example1',
+        email: 'example1@battleship.it',
+        username: 'example1',
+        password: 'example1',
       });
       await user1.setStatus(UserStatus.Active);
 
       // user2
       const user2: UserDocument = await createUser({
-        name: 'Laura',
-        surname: 'Villa',
-        email: 'laura-villa@battleship.it',
-        username: 'laura-villa',
-        password: 'laura-villa',
+        name: 'example2',
+        surname: 'example2',
+        email: 'example2@battleship.it',
+        username: 'example2',
+        password: 'example2',
       });
       await user2.setStatus(UserStatus.Active);
 
+      // user3
+      const user3: UserDocument = await createUser({
+        name: 'example3',
+        surname: 'example3',
+        email: 'example3@battleship.it',
+        username: 'example3',
+        password: 'example3',
+      });
+      await user3.setStatus(UserStatus.Active);
+
       // adding relationshis for testing purpose
       await user1.addRelationship(user2._id);
+      await user1.addRelationship(user3._id);
 
-      // user3 - moderator account
-      const user3: UserDocument = await createUser({
-        name: 'Roberto',
-        surname: 'Riva',
-        email: 'roberto-riva@battleship.it',
-        username: 'roberto-riva',
-        password: 'roberto-riva',
+      // user4 - moderator account
+      const user4: UserDocument = await createUser({
+        name: 'moderator1',
+        surname: 'moderator1',
+        email: 'moderator1@battleship.it',
+        username: 'moderator1',
+        password: 'moderator1',
       });
-      await user3.setRole(UserRoles.Moderator);
+      await user4.setRole(UserRoles.Moderator);
     }
     console.log(`${strColor}: Mongoose connection open to mongodb://${dbURI}`);
   } catch (err) {

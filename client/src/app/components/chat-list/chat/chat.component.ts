@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private accountService: AccountService,
+    public accountService: AccountService,
     private socketService: SocketService,
     private route: ActivatedRoute
   ) {

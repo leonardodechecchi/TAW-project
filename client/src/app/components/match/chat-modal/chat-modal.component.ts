@@ -19,7 +19,7 @@ export class ChatModalComponent implements OnInit {
 
   constructor(
     public modalRef: MdbModalRef<ChatModalComponent>,
-    private accountService: AccountService,
+    public accountService: AccountService,
     private chatService: ChatService,
     private socketService: SocketService
   ) {

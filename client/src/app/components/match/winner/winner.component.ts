@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MatchStats } from 'src/app/models/Match';
+import { AccountService } from 'src/app/services/account.service';
 import { MatchService } from 'src/app/services/match.service';
 
 @UntilDestroy()
@@ -17,7 +18,8 @@ export class WinnerComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private matchService: MatchService
+    private matchService: MatchService,
+    public accountService: AccountService
   ) {
     this.stats = {
       winner: null,

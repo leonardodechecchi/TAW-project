@@ -16,7 +16,11 @@
     >
       <div class="card-body">
         <h5 class="card-title">
-          {{ message.author }}
+          {{
+            message.author === this.accountService.getUsername()
+              ? "You"
+              : friendName
+          }}
         </h5>
         <div class="card-text">{{ message.content }}</div>
         <small>{{ message.date | date: "shortTime" }}</small>

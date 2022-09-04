@@ -1,6 +1,13 @@
 <div class="container">
   <section class="text-center">
-    <h1 class="display-5 py-5" *ngIf="!extras">{{ stats.winner }} won!</h1>
+    <h1 class="display-5 py-5" *ngIf="stats.winner">
+      {{
+        stats.winner === this.accountService.getUsername()
+          ? "You"
+          : stats.winner
+      }}
+      won!
+    </h1>
     <h1 class="display-5 py-5" *ngIf="extras">{{ extras.state.message }}</h1>
     <div class="card col-md-6 offset-md-3">
       <div class="card-body">
@@ -11,7 +18,7 @@
           >
             Match started
             <span class="badge badge-primary rounded-pill">{{
-              stats.startTime | date: "short"
+              stats.startTime | date: "shortTime"
             }}</span>
           </li>
           <li
@@ -19,7 +26,7 @@
           >
             Match ended
             <span class="badge badge-primary rounded-pill">{{
-              stats.endTime | date: "short"
+              stats.endTime | date: "shortTime"
             }}</span>
           </li>
           <li
