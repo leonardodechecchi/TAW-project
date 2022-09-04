@@ -75,6 +75,8 @@ ioServer.use(async (client, next) => {
 
   const userId: Types.ObjectId = retrieveId(client.userId);
   const user: UserDocument = await getUserById(userId);
+
+  // set user status to online
   await user.setOnlineStatus(true);
 
   // inform other users
@@ -91,57 +93,60 @@ ioServer.use(async (client, next) => {
 // Socket server events
 ioServer.on('connection', (client: io.Socket) => {
   /**
-   * OK
+   * Listen for server left event. Update the user status to offline
+   * and inform user friends.
    */
   const serverLeft = new ServerLeft(client);
   serverLeft.listen();
 
   /**
-   * OK
+   * Listen for chat joined event. Inform the users in the chat that a user
+   * has joined the chat.
    */
   const chatJoined = new ChatJoinedListener(client);
   chatJoined.listen();
 
   /**
-   * OK
+   * Listen for chat left event. Inform the users in the chat that a user
+   * has left the chat.
    */
   const chatLeft = new ChatLeftListener(client);
   chatLeft.listen();
 
   /**
-   * TODO test
+   * Listen for match request accepted event. Inform the user that
+   * the opponent has accepted the match and the game is going to start.
    */
   const matchRequestAccepted = new MatchRequestAcceptedListener(ioServer, client);
   matchRequestAccepted.listen();
 
   /**
-   *
+   * Listen for match request rejected event. Inform the user that
+   * the opponent has rejected the match.
    */
   const matchRequestRejected = new MatchRequestRejectedListener(ioServer, client);
   matchRequestRejected.listen();
 
   /**
-   * TODO test
+   * Listen for match joined event. The user who join the match will
+   * be pushed into the room (the matchId).
    */
   const matchJoined = new MatchJoinedListener(client);
   matchJoined.listen();
 
   /**
-   * TODO test
+   * Listen for match left event. It informs the opponent and the
+   * observers that the other player has left the match.
    */
   const matchLeft = new MatchLeftListener(ioServer, client);
   matchLeft.listen();
 
   /**
-   *
+   * Listen for match ended event. It informs the opponent and the
+   * observers that the match is ended and update the players elo scores.
    */
   const matchEnded = new MatchEndedListener(client);
   matchEnded.listen();
-});
-
-// Finally start http server
-httpServer.listen(port, () => {
-  console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
 });
 
 /**
@@ -149,3 +154,11 @@ httpServer.listen(port, () => {
  */
 const matchmakingEngine = new MatchmakingEngine(ioServer, 5000);
 matchmakingEngine.start();
+
+/**
+ * Finally start http server
+ */
+
+httpServer.listen(port, () => {
+  console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
+});
