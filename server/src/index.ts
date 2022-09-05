@@ -162,3 +162,11 @@ matchmakingEngine.start();
 httpServer.listen(port, () => {
   console.log(`[${colors.blue('server')}]: Server is running at http://localhost:${port}`);
 });
+
+// To use an https server, uncomment this section
+/*
+https.createServer({
+  key: fs.readFileSync(fs.readFileSync(path.join(__dirname, '../keys', 'key.pem'))),
+  cert: fs.readFileSync(fs.readFileSync(path.join(__dirname, '../keys', 'cert.pem'))
+}, app).listen(8443);
+*/
